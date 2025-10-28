@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="crm_lead_form_inherit_helpdesk_button" model="ir.ui.view">
+        <field name="name">crm.lead.form.inherit.helpdesk.button</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Ensure fields used in expressions are in the arch -->
+            <xpath expr="//sheet" position="inside">
+                <field name="stage_create_helpdesk_on_enter" invisible="1"/>
+                <field name="type" invisible="1"/>
+            </xpath>
+
+            <!-- Smart button: visible only when opportunity + stage flag -->
+            <xpath expr="//sheet//div[@name='button_box']" position="inside">
+                <button name="action_open_helpdesk_tickets"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-life-ring"
+                        groups="base.group_user"
+                        invisible="not (type == 'opportunity' and stage_create_helpdesk_on_enter)">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="helpdesk_ticket_count" nolabel="1"/>
+                        </span>
+                        <span class="o_stat_text">Helpdesk</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- Manual create: same visibility rule -->
+            <xpath expr="//header" position="inside">
+                <button name="action_create_helpdesk_ticket"
+                        type="object"
+                        string="Create Helpdesk Ticket"
+                        class="btn-primary"
+                        groups="base.group_user"
+                        invisible="not (type == 'opportunity' and stage_create_helpdesk_on_enter)"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

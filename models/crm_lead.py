@@ -8,13 +8,37 @@ CRM: Per-user stage visibility (Kanban columns) per Sales Team.
 - If rules exist but contain no stages, Kanban shows no columns (by design).
 """
 import logging
-from odoo import api, models
+from odoo import api, models, fields, _
 
 _logger = logging.getLogger(__name__)
 
 
 class CrmLead(models.Model):
     _inherit = "crm.lead"
+
+    helpdesk_ticket_ids = fields.One2many(
+        comodel_name="helpdesk.ticket",
+        inverse_name="lead_id",
+        string="Helpdesk Tickets",
+    )
+    helpdesk_ticket_count = fields.Integer(
+        string="Helpdesk Tickets Count",
+        compute="_compute_helpdesk_ticket_count",
+        store=False,
+    )
+    stage_create_helpdesk_on_enter = fields.Boolean(
+        related="stage_id.create_helpdesk_on_enter",
+        readonly=True,
+        string="Stage Creates Helpdesk"
+    )
+
+
+    @api.depends("helpdesk_ticket_ids")
+    def _compute_helpdesk_ticket_count(self):
+        for rec in self:
+            rec.helpdesk_ticket_count = len(rec.helpdesk_ticket_ids)
+
+
 
     # -------------------------------------------------------------------------
     # Helpers
@@ -127,3 +151,101 @@ class CrmLead(models.Model):
         if allowed is None:
             return
         return {"domain": {"stage_id": [("id", "in", list(allowed))]}}
+
+        # ---------------- auto-create ticket when entering a flagged stage --------
+
+    def write(self, vals):
+        """When stage_id changes to a stage flagged with create_helpdesk_on_enter, create a ticket
+        if none is open for this lead (avoid duplicates)."""
+        stage_changed = "stage_id" in vals
+        # Pre-fetch stage data to avoid multiple queries
+        stage_by_id = {}
+        if stage_changed:
+            stage_ids = set(vals.get("stage_id") for _ in self if vals.get("stage_id"))
+            if stage_ids:
+                stage_by_id = {
+                    s.id: s
+                    for s in self.env["crm.stage"].browse(list(stage_ids))
+                }
+
+        res = super().write(vals)
+
+        if stage_changed and vals.get("stage_id"):
+            for lead in self:
+                stage = stage_by_id.get(vals["stage_id"])
+                if not stage or not stage.create_helpdesk_on_enter:
+                    continue
+
+                # Avoid duplicates: if there is any not-done ticket linked, skip creation
+                existing = lead.helpdesk_ticket_ids.filtered(lambda t: t.stage_id and not t.stage_id.fold)
+                if existing:
+                    _logger.info("Skip creating ticket for lead %s: open ticket already exists", lead.id)
+                    continue
+
+                # Compose basic ticket values
+                vals_ticket = {
+                    "name": _("Ticket for Lead: %s") % (lead.name or _("No title")),
+                    "lead_id": lead.id,  # inverse below
+                    "partner_id": lead.partner_id.id or False,
+                    "email": lead.email_from or False,
+                    "description": lead.description or "",
+                    "team_id": stage.default_helpdesk_team_id.id or False,
+                    # You can map priority, tags, etc. here if desired
+                }
+                ticket = self.env["helpdesk.ticket"].sudo().create(vals_ticket)
+
+                # Post a message on lead & ticket for traceability
+                lead.message_post(body=_("Helpdesk ticket created: %s") % (ticket.display_name,))
+                ticket.message_post(body=_("Created from CRM Lead: %s") % (lead.display_name,))
+
+        return res
+
+        # ---- smart button handler -----------------------------------------------
+
+    def action_open_helpdesk_tickets(self):
+        self.ensure_one()
+        # If exactly one ticket, open form; else open list filtered by this lead.
+        if len(self.helpdesk_ticket_ids) == 1:
+            base_form = self.env.ref("helpdesk.helpdesk_ticket_view_form").id
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Helpdesk Ticket"),
+                "res_model": "helpdesk.ticket",
+                "view_mode": "form",
+                "views": [(base_form, "form")],
+                "view_id": base_form,
+                "res_id": self.helpdesk_ticket_ids.id,
+                "target": "current",
+            }
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Helpdesk Tickets"),
+            "res_model": "helpdesk.ticket",
+            "view_mode": "list,form",
+            "domain": [("lead_id", "=", self.id)],
+            "target": "current",
+        }
+        # ---- manual create button -----------------------------------------------
+
+    def action_create_helpdesk_ticket(self):
+        self.ensure_one()
+        # Pick default team from current stage if available
+        team_id = self.stage_id.default_helpdesk_team_id.id if self.stage_id else False
+        ticket = self.env["helpdesk.ticket"].sudo().create({
+            "name": _("Ticket for Lead: %s") % (self.name or _("No title")),
+            "lead_id": self.id,
+            "partner_id": self.partner_id.id or False,
+            "email_cc": self.email_from or False,
+            "description": self.description or "",
+            "team_id": team_id,
+        })
+        self.message_post(body=_("Helpdesk ticket created: %s") % ticket.display_name)
+        ticket.message_post(body=_("Created from CRM Lead: %s") % self.display_name)
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "helpdesk.ticket",
+            "res_id": ticket.id,
+            "view_mode": "form",
+            "target": "current",
+        }
+

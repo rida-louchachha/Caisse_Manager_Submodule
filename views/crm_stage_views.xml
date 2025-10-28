@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="crm_stage_form_inherit_helpdesk" model="ir.ui.view">
+        <field name="name">crm.stage.form.inherit.helpdesk</field>
+        <field name="model">crm.stage</field>
+        <field name="inherit_id" ref="crm.crm_stage_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/group" position="inside">
+                <group string="Helpdesk Automation">
+                    <field name="create_helpdesk_on_enter"/>
+                    <field name="default_helpdesk_team_id" invisible="not create_helpdesk_on_enter"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
