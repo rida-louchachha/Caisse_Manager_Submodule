@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List view for res.users.crm.stage.rule -->
+    <record id="res_users_crm_stage_rule_list" model="ir.ui.view">
+        <field name="name">res.users.crm.stage.rule.list</field>
+        <field name="model">res.users.crm.stage.rule</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="team_id"/>
+                <field name="stage_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view for res.users.crm.stage.rule -->
+    <record id="res_users_crm_stage_rule_form" model="ir.ui.view">
+        <field name="name">res.users.crm.stage.rule.form</field>
+        <field name="model">res.users.crm.stage.rule</field>
+        <field name="arch" type="xml">
+            <form string="CRM Stage Rule">
+                <group>
+                    <!-- Inverse M2O is auto-set when creating from the O2M -->
+                    <field name="user_id" invisible="1"/>
+                    <field name="team_id" options="{'no_create_edit': True}"/>
+                    <field name="stage_ids" widget="many2many_tags"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- Extend Users form: add a page with the O2M (internal users only) -->
+    <record id="view_users_form_crm_stage_rules" model="ir.ui.view">
+        <field name="name">res.users.form.crm.stage.rules</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form/sheet/notebook" position="inside">
+                <page string="CRM Stage Visibility" groups="base.group_user">
+                    <group>
+                        <field name="crm_stage_rule_ids"
+                               mode="list,form"
+                               views="[(list, 'crm_stage_user_visibility.res_users_crm_stage_rule_list'),
+                                       (form, 'crm_stage_user_visibility.res_users_crm_stage_rule_form')]"/>
+                    </group>
+
+                    <label for="crm_stage_rule_ids" string="Help"/>
+                    <p class="o_form_label_help">
+                        Choose allowed stages per Sales Team. If no rule is set for a team,
+                        Odoo’s default stage visibility applies.
+                    </p>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

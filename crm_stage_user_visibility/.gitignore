@@ -1,0 +1,56 @@
+# ---- Python bytecode / cache ----
+__pycache__/
+*.py[cod]
+*$py.class
+
+# ---- Virtual envs & Python tooling ----
+.env
+.venv
+venv/
+env/
+pip-wheel-metadata/
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# ---- Test / Lint caches ----
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.pylint.d/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# ---- Editors / IDEs ----
+.vscode/
+.idea/
+*.iml
+
+# ---- OS files ----
+.DS_Store
+Thumbs.db
+
+# ---- Logs & temp ----
+*.log
+logs/
+tmp/
+temp/
+
+# ---- Odoo-specific (runtime / local) ----
+.odoo*
+.odoorc
+.odoodebug
+local_addons/
+
+# ---- Node / UI (if present) ----
+node_modules/
+npm-debug.log*
+yarn-error.log
+
+# ---- Swap files ----
+*.swp
+*.swo
