@@ -187,7 +187,7 @@ class CrmLead(models.Model):
                     "name": _("Ticket for Lead: %s") % (lead.name or _("No title")),
                     "lead_id": lead.id,  # inverse below
                     "partner_id": lead.partner_id.id or False,
-                    "email": lead.email_from or False,
+                    "email_cc": lead.email_from or False,
                     "description": lead.description or "",
                     "team_id": stage.default_helpdesk_team_id.id or False,
                     # You can map priority, tags, etc. here if desired
