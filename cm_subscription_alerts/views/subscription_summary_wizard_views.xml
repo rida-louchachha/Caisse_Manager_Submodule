@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Summary Wizard Form View -->
+    <record id="subscription_summary_wizard_form" model="ir.ui.view">
+        <field name="name">subscription.summary.wizard.form</field>
+        <field name="model">subscription.summary.wizard</field>
+        <field name="arch" type="xml">
+            <form string="📊 Subscription Summary" class="o_subscription_summary_wizard">
+                <sheet>
+                    <div class="oe_title">
+                        <h1 style="text-align: center;">
+                            <span style="font-size: 32px;">📊</span>
+                            Subscription Summary Dashboard
+                        </h1>
+                    </div>
+                    
+                    <!-- Date Range Filter Section - Compact Layout -->
+                    <group string="📅 SELECT PERIOD" col="6">
+                        <field name="date_range_type" widget="radio" options="{'horizontal': true}" nolabel="1" colspan="6"/>
+                        <field name="date_from" string="📆 From"/>
+                        <field name="date_to" string="📆 To"/>
+                        <button name="action_apply_filter" string="🔍 APPLY FILTER" type="object" class="btn-primary oe_highlight"/>
+                    </group>
+                    
+                    <separator/>
+                    
+                    <!-- Dashboard Content -->
+                    <group>
+                        <field name="summary_html" nolabel="1" colspan="2" widget="html"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_refresh" string="🔄 Refresh Data" type="object" class="btn-primary"/>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Action to open the wizard -->
+    <record id="action_subscription_summary_wizard" model="ir.actions.act_window">
+        <field name="name">📊 Subscription Summary</field>
+        <field name="res_model">subscription.summary.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+    <!-- Menu item - must be after action definition -->
+    <menuitem id="menu_subscription_summary" 
+              name="📊 Subscription Summary"
+              action="action_subscription_summary_wizard"
+              parent="sale_subscription.menu_sale_subscription"
+              sequence="101"/>
+</odoo>

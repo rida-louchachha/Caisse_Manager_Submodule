@@ -1,0 +1,343 @@
+/* CM Subscription Alerts - Visual Alert Styles */
+
+/* ===== CRITICAL SHUTDOWN ALERT - MOST URGENT ===== */
+/* Used when date passed the 5th and no payment */
+.o_shutdown_alert {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #8b0000 0%, #ff0000 50%, #ff4500 100%);
+    border-radius: 4px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    animation:
+        critical-flame 0.3s ease-in-out infinite alternate,
+        shake-danger 0.5s ease-in-out infinite,
+        glow-fire 0.5s ease-in-out infinite alternate;
+    border: 2px solid #ff0000;
+}
+
+@keyframes critical-flame {
+    0% {
+        background: linear-gradient(135deg, #8b0000 0%, #ff0000 50%, #ff4500 100%);
+        box-shadow: 0 0 10px #ff0000, 0 0 20px #ff4500, 0 0 30px #ff6600, 0 0 40px #ff9900;
+    }
+
+    100% {
+        background: linear-gradient(135deg, #ff0000 0%, #ff4500 50%, #ffcc00 100%);
+        box-shadow: 0 0 20px #ff0000, 0 0 40px #ff4500, 0 0 60px #ff6600, 0 0 80px #ff9900;
+    }
+}
+
+@keyframes shake-danger {
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    10%,
+    30%,
+    50%,
+    70%,
+    90% {
+        transform: translateX(-2px);
+    }
+
+    20%,
+    40%,
+    60%,
+    80% {
+        transform: translateX(2px);
+    }
+}
+
+@keyframes glow-fire {
+    0% {
+        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0000;
+    }
+
+    100% {
+        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff0000, 0 0 40px #ff4500;
+    }
+}
+
+/* Pulsing/Flashing Red Circle for Unpaid Subscriptions */
+.o_unpaid_alert {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    color: white;
+    font-size: 14px;
+    animation: pulse-red 1.5s ease-in-out infinite, glow-red 1.5s ease-in-out infinite;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    margin-right: 8px;
+}
+
+/* Flame effect animation */
+@keyframes pulse-red {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes glow-red {
+    0% {
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5), 0 0 10px rgba(255, 0, 0, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.5), 0 0 40px rgba(255, 0, 0, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 5px rgba(255, 0, 0, 0.5), 0 0 10px rgba(255, 0, 0, 0.3);
+    }
+}
+
+/* Urgent alert badge with flame effect */
+.o_urgent_alert {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: linear-gradient(135deg, #ff4444 0%, #cc0000 100%);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    animation: flame-pulse 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes flame-pulse {
+    0% {
+        box-shadow: 0 0 5px #ff4444, 0 0 10px #ff4444, 0 0 15px #ff6600;
+        transform: translateY(0);
+    }
+
+    100% {
+        box-shadow: 0 0 10px #ff4444, 0 0 20px #ff4444, 0 0 30px #ff6600, 0 0 40px #ff9900;
+        transform: translateY(-1px);
+    }
+}
+
+/* Warning indicator (orange) for pending */
+.o_warning_alert {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    color: white;
+    font-size: 14px;
+    animation: pulse-orange 2s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(255, 165, 0, 0.5);
+}
+
+@keyframes pulse-orange {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(255, 165, 0, 0.5);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 15px rgba(255, 165, 0, 0.8);
+    }
+}
+
+/* Success indicator (green) for paid */
+.o_success_indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+    font-size: 12px;
+}
+
+/* Row highlighting for unpaid */
+.o_list_view tr.o_data_row.o_unpaid_row {
+    background: linear-gradient(90deg, rgba(255, 0, 0, 0.1) 0%, transparent 50%) !important;
+}
+
+.o_list_view tr.o_data_row.o_unpaid_row:hover {
+    background: linear-gradient(90deg, rgba(255, 0, 0, 0.15) 0%, rgba(255, 255, 255, 0.05) 50%) !important;
+}
+
+/* Alert badge in list view */
+.o_payment_alert_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.o_payment_alert_badge .alert-icon {
+    animation: blink-red 1s ease-in-out infinite;
+}
+
+@keyframes blink-red {
+
+    0%,
+    50%,
+    100% {
+        opacity: 1;
+    }
+
+    25%,
+    75% {
+        opacity: 0.5;
+    }
+}
+
+/* ===== SUBSCRIPTION SUMMARY DASHBOARD STYLES ===== */
+
+/* Date Filter Section Styling */
+.o_subscription_summary_wizard .o_group {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.o_subscription_summary_wizard .o_horizontal_separator {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+}
+
+/* Radio Button Cards */
+.o_subscription_summary_wizard .o_radio_input {
+    display: none;
+}
+
+.o_subscription_summary_wizard .o_radio_item {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 18px;
+    margin: 5px;
+    background: linear-gradient(135deg, #2d2d44 0%, #1f1f35 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 25px;
+    color: #a0a0a0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+}
+
+.o_subscription_summary_wizard .o_radio_item:hover {
+    border-color: #667eea;
+    color: #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    transform: translateY(-2px);
+}
+
+.o_subscription_summary_wizard .o_radio_item.o_active,
+.o_subscription_summary_wizard .o_radio_item:has(input:checked) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: #667eea;
+    color: white;
+    box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Date Input Fields */
+.o_subscription_summary_wizard .o_datepicker {
+    background: linear-gradient(135deg, #2d2d44 0%, #1f1f35 100%);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    border-radius: 10px;
+    padding: 5px;
+    transition: all 0.3s ease;
+}
+
+.o_subscription_summary_wizard .o_datepicker:hover,
+.o_subscription_summary_wizard .o_datepicker:focus-within {
+    border-color: #667eea;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.o_subscription_summary_wizard .o_datepicker input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 14px;
+}
+
+/* Apply Filter Button */
+.o_subscription_summary_wizard button[name="action_apply_filter"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 10px 30px !important;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+}
+
+.o_subscription_summary_wizard button[name="action_apply_filter"]:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6) !important;
+}
+
+/* Form Labels */
+.o_subscription_summary_wizard .o_form_label {
+    color: #a0a0a0;
+    font-weight: 500;
+    text-transform: uppercase;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+
+/* Footer Buttons */
+.o_subscription_summary_wizard .o_form_buttons_edit button {
+    border-radius: 25px !important;
+    padding: 8px 25px !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+.o_subscription_summary_wizard .btn-primary {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%) !important;
+    border: none !important;
+}
+
+.o_subscription_summary_wizard .btn-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+    border: none !important;
+}

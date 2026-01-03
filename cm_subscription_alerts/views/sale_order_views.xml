@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 
+        Menu Action: Refresh All Subscriptions (accessible without selection)
+    -->
+    <record id="action_refresh_all_menu" model="ir.actions.server">
+        <field name="name">🔄 Refresh All &amp; Show Summary</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">action = env['sale.order'].action_refresh_all_subscriptions()</field>
+    </record>
+    
+    <!-- Menu items under Subscriptions menu -->
+    <menuitem id="menu_subscription_refresh" 
+              name="🔄 Refresh All Subscriptions"
+              action="action_refresh_all_menu"
+              parent="sale_subscription.menu_sale_subscription"
+              sequence="100"/>
+    
+    <!-- 
+        Extend the subscription-specific list view with payment tracking
+        This is the view used in Abonnements menu
+    -->
+    <record id="sale_order_view_list_inherit_cm_subscription" model="ir.ui.view">
+        <field name="name">sale.order.list.inherit.cm.subscription.main</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_subscription.sale_subscription_view_tree"/>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <!-- Add Refresh All button to header -->
+            <xpath expr="//list" position="inside">
+                <header>
+                    <button name="action_refresh_all_button" 
+                            type="object" 
+                            string="🔄 Refresh All Alerts"
+                            class="btn-primary"/>
+                </header>
+            </xpath>
+            
+            <!-- Add payment status after subscription_state field -->
+            <xpath expr="//field[@name='subscription_state']" position="after">
+                <!-- Client Phone - Hidden by default -->
+                <field name="client_phone" string="Phone" optional="hide"/>
+                <!-- Payment Status Badge -->
+                <field name="subscription_payment_status" 
+                       string="Payment Status" 
+                       widget="badge"
+                       decoration-success="subscription_payment_status in ('paid', 'in_payment')"
+                       decoration-warning="subscription_payment_status in ('requires_payment', 'pending', 'should_invoice')"
+                       decoration-danger="subscription_payment_status == 'expired'"
+                       optional="show"/>
+                <!-- Next Invoice Date -->
+                <field name="next_invoice_date" string="Next Invoice" optional="show"/>
+                <!-- Last Payment Info -->
+                <field name="last_payment_date" string="Last Invoice Date" optional="show"/>
+                <field name="last_payment_amount" string="Last Amount" optional="hide"/>
+                <!-- Totals with sum aggregation -->
+                <field name="total_invoiced_amount" string="Total Invoiced" optional="hide" sum="Total Invoiced"/>
+                <field name="total_paid_amount" string="Total Paid" optional="show" sum="Total Paid"/>
+                <field name="amount_to_pay" string="Amount To Pay" optional="show" sum="Total To Pay"/>
+                <!-- Alerts with hover tooltip - uses help attribute for native browser tooltip -->
+                <field name="payment_alert_message" 
+                       string="Alerts" 
+                       optional="show"/>
+            </xpath>
+            
+            <!-- Add hidden fields for status logic and tooltip data -->
+            <xpath expr="//list" position="inside">
+                <field name="has_pending_invoice" column_invisible="1"/>
+                <field name="has_missing_invoice" column_invisible="1"/>
+                <field name="is_payment_window_active" column_invisible="1"/>
+                <field name="invoice_created_for_period" column_invisible="1"/>
+                <field name="is_cm_subscription" column_invisible="1"/>
+                <field name="payment_info_tooltip" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Also extend the base sale.view_order_tree for non-subscription orders -->
+    <record id="sale_order_view_list_inherit_cm_base" model="ir.ui.view">
+        <field name="name">sale.order.list.inherit.cm.base</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <!-- Add hidden fields for status logic -->
+            <xpath expr="//list" position="inside">
+                <field name="has_pending_invoice" column_invisible="1"/>
+                <field name="has_missing_invoice" column_invisible="1"/>
+                <field name="is_payment_window_active" column_invisible="1"/>
+                <field name="invoice_created_for_period" column_invisible="1"/>
+                <field name="is_cm_subscription" column_invisible="1"/>
+                <field name="subscription_payment_status" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Extend the sale.order form view with Payment Tracking tab -->
+    <record id="sale_order_view_form_inherit_cm" model="ir.ui.view">
+        <field name="name">sale.order.form.inherit.cm.subscription</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <!-- Add payment tracking tab to notebook -->
+            <xpath expr="//notebook" position="inside">
+                <page string="Payment Tracking" name="payment_tracking" invisible="not is_cm_subscription">
+                    <!-- Status Banner -->
+                    <div class="alert alert-success" role="alert" invisible="subscription_payment_status != 'paid'">
+                        <strong>✅ PAID</strong> - Invoice for next month is paid.
+                    </div>
+                    <div class="alert alert-success" role="alert" invisible="subscription_payment_status != 'in_payment'">
+                        <strong>🔵 IN PAYMENT</strong> - Payment in progress for next month.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="subscription_payment_status != 'requires_payment'">
+                        <strong>⚠️ REQUIRES PAYMENT</strong> - Payment window open (1st-5th). Pay before the 5th!
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="subscription_payment_status != 'pending'">
+                        <strong>🟠 PENDING PAYMENT</strong> - Invoice created for next month, awaiting payment.
+                    </div>
+                    <div class="alert alert-danger" role="alert" invisible="subscription_payment_status != 'expired'">
+                        <strong>🔴 EXPIRED</strong> - No invoice created for next month! Create and pay to activate.
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="subscription_payment_status != 'should_invoice'">
+                        <strong>📝 SHOULD INVOICE</strong> - Invoice should be created for this period.
+                    </div>
+                    
+                    <group>
+                        <group string="Current Payment Status">
+                            <field name="subscription_payment_status" widget="badge"/>
+                            <field name="is_payment_window_active" readonly="1"/>
+                            <field name="invoice_created_for_period" readonly="1"/>
+                            <field name="amount_to_pay"/>
+                            <field name="client_phone" readonly="1"/>
+                        </group>
+                        <group string="Last Payment Information">
+                            <field name="last_payment_date"/>
+                            <field name="last_payment_partner_id"/>
+                            <field name="last_payment_amount"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Invoice History">
+                            <field name="first_invoice_date" readonly="1"/>
+                            <field name="total_invoiced_amount" readonly="1"/>
+                            <field name="has_pending_invoice" readonly="1"/>
+                            <field name="has_missing_invoice" readonly="1"/>
+                        </group>
+                        <group string="Next Invoice">
+                            <field name="days_until_next_invoice" readonly="1"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Payment Info Summary">
+                        <field name="payment_info_tooltip" readonly="1" nolabel="1" colspan="2" widget="text"/>
+                    </group>
+                    
+                    <!-- Button to view pending invoices -->
+                    <div>
+                        <button name="action_view_pending_invoices" 
+                                type="object" 
+                                string="View Pending Invoices"
+                                class="btn-primary"
+                                invisible="not has_pending_invoice"/>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Add search filters for subscription payment status -->
+    <record id="sale_order_view_search_inherit_cm" model="ir.ui.view">
+        <field name="name">sale.order.search.inherit.cm.subscription</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <separator/>
+                <filter name="filter_cm_subscriptions" 
+                        string="📋 Subscriptions Only" 
+                        domain="[('is_cm_subscription', '=', True)]"/>
+                <separator/>
+                <filter name="filter_paid" 
+                        string="✅ Paid" 
+                        domain="[('subscription_payment_status', '=', 'paid')]"/>
+                <filter name="filter_in_payment" 
+                        string="🔵 In Payment" 
+                        domain="[('subscription_payment_status', '=', 'in_payment')]"/>
+                <filter name="filter_requires_payment" 
+                        string="⚠️ Requires Payment" 
+                        domain="[('subscription_payment_status', '=', 'requires_payment')]"/>
+                <filter name="filter_pending" 
+                        string="🟠 Pending Payment" 
+                        domain="[('subscription_payment_status', '=', 'pending')]"/>
+                <filter name="filter_expired" 
+                        string="🔴 Expired" 
+                        domain="[('subscription_payment_status', '=', 'expired')]"/>
+                <filter name="filter_should_invoice" 
+                        string="📝 Should Invoice" 
+                        domain="[('subscription_payment_status', '=', 'should_invoice')]"/>
+                <separator/>
+                <filter name="filter_pending_invoice" 
+                        string="Has Pending Invoice" 
+                        domain="[('has_pending_invoice', '=', True)]"/>
+                <filter name="filter_missing_invoice" 
+                        string="Missing Invoice" 
+                        domain="[('has_missing_invoice', '=', True)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_payment_status" 
+                            string="Payment Status" 
+                            context="{'group_by': 'subscription_payment_status'}"/>
+                    <filter name="group_last_payment_partner" 
+                            string="Last Paid By" 
+                            context="{'group_by': 'last_payment_partner_id'}"/>
+                    <filter name="group_is_subscription" 
+                            string="Is Subscription" 
+                            context="{'group_by': 'is_cm_subscription'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Server action to mark orders as subscriptions -->
+    <record id="action_mark_as_subscription" model="ir.actions.server">
+        <field name="name">Mark as Subscription</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_as_subscription()</field>
+    </record>
+
+    <!-- Server action to unmark subscriptions -->
+    <record id="action_unmark_subscription" model="ir.actions.server">
+        <field name="name">Remove Subscription Mark</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">records.action_unmark_subscription()</field>
+    </record>
+
+</odoo>

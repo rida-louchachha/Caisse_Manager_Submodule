@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Server Action: Refresh Selected Subscriptions (Main action for refreshing) -->
+    <record id="action_refresh_subscriptions" model="ir.actions.server">
+        <field name="name">🔄 Refresh Subscription Alerts</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    action = records.action_refresh_selected_subscriptions()
+else:
+    action = model.action_refresh_all_subscriptions()
+        </field>
+    </record>
+
+    <!-- Server Action: Refresh ALL Subscriptions - Always Available in Action Menu -->
+    <record id="action_refresh_all_subscriptions" model="ir.actions.server">
+        <field name="name">🔄 Refresh ALL &amp; Show Summary</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = env['sale.order'].action_refresh_all_subscriptions()</field>
+    </record>
+
+    <!-- Server Action: Mark as Subscription -->
+    <record id="action_mark_as_subscription" model="ir.actions.server">
+        <field name="name">✅ Mark as Subscription</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.action_mark_as_subscription()</field>
+    </record>
+
+    <!-- Server Action: Unmark Subscription -->
+    <record id="action_unmark_subscription" model="ir.actions.server">
+        <field name="name">❌ Unmark Subscription</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.action_unmark_subscription()</field>
+    </record>
+    
+    <!-- Client Action: Show Subscription Summary (Dashboard-like) -->
+    <record id="action_show_subscription_summary" model="ir.actions.server">
+        <field name="name">📊 Show Subscription Summary</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">action = env['sale.order'].action_show_summary()</field>
+    </record>
+</odoo>
+

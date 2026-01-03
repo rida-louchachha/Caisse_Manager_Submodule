@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled action to check subscription payment statuses daily -->
+    <record id="ir_cron_check_subscription_payments" model="ir.cron">
+        <field name="name">Check Subscription Payments</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_subscription_payments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Additional cron for payment window alerts (1st-5th of month) -->
+    <record id="ir_cron_payment_window_reminder" model="ir.cron">
+        <field name="name">Payment Window Reminder (1st-5th)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_check_subscription_payments()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+
+    <!-- Cron to refresh is_cm_subscription flags for orders with plan_id -->
+    <record id="ir_cron_refresh_subscription_flags" model="ir.cron">
+        <field name="name">Refresh Subscription Flags</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="state">code</field>
+        <field name="code">model.action_refresh_all_subscriptions()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">hours</field>
+        <field name="active">True</field>
+    </record>
+</odoo>
