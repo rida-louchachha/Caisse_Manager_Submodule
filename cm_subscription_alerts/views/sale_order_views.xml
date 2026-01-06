@@ -62,6 +62,11 @@
                 <field name="payment_alert_message" 
                        string="Alerts" 
                        optional="show"/>
+                <!-- Server Shutdown Toggle - Boolean to mark if server is shutdown -->
+                <field name="is_server_shutdown" 
+                       string="Shutdown?" 
+                       widget="boolean_toggle"
+                       optional="show"/>
             </xpath>
             
             <!-- Add hidden fields for status logic and tooltip data -->

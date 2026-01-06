@@ -1,69 +1,85 @@
 /* CM Subscription Alerts - Visual Alert Styles */
 
-/* ===== CRITICAL SHUTDOWN ALERT - MOST URGENT ===== */
-/* Used when date passed the 5th and no payment */
+/* ===== SYSTEM SHOULD SHUTDOWN ALERT - CALM BUT SERIOUS ===== */
+/* Used when date passed the 5th and no payment - calm dark red pulse */
 .o_shutdown_alert {
     display: inline-flex;
     align-items: center;
     gap: 6px;
     padding: 4px 12px;
-    background: linear-gradient(135deg, #8b0000 0%, #ff0000 50%, #ff4500 100%);
-    border-radius: 4px;
+    background: linear-gradient(135deg, #8b0000 0%, #b30000 100%);
+    border-radius: 20px;
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 1px;
-    animation:
-        critical-flame 0.3s ease-in-out infinite alternate,
-        shake-danger 0.5s ease-in-out infinite,
-        glow-fire 0.5s ease-in-out infinite alternate;
-    border: 2px solid #ff0000;
+    letter-spacing: 0.5px;
+    animation: shutdown-pulse 2s ease-in-out infinite;
+    border: 2px solid #cc0000;
+    box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
 }
 
-@keyframes critical-flame {
-    0% {
-        background: linear-gradient(135deg, #8b0000 0%, #ff0000 50%, #ff4500 100%);
-        box-shadow: 0 0 10px #ff0000, 0 0 20px #ff4500, 0 0 30px #ff6600, 0 0 40px #ff9900;
-    }
-
-    100% {
-        background: linear-gradient(135deg, #ff0000 0%, #ff4500 50%, #ffcc00 100%);
-        box-shadow: 0 0 20px #ff0000, 0 0 40px #ff4500, 0 0 60px #ff6600, 0 0 80px #ff9900;
-    }
+/* Shutdown indicator circle - different from pay before 5th */
+.o_shutdown_indicator {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8b0000 0%, #b30000 100%);
+    color: white;
+    font-size: 12px;
+    animation: shutdown-circle-pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 8px rgba(139, 0, 0, 0.6);
+    margin-right: 6px;
 }
 
-@keyframes shake-danger {
+/* Calm pulsing animation for shutdown - slower than pay before 5th */
+@keyframes shutdown-pulse {
 
     0%,
     100% {
-        transform: translateX(0);
+        box-shadow: 0 2px 8px rgba(139, 0, 0, 0.4);
+        opacity: 1;
     }
 
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-        transform: translateX(-2px);
-    }
-
-    20%,
-    40%,
-    60%,
-    80% {
-        transform: translateX(2px);
+    50% {
+        box-shadow: 0 2px 15px rgba(139, 0, 0, 0.7), 0 0 25px rgba(179, 0, 0, 0.3);
+        opacity: 0.9;
     }
 }
 
-@keyframes glow-fire {
-    0% {
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #ff0000;
+@keyframes shutdown-circle-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
     }
 
-    100% {
-        text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #ff0000, 0 0 40px #ff4500;
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 12px rgba(179, 0, 0, 0.7);
     }
+}
+
+/* ===== ALREADY SHUTDOWN STATE ===== */
+/* When is_server_shutdown = True */
+.o_already_shutdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #4a0000 0%, #660000 100%);
+    border-radius: 20px;
+    color: #ff6666;
+    font-weight: bold;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid #4a0000;
+    box-shadow: 0 2px 8px rgba(74, 0, 0, 0.4);
 }
 
 /* Pulsing/Flashing Red Circle for Unpaid Subscriptions */

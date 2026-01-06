@@ -78,6 +78,14 @@ class SaleOrder(models.Model):
         help='True if this order has a recurring plan'
     )
     
+    # Boolean field to mark if server has been shutdown for this subscription
+    is_server_shutdown = fields.Boolean(
+        string='Server Shutdown',
+        default=False,
+        store=True,
+        help='Set to True when the server has been shut down for non-payment. When False, shows "System Should Shutdown" alert.'
+    )
+    
     # ===== Client Contact Info =====
     client_phone = fields.Char(
         string='Client Phone',
@@ -520,16 +528,22 @@ class SaleOrder(models.Model):
             # Build status message and determine alert styling
             status_msg = ""
             status_emoji = ""
-            alert_class = ""  # CSS class for flashing animation
-            is_shutdown = False  # Flag for most critical alert
+            alert_class = ""  # CSS class for animation
+            is_shutdown_state = False  # Flag for shutdown alert
             
             # Check for SHUTDOWN condition: past 5th AND (pending or expired or requires_payment)
             if is_past_5th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
-                # CRITICAL: System Shutdown - Most urgent
-                status_msg = "⚠️ SYSTEM SHUTDOWN ⚠️"
-                status_emoji = "🔥💀🔥"
-                alert_class = "o_shutdown_alert"
-                is_shutdown = True
+                is_shutdown_state = True
+                if order.is_server_shutdown:
+                    # Server is ALREADY shutdown
+                    status_msg = "SERVER SHUTDOWN"
+                    status_emoji = "🔴"
+                    alert_class = "o_already_shutdown"
+                else:
+                    # Server SHOULD be shutdown (not yet marked)
+                    status_msg = "System Should Shutdown"
+                    status_emoji = "⚠️"
+                    alert_class = "o_shutdown_alert"
             elif order.subscription_payment_status == 'expired':
                 status_msg = "EXPIRED - No invoice!"
                 status_emoji = "🔥"
@@ -590,11 +604,12 @@ class SaleOrder(models.Model):
             tooltip_text = "&#10;".join(tooltip_lines)  # &#10; is line break in HTML title
             
             # Create HTML with animated indicator for unpaid statuses
-            if is_shutdown:
-                # CRITICAL SHUTDOWN - Most extreme alert with fire emojis
+            if is_shutdown_state:
+                # Shutdown state - calm pulsing indicator with circle
                 order.payment_alert_message = Markup(
-                    f'<span class="{alert_class}" title="{tooltip_text}" style="cursor: help;">'
-                    f'{status_emoji} {status_msg}'
+                    f'<span class="o_payment_alert_badge" title="{tooltip_text}" style="cursor: help;">'
+                    f'<span class="o_shutdown_indicator">{status_emoji}</span>'
+                    f'<span class="{alert_class}">{status_msg}</span>'
                     f'</span>'
                 )
             elif alert_class and order.subscription_payment_status in ('expired', 'requires_payment', 'pending', 'should_invoice'):
