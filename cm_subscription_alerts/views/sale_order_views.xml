@@ -27,6 +27,11 @@
         <field name="inherit_id" ref="sale_subscription.sale_subscription_view_tree"/>
         <field name="priority">200</field>
         <field name="arch" type="xml">
+            <!-- Enable multi-edit: click opens form, but selecting rows allows bulk edit -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="multi_edit">1</attribute>
+            </xpath>
+            
             <!-- Add Refresh All button to header -->
             <xpath expr="//list" position="inside">
                 <header>
@@ -66,6 +71,11 @@
                 <field name="is_server_shutdown" 
                        string="Shutdown?" 
                        widget="boolean_toggle"
+                       optional="show"/>
+                <!-- Client Validation Status - Editable selection with decorations -->
+                <field name="client_info_validated" 
+                       string="Client Validated"
+                       widget="selection"
                        optional="show"/>
             </xpath>
             

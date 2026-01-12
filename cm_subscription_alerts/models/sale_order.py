@@ -86,6 +86,14 @@ class SaleOrder(models.Model):
         help='Set to True when the server has been shut down for non-payment. When False, shows "System Should Shutdown" alert.'
     )
     
+    # Client information validation status (manual field)
+    client_info_validated = fields.Selection([
+        ('not_validated', '❌ Not Validated'),
+        ('pending', '🔄 Pending'),
+        ('validated', '✅ Validated'),
+    ], string='Client Validated', default='not_validated', store=True,
+       help='Manual field to indicate if client information has been verified and validated.')
+    
     # ===== Client Contact Info =====
     client_phone = fields.Char(
         string='Client Phone',
