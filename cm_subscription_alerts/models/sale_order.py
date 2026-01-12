@@ -378,8 +378,27 @@ class SaleOrder(models.Model):
             deadline_date = target_month_start.replace(day=5)
             is_past_deadline = today > deadline_date
             
+            # CRITICAL CHECK: If next_invoice_date is AFTER the target month,
+            # it means the target month is already covered (invoice created and the system 
+            # moved to the next billing period). This happens when invoice is paid.
+            next_inv_date = order.next_invoice_date
+            if next_inv_date and next_inv_date > target_month_end:
+                # The subscription has already moved past this period
+                # Check the most recent invoice to confirm it's paid
+                recent_invoices = order.invoice_ids.filtered(
+                    lambda inv: inv.move_type == 'out_invoice' and inv.state == 'posted'
+                ).sorted(key=lambda inv: inv.invoice_date or fields.Date.today(), reverse=True)
+                
+                if recent_invoices and recent_invoices[0].payment_state == 'paid':
+                    order.subscription_payment_status = 'paid'
+                    continue
+                elif recent_invoices and recent_invoices[0].payment_state in ('in_payment', 'partial'):
+                    order.subscription_payment_status = 'in_payment'
+                    continue
+            
+            
             # Find invoices for the target period
-            # Check by invoice_date OR by checking if invoice is linked to this subscription
+            # Check by invoice_date within target month
             target_period_invoices = order.invoice_ids.filtered(
                 lambda inv: inv.move_type == 'out_invoice' and 
                            inv.state == 'posted' and
@@ -387,22 +406,40 @@ class SaleOrder(models.Model):
                            target_month_start <= inv.invoice_date <= target_month_end
             )
             
-            # Also check for invoices that might be for this period but dated differently
-            # If we're checking January and today is Jan 1, also include December invoices (day >= 20)
+            # Also check for invoices from previous month that might be for this period
+            # (invoices are often created in advance for the next billing period)
             if not target_period_invoices:
-                one_month_before_target = target_month_start - relativedelta(months=1)
+                two_months_before_target = target_month_start - relativedelta(months=2)
                 prev_month_end = target_month_start - timedelta(days=1)
                 
-                # Find invoices from previous month created after the 20th
-                late_prev_month_invoices = order.invoice_ids.filtered(
+                # Find invoices from any time in the previous 2 months
+                # These could be advance invoices for the target period
+                prev_month_invoices = order.invoice_ids.filtered(
                     lambda inv: inv.move_type == 'out_invoice' and 
                                inv.state == 'posted' and
                                inv.invoice_date and 
-                               one_month_before_target <= inv.invoice_date <= prev_month_end and
-                               inv.invoice_date.day >= 20
+                               two_months_before_target <= inv.invoice_date <= prev_month_end
                 )
-                # Use recordset union
-                target_period_invoices = target_period_invoices | late_prev_month_invoices
+                
+                # If we found invoices from previous month(s), use the most recent ones as target
+                # This handles the case where invoice was created early for next period
+                if prev_month_invoices:
+                    # Get the most recent invoice by date
+                    sorted_invoices = prev_month_invoices.sorted(key=lambda inv: inv.invoice_date, reverse=True)
+                    # Use the most recent invoice(s) - usually invoice created for upcoming period
+                    target_period_invoices = sorted_invoices[:1]  # Take most recent
+                    
+                    # If the most recent invoice is PAID, check if it's likely for the target period
+                    # by checking if next_invoice_date is after target_month_start
+                    if target_period_invoices and target_period_invoices[0].payment_state == 'paid':
+                        # Check if subscription's next_invoice_date is in or after target month
+                        next_inv_date = order.next_invoice_date
+                        if next_inv_date and next_inv_date >= target_month_start:
+                            # This paid invoice is likely covering the target period
+                            target_period_invoices = sorted_invoices[:1]
+                        else:
+                            # The paid invoice might be for a previous period, need new invoice
+                            target_period_invoices = order.invoice_ids.browse()  # Empty recordset
             
             # Check payment states
             paid_invoices = target_period_invoices.filtered(
