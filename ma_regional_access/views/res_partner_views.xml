@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View Extension -->
+    <record id="view_partner_form_ma_regional_access" model="ir.ui.view">
+        <field name="name">res.partner.form.ma.regional.access</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="system_version_ids" widget="many2many_tags" options="{'color_field': 'color', 'no_create': True, 'no_create_edit': True}" placeholder="Versions Système..."/>
+            </xpath>
+            <xpath expr="//field[@name='vat']" position="after">
+                <field name="region_id" placeholder="Région (Maroc)" options="{'no_create': True, 'no_create_edit': True}" class="oe_inline"/>
+                <field name="city_ma_id" placeholder="Ville" options="{'no_create': True, 'no_create_edit': True}" class="oe_inline"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- Search View Extension -->
+    <record id="view_res_partner_filter_ma_regional_access" model="ir.ui.view">
+        <field name="name">res.partner.select.ma.regional.access</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group_by']" position="before">
+
+            </xpath>
+            <xpath expr="//group[@name='group_by']" position="inside">
+                <filter string="Région" name="group_by_region" context="{'group_by': 'region_id'}"/>
+                <filter string="Ville" name="group_by_city" context="{'group_by': 'city_ma_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

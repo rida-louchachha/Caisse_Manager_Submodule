@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_res_region_ma_user,res.region.ma user,model_res_region_ma,base.group_user,1,0,0,0
+access_res_region_ma_manager,res.region.ma manager,model_res_region_ma,base.group_system,1,1,1,1
+access_res_city_ma_user,res.city.ma user,model_res_city_ma,base.group_user,1,0,0,0
+access_res_city_ma_manager,res.city.ma manager,model_res_city_ma,base.group_system,1,1,1,1
+access_ma_system_version_user,ma.system.version user,model_ma_system_version,base.group_user,1,0,0,0
+access_ma_system_version_manager,ma.system.version manager,model_ma_system_version,base.group_system,1,1,1,1

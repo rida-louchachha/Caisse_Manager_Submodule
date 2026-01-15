@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View Extension -->
+    <record id="view_order_tree_ma_regional_access" model="ir.ui.view">
+        <field name="name">sale.order.list.ma.regional.access</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                 <field name="region_id" optional="hide"/>
+                 <field name="city_ma_id" optional="hide"/>
+                 <field name="system_version_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Subscription List View Extension -->
+    <record id="view_sale_subscription_tree_ma_regional_access" model="ir.ui.view">
+        <field name="name">sale.subscription.list.ma.regional.access</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_subscription.sale_subscription_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                 <field name="region_id" optional="hide"/>
+                 <field name="city_ma_id" optional="hide"/>
+                 <field name="system_version_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Search View Extension -->
+    <record id="view_sales_order_filter_ma_regional_access" model="ir.ui.view">
+        <field name="name">sale.order.search.ma.regional.access</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="region_id"/>
+                <field name="city_ma_id"/>
+                <field name="system_version_ids"/>
+            </field>
+
+            <group expand="0" position="inside">
+                 <filter string="Région" name="group_by_region" context="{'group_by': 'region_id'}"/>
+                 <filter string="Ville" name="group_by_city" context="{'group_by': 'city_ma_id'}"/>
+            </group>
+        </field>
+    </record>
+</odoo>

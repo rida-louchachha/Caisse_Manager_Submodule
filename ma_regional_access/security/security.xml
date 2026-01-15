@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Category -->
+        <record id="module_category_ma_regional_access" model="ir.module.category">
+            <field name="name">Regional Access</field>
+            <field name="description">Gestion des accès par régions</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- Groups -->
+        <record id="group_caisse_manager_user" model="res.groups">
+            <field name="name">Utilisateur régional</field>
+            <field name="category_id" ref="module_category_ma_regional_access"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_caisse_manager_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_ma_regional_access"/>
+            <field name="implied_ids" eval="[(4, ref('group_caisse_manager_user'))]"/>
+            <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]"/>
+        </record>
+
+        <!-- Record Rules -->
+        
+        <!-- Rule for Users: See own regions OR no region -->
+        <record id="rule_res_partner_region_user" model="ir.rule">
+            <field name="name">Partner Region Rule (User)</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="groups" eval="[(4, ref('group_caisse_manager_user'))]"/>
+            <field name="domain_force">['|', ('region_id', '=', False), ('region_id', 'in', user.allowed_region_ids.ids)]</field>
+        </record>
+
+        <!-- Rule for Managers: See all -->
+        <record id="rule_res_partner_region_manager" model="ir.rule">
+            <field name="name">Partner Region Rule (Manager)</field>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="groups" eval="[(4, ref('group_caisse_manager_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+    </data>
+</odoo>

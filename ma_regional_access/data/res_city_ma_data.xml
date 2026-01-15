@@ -1,0 +1,1573 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="city_ain_harrouda_0" model="res.city.ma">
+            <field name="name">Aïn Harrouda</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_ben_yakhlef_1" model="res.city.ma">
+            <field name="name">Ben Yakhlef</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_bouskoura_2" model="res.city.ma">
+            <field name="name">Bouskoura</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_casablanca_3" model="res.city.ma">
+            <field name="name">Casablanca</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_mediouna_4" model="res.city.ma">
+            <field name="name">Médiouna</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_mohammadia_5" model="res.city.ma">
+            <field name="name">Mohammadia</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_tit_mellil_6" model="res.city.ma">
+            <field name="name">Tit Mellil</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_bejaad_7" model="res.city.ma">
+            <field name="name">Bejaâd</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_ben_ahmed_8" model="res.city.ma">
+            <field name="name">Ben Ahmed</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_benslimane_9" model="res.city.ma">
+            <field name="name">Benslimane</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_berrechid_10" model="res.city.ma">
+            <field name="name">Berrechid</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_boujniba_11" model="res.city.ma">
+            <field name="name">Boujniba</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_boulanouare_12" model="res.city.ma">
+            <field name="name">Boulanouare</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_bouznika_13" model="res.city.ma">
+            <field name="name">Bouznika</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_deroua_14" model="res.city.ma">
+            <field name="name">Deroua</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_el_borouj_15" model="res.city.ma">
+            <field name="name">El Borouj</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_el_gara_16" model="res.city.ma">
+            <field name="name">El Gara</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_guisser_17" model="res.city.ma">
+            <field name="name">Guisser</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_hattane_18" model="res.city.ma">
+            <field name="name">Hattane</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_khouribga_19" model="res.city.ma">
+            <field name="name">Khouribga</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_loulad_20" model="res.city.ma">
+            <field name="name">Loulad</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oued_zem_21" model="res.city.ma">
+            <field name="name">Oued Zem</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_oulad_abbou_22" model="res.city.ma">
+            <field name="name">Oulad Abbou</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_hriz_sahel_23" model="res.city.ma">
+            <field name="name">Oulad H'Riz Sahel</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_mrah_24" model="res.city.ma">
+            <field name="name">Oulad M'rah</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_said_25" model="res.city.ma">
+            <field name="name">Oulad Saïd</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_sidi_ben_daoud_26" model="res.city.ma">
+            <field name="name">Oulad Sidi Ben Daoud</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_ras_el_ain_27" model="res.city.ma">
+            <field name="name">Ras El Aïn</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_settat_28" model="res.city.ma">
+            <field name="name">Settat</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_sidi_rahhal_chatai_29" model="res.city.ma">
+            <field name="name">Sidi Rahhal Chataï</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_soualem_30" model="res.city.ma">
+            <field name="name">Soualem</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_azemmour_31" model="res.city.ma">
+            <field name="name">Azemmour</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_bir_jdid_32" model="res.city.ma">
+            <field name="name">Bir Jdid</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_bouguedra_33" model="res.city.ma">
+            <field name="name">Bouguedra</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_echemmaia_34" model="res.city.ma">
+            <field name="name">Echemmaia</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_el_jadida_35" model="res.city.ma">
+            <field name="name">El Jadida</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_hrara_36" model="res.city.ma">
+            <field name="name">Hrara</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ighoud_37" model="res.city.ma">
+            <field name="name">Ighoud</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_jamaat_shaim_38" model="res.city.ma">
+            <field name="name">Jamâat Shaim</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_jorf_lasfar_39" model="res.city.ma">
+            <field name="name">Jorf Lasfar</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_khemis_zemamra_40" model="res.city.ma">
+            <field name="name">Khemis Zemamra</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_laaounate_41" model="res.city.ma">
+            <field name="name">Laaounate</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_moulay_abdallah_42" model="res.city.ma">
+            <field name="name">Moulay Abdallah</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oualidia_43" model="res.city.ma">
+            <field name="name">Oualidia</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_amrane_44" model="res.city.ma">
+            <field name="name">Oulad Amrane</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_frej_45" model="res.city.ma">
+            <field name="name">Oulad Frej</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_oulad_ghadbane_46" model="res.city.ma">
+            <field name="name">Oulad Ghadbane</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_safi_47" model="res.city.ma">
+            <field name="name">Safi</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sebt_el_maarif_48" model="res.city.ma">
+            <field name="name">Sebt El Maârif</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_sebt_gzoula_49" model="res.city.ma">
+            <field name="name">Sebt Gzoula</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sidi_ahmed_50" model="res.city.ma">
+            <field name="name">Sidi Ahmed</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sidi_ali_ban_hamdouche_51" model="res.city.ma">
+            <field name="name">Sidi Ali Ban Hamdouche</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_sidi_bennour_52" model="res.city.ma">
+            <field name="name">Sidi Bennour</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_sidi_bouzid_53" model="res.city.ma">
+            <field name="name">Sidi Bouzid</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_sidi_smail_54" model="res.city.ma">
+            <field name="name">Sidi Smaïl</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_youssoufia_55" model="res.city.ma">
+            <field name="name">Youssoufia</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_fes_56" model="res.city.ma">
+            <field name="name">Fès</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ain_cheggag_57" model="res.city.ma">
+            <field name="name">Aïn Cheggag</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_bhalil_58" model="res.city.ma">
+            <field name="name">Bhalil</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_boulemane_59" model="res.city.ma">
+            <field name="name">Boulemane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_el_menzel_60" model="res.city.ma">
+            <field name="name">El Menzel</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_guigou_61" model="res.city.ma">
+            <field name="name">Guigou</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_imouzzer_kandar_62" model="res.city.ma">
+            <field name="name">Imouzzer Kandar</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_imouzzer_marmoucha_63" model="res.city.ma">
+            <field name="name">Imouzzer Marmoucha</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_missour_64" model="res.city.ma">
+            <field name="name">Missour</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_moulay_yaacoub_65" model="res.city.ma">
+            <field name="name">Moulay Yaâcoub</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ouled_tayeb_66" model="res.city.ma">
+            <field name="name">Ouled Tayeb</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_outat_el_haj_67" model="res.city.ma">
+            <field name="name">Outat El Haj</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ribate_el_kheir_68" model="res.city.ma">
+            <field name="name">Ribate El Kheir</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_sefrou_69" model="res.city.ma">
+            <field name="name">Séfrou</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_skhinate_70" model="res.city.ma">
+            <field name="name">Skhinate</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tafajight_71" model="res.city.ma">
+            <field name="name">Tafajight</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_arbaoua_72" model="res.city.ma">
+            <field name="name">Arbaoua</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_ain_dorij_73" model="res.city.ma">
+            <field name="name">Aïn Dorij</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_dar_gueddari_74" model="res.city.ma">
+            <field name="name">Dar Gueddari</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_had_kourt_75" model="res.city.ma">
+            <field name="name">Had Kourt</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_jorf_el_melha_76" model="res.city.ma">
+            <field name="name">Jorf El Melha</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_kenitra_77" model="res.city.ma">
+            <field name="name">Kénitra</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_khenichet_78" model="res.city.ma">
+            <field name="name">Khenichet</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_lalla_mimouna_79" model="res.city.ma">
+            <field name="name">Lalla Mimouna</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_mechra_bel_ksiri_80" model="res.city.ma">
+            <field name="name">Mechra Bel Ksiri</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_mehdia_81" model="res.city.ma">
+            <field name="name">Mehdia</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_moulay_bousselham_82" model="res.city.ma">
+            <field name="name">Moulay Bousselham</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_allal_tazi_83" model="res.city.ma">
+            <field name="name">Sidi Allal Tazi</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_kacem_84" model="res.city.ma">
+            <field name="name">Sidi Kacem</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_slimane_85" model="res.city.ma">
+            <field name="name">Sidi Slimane</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_taibi_86" model="res.city.ma">
+            <field name="name">Sidi Taibi</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_yahya_el_gharb_87" model="res.city.ma">
+            <field name="name">Sidi Yahya El Gharb</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_souk_el_arbaa_88" model="res.city.ma">
+            <field name="name">Souk El Arbaa</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_akka_89" model="res.city.ma">
+            <field name="name">Akka</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_assa_90" model="res.city.ma">
+            <field name="name">Assa</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_bouizakarne_91" model="res.city.ma">
+            <field name="name">Bouizakarne</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_el_ouatia_92" model="res.city.ma">
+            <field name="name">El Ouatia</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_es_semara_93" model="res.city.ma">
+            <field name="name">Es-Semara</field>
+            <field name="region_id" ref="region_11"/>
+        </record>
+        <record id="city_fam_el_hisn_94" model="res.city.ma">
+            <field name="name">Fam El Hisn</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_foum_zguid_95" model="res.city.ma">
+            <field name="name">Foum Zguid</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_guelmim_96" model="res.city.ma">
+            <field name="name">Guelmim</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_taghjijt_97" model="res.city.ma">
+            <field name="name">Taghjijt</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_tan_tan_98" model="res.city.ma">
+            <field name="name">Tan-Tan</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_tata_99" model="res.city.ma">
+            <field name="name">Tata</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_zag_100" model="res.city.ma">
+            <field name="name">Zag</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_marrakech_101" model="res.city.ma">
+            <field name="name">Marrakech</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ait_daoud_102" model="res.city.ma">
+            <field name="name">Ait Daoud</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_amizmiz_103" model="res.city.ma">
+            <field name="name">Amizmiz</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_assahrij_104" model="res.city.ma">
+            <field name="name">Assahrij</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ait_ourir_105" model="res.city.ma">
+            <field name="name">Aït Ourir</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ben_guerir_106" model="res.city.ma">
+            <field name="name">Ben Guerir</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_chichaoua_107" model="res.city.ma">
+            <field name="name">Chichaoua</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_el_hanchane_108" model="res.city.ma">
+            <field name="name">El Hanchane</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_el_kelaa_des_sraghna_109" model="res.city.ma">
+            <field name="name">El Kelaâ des Sraghna</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_essaouira_110" model="res.city.ma">
+            <field name="name">Essaouira</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_fraita_111" model="res.city.ma">
+            <field name="name">Fraïta</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ghmate_112" model="res.city.ma">
+            <field name="name">Ghmate</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ighounane_113" model="res.city.ma">
+            <field name="name">Ighounane</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_imintanoute_114" model="res.city.ma">
+            <field name="name">Imintanoute</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_kattara_115" model="res.city.ma">
+            <field name="name">Kattara</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_lalla_takerkoust_116" model="res.city.ma">
+            <field name="name">Lalla Takerkoust</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_loudaya_117" model="res.city.ma">
+            <field name="name">Loudaya</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_laattaouia_118" model="res.city.ma">
+            <field name="name">Lâattaouia</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_moulay_brahim_119" model="res.city.ma">
+            <field name="name">Moulay Brahim</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_mzouda_120" model="res.city.ma">
+            <field name="name">Mzouda</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_ounagha_121" model="res.city.ma">
+            <field name="name">Ounagha</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sid_lmokhtar_122" model="res.city.ma">
+            <field name="name">Sid L'Mokhtar</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sid_zouin_123" model="res.city.ma">
+            <field name="name">Sid Zouin</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sidi_abdallah_ghiat_124" model="res.city.ma">
+            <field name="name">Sidi Abdallah Ghiat</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sidi_bou_othmane_125" model="res.city.ma">
+            <field name="name">Sidi Bou Othmane</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_sidi_rahhal_126" model="res.city.ma">
+            <field name="name">Sidi Rahhal</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_skhour_rehamna_127" model="res.city.ma">
+            <field name="name">Skhour Rehamna</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_smimou_128" model="res.city.ma">
+            <field name="name">Smimou</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tafetachte_129" model="res.city.ma">
+            <field name="name">Tafetachte</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tahannaout_130" model="res.city.ma">
+            <field name="name">Tahannaout</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_talmest_131" model="res.city.ma">
+            <field name="name">Talmest</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tamallalt_132" model="res.city.ma">
+            <field name="name">Tamallalt</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tamanar_133" model="res.city.ma">
+            <field name="name">Tamanar</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tamansourt_134" model="res.city.ma">
+            <field name="name">Tamansourt</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tameslouht_135" model="res.city.ma">
+            <field name="name">Tameslouht</field>
+            <field name="region_id" ref="region_07"/>
+        </record>
+        <record id="city_tanalt_136" model="res.city.ma">
+            <field name="name">Tanalt</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_meknes_137" model="res.city.ma">
+            <field name="name">Meknès</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_khenifra_138" model="res.city.ma">
+            <field name="name">Khénifra</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_agourai_139" model="res.city.ma">
+            <field name="name">Agourai</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ain_taoujdate_140" model="res.city.ma">
+            <field name="name">Ain Taoujdate</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_myalicherif_141" model="res.city.ma">
+            <field name="name">MyAliCherif</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_rissani_142" model="res.city.ma">
+            <field name="name">Rissani</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_amalou_ighriben_143" model="res.city.ma">
+            <field name="name">Amalou Ighriben</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_aoufous_144" model="res.city.ma">
+            <field name="name">Aoufous</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_arfoud_145" model="res.city.ma">
+            <field name="name">Arfoud</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_azrou_146" model="res.city.ma">
+            <field name="name">Azrou</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ain_jemaa_147" model="res.city.ma">
+            <field name="name">Aïn Jemaa</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ain_karma_148" model="res.city.ma">
+            <field name="name">Aïn Karma</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ain_leuh_149" model="res.city.ma">
+            <field name="name">Aïn Leuh</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ait_boubidmane_150" model="res.city.ma">
+            <field name="name">Aït Boubidmane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ait_ishaq_151" model="res.city.ma">
+            <field name="name">Aït Ishaq</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_boudnib_152" model="res.city.ma">
+            <field name="name">Boudnib</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_boufakrane_153" model="res.city.ma">
+            <field name="name">Boufakrane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_boumia_154" model="res.city.ma">
+            <field name="name">Boumia</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_el_hajeb_155" model="res.city.ma">
+            <field name="name">El Hajeb</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_elkbab_156" model="res.city.ma">
+            <field name="name">Elkbab</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_er_rich_157" model="res.city.ma">
+            <field name="name">Er-Rich</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_errachidia_158" model="res.city.ma">
+            <field name="name">Errachidia</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_gardmit_159" model="res.city.ma">
+            <field name="name">Gardmit</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_goulmima_160" model="res.city.ma">
+            <field name="name">Goulmima</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_gourrama_161" model="res.city.ma">
+            <field name="name">Gourrama</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_had_bouhssoussen_162" model="res.city.ma">
+            <field name="name">Had Bouhssoussen</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_el_haj_kaddour_163" model="res.city.ma">
+            <field name="name">El Haj Kaddour</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ifrane_164" model="res.city.ma">
+            <field name="name">Ifrane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_itzer_165" model="res.city.ma">
+            <field name="name">Itzer</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_jorf_166" model="res.city.ma">
+            <field name="name">Jorf</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_kehf_nsour_167" model="res.city.ma">
+            <field name="name">Kehf Nsour</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_kerrouchen_168" model="res.city.ma">
+            <field name="name">Kerrouchen</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_mhaya_169" model="res.city.ma">
+            <field name="name">M'haya</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_mrirt_170" model="res.city.ma">
+            <field name="name">M'rirt</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_midelt_171" model="res.city.ma">
+            <field name="name">Midelt</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_moulay_ali_cherif_172" model="res.city.ma">
+            <field name="name">Moulay Ali Cherif</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_moulay_bouazza_173" model="res.city.ma">
+            <field name="name">Moulay Bouazza</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_moulay_idriss_zerhoun_174" model="res.city.ma">
+            <field name="name">Moulay Idriss Zerhoun</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_moussaoua_175" model="res.city.ma">
+            <field name="name">Moussaoua</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_nzalat_bni_amar_176" model="res.city.ma">
+            <field name="name">N'Zalat Bni Amar</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_ouaoumana_177" model="res.city.ma">
+            <field name="name">Ouaoumana</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_oued_ifrane_178" model="res.city.ma">
+            <field name="name">Oued Ifrane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_sabaa_aiyoun_179" model="res.city.ma">
+            <field name="name">Sabaa Aiyoun</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_sebt_jahjouh_180" model="res.city.ma">
+            <field name="name">Sebt Jahjouh</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_sidi_addi_181" model="res.city.ma">
+            <field name="name">Sidi Addi</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tichoute_182" model="res.city.ma">
+            <field name="name">Tichoute</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_tighassaline_183" model="res.city.ma">
+            <field name="name">Tighassaline</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_tighza_184" model="res.city.ma">
+            <field name="name">Tighza</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_timahdite_185" model="res.city.ma">
+            <field name="name">Timahdite</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tinejdad_186" model="res.city.ma">
+            <field name="name">Tinejdad</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_tizguite_187" model="res.city.ma">
+            <field name="name">Tizguite</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_toulal_188" model="res.city.ma">
+            <field name="name">Toulal</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tounfite_189" model="res.city.ma">
+            <field name="name">Tounfite</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_zaouia_difrane_190" model="res.city.ma">
+            <field name="name">Zaouia d'Ifrane</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_zaida_191" model="res.city.ma">
+            <field name="name">Zaïda</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_ahfir_192" model="res.city.ma">
+            <field name="name">Ahfir</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_aklim_193" model="res.city.ma">
+            <field name="name">Aklim</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_al_aroui_194" model="res.city.ma">
+            <field name="name">Al Aroui</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_ain_bni_mathar_195" model="res.city.ma">
+            <field name="name">Aïn Bni Mathar</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_ain_erreggada_196" model="res.city.ma">
+            <field name="name">Aïn Erreggada</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_ben_taieb_197" model="res.city.ma">
+            <field name="name">Ben Taïeb</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_berkane_198" model="res.city.ma">
+            <field name="name">Berkane</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bni_ansar_199" model="res.city.ma">
+            <field name="name">Bni Ansar</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bni_chiker_200" model="res.city.ma">
+            <field name="name">Bni Chiker</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bni_drar_201" model="res.city.ma">
+            <field name="name">Bni Drar</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bni_tadjite_202" model="res.city.ma">
+            <field name="name">Bni Tadjite</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bouanane_203" model="res.city.ma">
+            <field name="name">Bouanane</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bouarfa_204" model="res.city.ma">
+            <field name="name">Bouarfa</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_bouhdila_205" model="res.city.ma">
+            <field name="name">Bouhdila</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_dar_el_kebdani_206" model="res.city.ma">
+            <field name="name">Dar El Kebdani</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_debdou_207" model="res.city.ma">
+            <field name="name">Debdou</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_douar_kannine_208" model="res.city.ma">
+            <field name="name">Douar Kannine</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_driouch_209" model="res.city.ma">
+            <field name="name">Driouch</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_el_aioun_sidi_mellouk_210" model="res.city.ma">
+            <field name="name">El Aïoun Sidi Mellouk</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_farkhana_211" model="res.city.ma">
+            <field name="name">Farkhana</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_figuig_212" model="res.city.ma">
+            <field name="name">Figuig</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_ihddaden_213" model="res.city.ma">
+            <field name="name">Ihddaden</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_jaadar_214" model="res.city.ma">
+            <field name="name">Jaâdar</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_jerada_215" model="res.city.ma">
+            <field name="name">Jerada</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_kariat_arekmane_216" model="res.city.ma">
+            <field name="name">Kariat Arekmane</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_kassita_217" model="res.city.ma">
+            <field name="name">Kassita</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_kerouna_218" model="res.city.ma">
+            <field name="name">Kerouna</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_laatamna_219" model="res.city.ma">
+            <field name="name">Laâtamna</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_madagh_220" model="res.city.ma">
+            <field name="name">Madagh</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_midar_221" model="res.city.ma">
+            <field name="name">Midar</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_nador_222" model="res.city.ma">
+            <field name="name">Nador</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_naima_223" model="res.city.ma">
+            <field name="name">Naima</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_oued_heimer_224" model="res.city.ma">
+            <field name="name">Oued Heimer</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_oujda_225" model="res.city.ma">
+            <field name="name">Oujda</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_ras_el_ma_226" model="res.city.ma">
+            <field name="name">Ras El Ma</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_saidia_227" model="res.city.ma">
+            <field name="name">Saïdia</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_selouane_228" model="res.city.ma">
+            <field name="name">Selouane</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_sidi_boubker_229" model="res.city.ma">
+            <field name="name">Sidi Boubker</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_sidi_slimane_echcharraa_230" model="res.city.ma">
+            <field name="name">Sidi Slimane Echcharraa</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_talsint_231" model="res.city.ma">
+            <field name="name">Talsint</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_taourirt_232" model="res.city.ma">
+            <field name="name">Taourirt</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_tendrara_233" model="res.city.ma">
+            <field name="name">Tendrara</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_tiztoutine_234" model="res.city.ma">
+            <field name="name">Tiztoutine</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_touima_235" model="res.city.ma">
+            <field name="name">Touima</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_touissit_236" model="res.city.ma">
+            <field name="name">Touissit</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_zaio_237" model="res.city.ma">
+            <field name="name">Zaïo</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_zeghanghane_238" model="res.city.ma">
+            <field name="name">Zeghanghane</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_rabat_239" model="res.city.ma">
+            <field name="name">Rabat</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sale_240" model="res.city.ma">
+            <field name="name">Salé</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_ain_el_aouda_241" model="res.city.ma">
+            <field name="name">Ain El Aouda</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_harhoura_242" model="res.city.ma">
+            <field name="name">Harhoura</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_khemisset_243" model="res.city.ma">
+            <field name="name">Khémisset</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_oulmes_244" model="res.city.ma">
+            <field name="name">Oulmès</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_rommani_245" model="res.city.ma">
+            <field name="name">Rommani</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_allal_el_bahraoui_246" model="res.city.ma">
+            <field name="name">Sidi Allal El Bahraoui</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_sidi_bouknadel_247" model="res.city.ma">
+            <field name="name">Sidi Bouknadel</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_skhirate_248" model="res.city.ma">
+            <field name="name">Skhirate</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_tamesna_249" model="res.city.ma">
+            <field name="name">Tamesna</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_temara_250" model="res.city.ma">
+            <field name="name">Témara</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_tiddas_251" model="res.city.ma">
+            <field name="name">Tiddas</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_tiflet_252" model="res.city.ma">
+            <field name="name">Tiflet</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_touarga_253" model="res.city.ma">
+            <field name="name">Touarga</field>
+            <field name="region_id" ref="region_04"/>
+        </record>
+        <record id="city_agadir_254" model="res.city.ma">
+            <field name="name">Agadir</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_agdz_255" model="res.city.ma">
+            <field name="name">Agdz</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_agni_izimmer_256" model="res.city.ma">
+            <field name="name">Agni Izimmer</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ait_melloul_257" model="res.city.ma">
+            <field name="name">Aït Melloul</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_alnif_258" model="res.city.ma">
+            <field name="name">Alnif</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_anzi_259" model="res.city.ma">
+            <field name="name">Anzi</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_aoulouz_260" model="res.city.ma">
+            <field name="name">Aoulouz</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_aourir_261" model="res.city.ma">
+            <field name="name">Aourir</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_arazane_262" model="res.city.ma">
+            <field name="name">Arazane</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ait_baha_263" model="res.city.ma">
+            <field name="name">Aït Baha</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ait_iaaza_264" model="res.city.ma">
+            <field name="name">Aït Iaâza</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ait_yalla_265" model="res.city.ma">
+            <field name="name">Aït Yalla</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_ben_sergao_266" model="res.city.ma">
+            <field name="name">Ben Sergao</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_biougra_267" model="res.city.ma">
+            <field name="name">Biougra</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_boumalne_dades_268" model="res.city.ma">
+            <field name="name">Boumalne-Dadès</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_dcheira_el_jihadia_269" model="res.city.ma">
+            <field name="name">Dcheira El Jihadia</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_drargua_270" model="res.city.ma">
+            <field name="name">Drargua</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_el_guerdane_271" model="res.city.ma">
+            <field name="name">El Guerdane</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_harte_lyamine_272" model="res.city.ma">
+            <field name="name">Harte Lyamine</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_ida_ougnidif_273" model="res.city.ma">
+            <field name="name">Ida Ougnidif</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ifri_274" model="res.city.ma">
+            <field name="name">Ifri</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_igdamen_275" model="res.city.ma">
+            <field name="name">Igdamen</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ighil_noumgoun_276" model="res.city.ma">
+            <field name="name">Ighil n'Oumgoun</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_imassine_277" model="res.city.ma">
+            <field name="name">Imassine</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_inezgane_278" model="res.city.ma">
+            <field name="name">Inezgane</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_irherm_279" model="res.city.ma">
+            <field name="name">Irherm</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_kelaat_mgouna_280" model="res.city.ma">
+            <field name="name">Kelaat-M'Gouna</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_lakhsas_281" model="res.city.ma">
+            <field name="name">Lakhsas</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_lakhsass_282" model="res.city.ma">
+            <field name="name">Lakhsass</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_lqliaa_283" model="res.city.ma">
+            <field name="name">Lqliâa</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_msemrir_284" model="res.city.ma">
+            <field name="name">M'semrir</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_massa_maroc_285" model="res.city.ma">
+            <field name="name">Massa (Maroc)</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_megousse_286" model="res.city.ma">
+            <field name="name">Megousse</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_ouarzazate_287" model="res.city.ma">
+            <field name="name">Ouarzazate</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_oulad_berhil_288" model="res.city.ma">
+            <field name="name">Oulad Berhil</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_oulad_teima_289" model="res.city.ma">
+            <field name="name">Oulad Teïma</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_sarghine_290" model="res.city.ma">
+            <field name="name">Sarghine</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_sidi_ifni_291" model="res.city.ma">
+            <field name="name">Sidi Ifni</field>
+            <field name="region_id" ref="region_10"/>
+        </record>
+        <record id="city_skoura_292" model="res.city.ma">
+            <field name="name">Skoura</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_tabounte_293" model="res.city.ma">
+            <field name="name">Tabounte</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_tafraout_294" model="res.city.ma">
+            <field name="name">Tafraout</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_taghzout_295" model="res.city.ma">
+            <field name="name">Taghzout</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_tagzen_296" model="res.city.ma">
+            <field name="name">Tagzen</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_taliouine_297" model="res.city.ma">
+            <field name="name">Taliouine</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_tamegroute_298" model="res.city.ma">
+            <field name="name">Tamegroute</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_tamraght_299" model="res.city.ma">
+            <field name="name">Tamraght</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_tanoumrite_nkob_zagora_300" model="res.city.ma">
+            <field name="name">Tanoumrite Nkob Zagora</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_taourirt_ait_zaghar_301" model="res.city.ma">
+            <field name="name">Taourirt ait zaghar</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_taroudannt_302" model="res.city.ma">
+            <field name="name">Taroudannt</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_temsia_303" model="res.city.ma">
+            <field name="name">Temsia</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_tifnit_304" model="res.city.ma">
+            <field name="name">Tifnit</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_tisgdal_305" model="res.city.ma">
+            <field name="name">Tisgdal</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_tiznit_306" model="res.city.ma">
+            <field name="name">Tiznit</field>
+            <field name="region_id" ref="region_09"/>
+        </record>
+        <record id="city_toundoute_307" model="res.city.ma">
+            <field name="name">Toundoute</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_zagora_308" model="res.city.ma">
+            <field name="name">Zagora</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_afourar_309" model="res.city.ma">
+            <field name="name">Afourar</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_aghbala_310" model="res.city.ma">
+            <field name="name">Aghbala</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_azilal_311" model="res.city.ma">
+            <field name="name">Azilal</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_ait_majden_312" model="res.city.ma">
+            <field name="name">Aït Majden</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_beni_ayat_313" model="res.city.ma">
+            <field name="name">Beni Ayat</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_beni_mellal_314" model="res.city.ma">
+            <field name="name">Béni Mellal</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_bin_elouidane_315" model="res.city.ma">
+            <field name="name">Bin elouidane</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_bradia_316" model="res.city.ma">
+            <field name="name">Bradia</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_bzou_317" model="res.city.ma">
+            <field name="name">Bzou</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_dar_oulad_zidouh_318" model="res.city.ma">
+            <field name="name">Dar Oulad Zidouh</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_demnate_319" model="res.city.ma">
+            <field name="name">Demnate</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_draa_320" model="res.city.ma">
+            <field name="name">Dra'a</field>
+            <field name="region_id" ref="region_08"/>
+        </record>
+        <record id="city_el_ksiba_321" model="res.city.ma">
+            <field name="name">El Ksiba</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_foum_jamaa_322" model="res.city.ma">
+            <field name="name">Foum Jamaa</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_fquih_ben_salah_323" model="res.city.ma">
+            <field name="name">Fquih Ben Salah</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_kasba_tadla_324" model="res.city.ma">
+            <field name="name">Kasba Tadla</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_ouaouizeght_325" model="res.city.ma">
+            <field name="name">Ouaouizeght</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_oulad_ayad_326" model="res.city.ma">
+            <field name="name">Oulad Ayad</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_oulad_mbarek_327" model="res.city.ma">
+            <field name="name">Oulad M'Barek</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_oulad_yaich_328" model="res.city.ma">
+            <field name="name">Oulad Yaich</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_sidi_jaber_329" model="res.city.ma">
+            <field name="name">Sidi Jaber</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_souk_sebt_oulad_nemma_330" model="res.city.ma">
+            <field name="name">Souk Sebt Oulad Nemma</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_zaouiat_cheikh_331" model="res.city.ma">
+            <field name="name">Zaouïat Cheikh</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+        <record id="city_tanger_332" model="res.city.ma">
+            <field name="name">Tanger</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_tetouan_333" model="res.city.ma">
+            <field name="name">Tétouan</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_akchour_334" model="res.city.ma">
+            <field name="name">Akchour</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_assilah_335" model="res.city.ma">
+            <field name="name">Assilah</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_bab_berred_336" model="res.city.ma">
+            <field name="name">Bab Berred</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_bab_taza_337" model="res.city.ma">
+            <field name="name">Bab Taza</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_brikcha_338" model="res.city.ma">
+            <field name="name">Brikcha</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_chefchaouen_339" model="res.city.ma">
+            <field name="name">Chefchaouen</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_dar_bni_karrich_340" model="res.city.ma">
+            <field name="name">Dar Bni Karrich</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_dar_chaoui_341" model="res.city.ma">
+            <field name="name">Dar Chaoui</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_fnideq_342" model="res.city.ma">
+            <field name="name">Fnideq</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_gueznaia_343" model="res.city.ma">
+            <field name="name">Gueznaia</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_jebha_344" model="res.city.ma">
+            <field name="name">Jebha</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_karia_345" model="res.city.ma">
+            <field name="name">Karia</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_khemis_sahel_346" model="res.city.ma">
+            <field name="name">Khémis Sahel</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ksar_el_kebir_347" model="res.city.ma">
+            <field name="name">Ksar El Kébir</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_larache_348" model="res.city.ma">
+            <field name="name">Larache</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_mdiq_349" model="res.city.ma">
+            <field name="name">M'diq</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_martil_350" model="res.city.ma">
+            <field name="name">Martil</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_moqrisset_351" model="res.city.ma">
+            <field name="name">Moqrisset</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_oued_laou_352" model="res.city.ma">
+            <field name="name">Oued Laou</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_oued_rmel_353" model="res.city.ma">
+            <field name="name">Oued Rmel</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ouazzane_354" model="res.city.ma">
+            <field name="name">Ouazzane</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_point_cires_355" model="res.city.ma">
+            <field name="name">Point Cires</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_sidi_lyamani_356" model="res.city.ma">
+            <field name="name">Sidi Lyamani</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_sidi_mohamed_ben_abdallah_el_raisuni_357" model="res.city.ma">
+            <field name="name">Sidi Mohamed ben Abdallah el-Raisuni</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_zinat_358" model="res.city.ma">
+            <field name="name">Zinat</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ajdir_359" model="res.city.ma">
+            <field name="name">Ajdir</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_aknoul_360" model="res.city.ma">
+            <field name="name">Aknoul</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_al_hoceima_361" model="res.city.ma">
+            <field name="name">Al Hoceïma</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ait_hichem_362" model="res.city.ma">
+            <field name="name">Aït Hichem</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_bni_bouayach_363" model="res.city.ma">
+            <field name="name">Bni Bouayach</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_bni_hadifa_364" model="res.city.ma">
+            <field name="name">Bni Hadifa</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ghafsai_365" model="res.city.ma">
+            <field name="name">Ghafsai</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_guercif_366" model="res.city.ma">
+            <field name="name">Guercif</field>
+            <field name="region_id" ref="region_02"/>
+        </record>
+        <record id="city_imzouren_367" model="res.city.ma">
+            <field name="name">Imzouren</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_inahnahen_368" model="res.city.ma">
+            <field name="name">Inahnahen</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_issaguen_ketama_369" model="res.city.ma">
+            <field name="name">Issaguen (Ketama)</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_karia_el_jadida_370" model="res.city.ma">
+            <field name="name">Karia (El Jadida)</field>
+            <field name="region_id" ref="region_06"/>
+        </record>
+        <record id="city_karia_ba_mohamed_371" model="res.city.ma">
+            <field name="name">Karia Ba Mohamed</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_oued_amlil_372" model="res.city.ma">
+            <field name="name">Oued Amlil</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_oulad_zbair_373" model="res.city.ma">
+            <field name="name">Oulad Zbair</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tahla_374" model="res.city.ma">
+            <field name="name">Tahla</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tala_tazegwaght_375" model="res.city.ma">
+            <field name="name">Tala Tazegwaght</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_tamassint_376" model="res.city.ma">
+            <field name="name">Tamassint</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_taounate_377" model="res.city.ma">
+            <field name="name">Taounate</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_targuist_378" model="res.city.ma">
+            <field name="name">Targuist</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_taza_379" model="res.city.ma">
+            <field name="name">Taza</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tainaste_380" model="res.city.ma">
+            <field name="name">Taïnaste</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_thar_es_souk_381" model="res.city.ma">
+            <field name="name">Thar Es-Souk</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tissa_382" model="res.city.ma">
+            <field name="name">Tissa</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_tizi_ouasli_383" model="res.city.ma">
+            <field name="name">Tizi Ouasli</field>
+            <field name="region_id" ref="region_03"/>
+        </record>
+        <record id="city_laayoune_384" model="res.city.ma">
+            <field name="name">Laayoune</field>
+            <field name="region_id" ref="region_11"/>
+        </record>
+        <record id="city_el_marsa_385" model="res.city.ma">
+            <field name="name">El Marsa</field>
+            <field name="region_id" ref="region_11"/>
+        </record>
+        <record id="city_tarfaya_386" model="res.city.ma">
+            <field name="name">Tarfaya</field>
+            <field name="region_id" ref="region_11"/>
+        </record>
+        <record id="city_boujdour_387" model="res.city.ma">
+            <field name="name">Boujdour</field>
+            <field name="region_id" ref="region_11"/>
+        </record>
+        <record id="city_awsard_388" model="res.city.ma">
+            <field name="name">Awsard</field>
+            <field name="region_id" ref="region_12"/>
+        </record>
+        <record id="city_oued_eddahab_389" model="res.city.ma">
+            <field name="name">Oued-Eddahab</field>
+            <field name="region_id" ref="region_12"/>
+        </record>
+        <record id="city_stehat_390" model="res.city.ma">
+            <field name="name">Stehat</field>
+            <field name="region_id" ref="region_01"/>
+        </record>
+        <record id="city_ait_attab_391" model="res.city.ma">
+            <field name="name">Aït Attab</field>
+            <field name="region_id" ref="region_05"/>
+        </record>
+    </data>
+</odoo>

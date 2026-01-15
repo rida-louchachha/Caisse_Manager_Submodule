@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_users_form_ma_regional_access" model="ir.ui.view">
+        <field name="name">res.users.form.ma.regional.access</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page string="Accès Régionaux">
+                    <group>
+                        <field name="allowed_region_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                    </group>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ma_system_version_tree" model="ir.ui.view">
+        <field name="name">ma.system.version.tree</field>
+        <field name="model">ma.system.version</field>
+        <field name="arch" type="xml">
+            <list string="Versions Système" editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_ma_system_version" model="ir.actions.act_window">
+        <field name="name">Versions Système</field>
+        <field name="res_model">ma.system.version</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ma_system_version" name="Versions Système" parent="menu_ma_regional_access_config" action="action_ma_system_version" sequence="30"/>
+</odoo>

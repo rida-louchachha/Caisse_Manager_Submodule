@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="region_01" model="res.region.ma">
+            <field name="name">Tanger-Tétouan-Al Hoceïma</field>
+            <field name="code">01</field>
+        </record>
+        <record id="region_02" model="res.region.ma">
+            <field name="name">l'Oriental</field>
+            <field name="code">02</field>
+        </record>
+        <record id="region_03" model="res.region.ma">
+            <field name="name">Fès-Meknès</field>
+            <field name="code">03</field>
+        </record>
+        <record id="region_04" model="res.region.ma">
+            <field name="name">Rabat-Salé-Kénitra</field>
+            <field name="code">04</field>
+        </record>
+        <record id="region_05" model="res.region.ma">
+            <field name="name">Béni Mellal-Khénifra</field>
+            <field name="code">05</field>
+        </record>
+        <record id="region_06" model="res.region.ma">
+            <field name="name">Casablanca-Settat</field>
+            <field name="code">06</field>
+        </record>
+        <record id="region_07" model="res.region.ma">
+            <field name="name">Marrakech-Safi</field>
+            <field name="code">07</field>
+        </record>
+        <record id="region_08" model="res.region.ma">
+            <field name="name">Drâa-Tafilalet</field>
+            <field name="code">08</field>
+        </record>
+        <record id="region_09" model="res.region.ma">
+            <field name="name">Souss-Massa</field>
+            <field name="code">09</field>
+        </record>
+        <record id="region_10" model="res.region.ma">
+            <field name="name">Guelmim-Oued Noun</field>
+            <field name="code">10</field>
+        </record>
+        <record id="region_11" model="res.region.ma">
+            <field name="name">Laâyoune-Sakia El Hamra</field>
+            <field name="code">11</field>
+        </record>
+        <record id="region_12" model="res.region.ma">
+            <field name="name">Dakhla-Oued Ed Dahab</field>
+            <field name="code">12</field>
+        </record>
+    </data>
+</odoo>

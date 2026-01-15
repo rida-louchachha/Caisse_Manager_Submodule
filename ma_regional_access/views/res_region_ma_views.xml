@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_res_region_ma_tree" model="ir.ui.view">
+        <field name="name">res.region.ma.tree</field>
+        <field name="model">res.region.ma</field>
+        <field name="arch" type="xml">
+            <list string="Régions">
+                <field name="name"/>
+                <field name="code"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_res_region_ma_form" model="ir.ui.view">
+        <field name="name">res.region.ma.form</field>
+        <field name="model">res.region.ma</field>
+        <field name="arch" type="xml">
+            <form string="Région">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Villes">
+                            <field name="city_ids">
+                                <list editable="bottom">
+                                    <field name="name"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_res_region_ma" model="ir.actions.act_window">
+        <field name="name">Régions (Maroc)</field>
+        <field name="res_model">res.region.ma</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_ma_regional_access_config" name="Localisation Maroc" parent="contacts.res_partner_menu_config" sequence="10"/>
+    <menuitem id="menu_res_region_ma" name="Régions" parent="menu_ma_regional_access_config" action="action_res_region_ma" sequence="10"/>
+
+</odoo>
