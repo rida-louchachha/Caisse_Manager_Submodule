@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Conversation Kanban View (Left sidebar style) -->
+    <record id="view_whatsapp_conversation_kanban" model="ir.ui.view">
+        <field name="name">whatsapp.conversation.kanban</field>
+        <field name="model">whatsapp.conversation</field>
+        <field name="arch" type="xml">
+            <kanban class="o_whatsapp_conversation_kanban" create="false">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="last_message"/>
+                <field name="last_message_date"/>
+                <field name="unread_count"/>
+                <templates>
+                    <t t-name="card" class="o_whatsapp_conv_card">
+                        <div class="d-flex align-items-center p-2">
+                            <div class="rounded-circle me-2 d-flex align-items-center justify-content-center" 
+                                 style="width: 48px; height: 48px; background: #00a884; color: white; font-weight: bold; font-size: 20px;">
+                                <t t-esc="record.partner_id.value[0] or '?'"/>
+                            </div>
+                            <div class="flex-grow-1 overflow-hidden">
+                                <div class="d-flex justify-content-between">
+                                    <strong class="text-truncate"><field name="partner_id"/></strong>
+                                    <small class="text-muted"><field name="last_message_date" widget="relative"/></small>
+                                </div>
+                                <div class="d-flex justify-content-between">
+                                    <small class="text-muted text-truncate"><field name="last_message"/></small>
+                                    <span t-if="record.unread_count.raw_value > 0" 
+                                          class="badge bg-success rounded-pill ms-1">
+                                        <field name="unread_count"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Conversation Form View (Chat panel) -->
+    <record id="view_whatsapp_conversation_form" model="ir.ui.view">
+        <field name="name">whatsapp.conversation.form</field>
+        <field name="model">whatsapp.conversation</field>
+        <field name="arch" type="xml">
+            <form string="Chat" class="o_whatsapp_chat_form">
+                <header>
+                    <button name="action_send_message" type="object" string="📤 Send Message" class="btn-primary"/>
+                    <button name="action_mark_as_read" type="object" string="✓ Mark as Read" class="btn-secondary"/>
+                </header>
+                <sheet>
+                    <!-- Header with contact info -->
+                    <div class="o_whatsapp_chat_header d-flex align-items-center p-3" style="background: #202c33;">
+                        <div class="me-3">
+                            <img class="rounded-circle" style="width: 50px; height: 50px; background: #00a884;"/>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h4 class="mb-0" style="color: white;"><field name="partner_id" readonly="1" options="{'no_open': True}"/></h4>
+                            <small style="color: #8696a0;"><field name="phone" readonly="1"/></small>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages area -->
+                    <div class="o_whatsapp_messages_container p-3" style="min-height: 350px; max-height: 500px; overflow-y: auto; background: #0b141a;">
+                        <field name="message_ids" nolabel="1" mode="list" readonly="1">
+                            <list decoration-success="direction == 'outgoing'" 
+                                  decoration-muted="direction == 'incoming'"
+                                  create="false" delete="false" edit="false">
+                                <field name="direction" column_invisible="1"/>
+                                <field name="message" string="Message"/>
+                                <field name="create_date" widget="datetime" string="Time"/>
+                                <field name="status" widget="badge" 
+                                       decoration-success="status == 'sent'"
+                                       decoration-info="status == 'delivered'"
+                                       decoration-primary="status == 'read'"
+                                       decoration-danger="status == 'failed'"/>
+                            </list>
+                        </field>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Conversation List View -->
+    <record id="view_whatsapp_conversation_list" model="ir.ui.view">
+        <field name="name">whatsapp.conversation.list</field>
+        <field name="model">whatsapp.conversation</field>
+        <field name="arch" type="xml">
+            <list string="Conversations">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="last_message"/>
+                <field name="last_message_date"/>
+                <field name="unread_count"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_chat" model="ir.actions.act_window">
+        <field name="name">💬 WhatsApp Chat</field>
+        <field name="res_model">whatsapp.conversation</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No conversations yet!
+            </p>
+            <p>
+                Start a new conversation by sending a message from a subscription.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_whatsapp_chat"
+              name="💬 Chat"
+              parent="sale_subscription.menu_sale_subscription"
+              action="action_whatsapp_chat"
+              sequence="105"/>
+</odoo>

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_whatsapp_subscription_sender,whatsapp.subscription.sender,model_whatsapp_subscription_sender,base.group_user,1,1,1,1
+access_whatsapp_message_log,whatsapp.message.log,model_whatsapp_message_log,base.group_user,1,1,1,1
+access_whatsapp_subscription_template,whatsapp.subscription.template,model_whatsapp_subscription_template,base.group_user,1,1,1,1
+access_whatsapp_scheduled_message,whatsapp.scheduled.message,model_whatsapp_scheduled_message,base.group_user,1,1,1,1
+access_whatsapp_conversation,whatsapp.conversation,model_whatsapp_conversation,base.group_user,1,1,1,1
+access_whatsapp_webhook_config,whatsapp.webhook.config,model_whatsapp_webhook_config,base.group_user,1,1,1,1
