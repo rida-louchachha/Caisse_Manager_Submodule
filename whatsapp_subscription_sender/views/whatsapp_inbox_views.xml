@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================
+         WHATSAPP INBOX KANBAN VIEW
+         Simple message card layout
+         ============================================ -->
+    <record id="view_whatsapp_inbox_kanban" model="ir.ui.view">
+        <field name="name">whatsapp.inbox.kanban</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="arch" type="xml">
+            <kanban class="o_whatsapp_inbox_kanban" default_group_by="direction" sample="1">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="message"/>
+                <field name="status"/>
+                <field name="direction"/>
+                <field name="create_date"/>
+                <field name="order_id"/>
+                <progressbar field="status" 
+                    colors='{"sent": "success", "delivered": "info", "read": "primary", "received": "success", "failed": "danger"}'/>
+                <templates>
+                    <t t-name="card" class="p-0 mb-2">
+                        <div class="d-flex align-items-start p-3" style="background: #202c33; border-radius: 8px;">
+                            <!-- Direction Icon -->
+                            <div class="rounded-circle me-3 d-flex align-items-center justify-content-center flex-shrink-0" 
+                                 style="width: 42px; height: 42px; background: linear-gradient(135deg, #00a884, #00d4aa); color: white; font-size: 16px;">
+                                <t t-if="record.direction.raw_value == 'incoming'">📥</t>
+                                <t t-else="">📤</t>
+                            </div>
+                            
+                            <!-- Message Content -->
+                            <div class="flex-grow-1 overflow-hidden">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <strong class="text-truncate" style="color: #e9edef; font-size: 14px;">
+                                        <field name="partner_id"/>
+                                    </strong>
+                                    <field name="status" widget="badge"
+                                           decoration-success="status in ('sent', 'delivered', 'read', 'received')"
+                                           decoration-danger="status == 'failed'"/>
+                                </div>
+                                <div class="text-truncate mb-1" style="color: #8696a0; font-size: 13px;">
+                                    <field name="message"/>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small style="color: #667781;">
+                                        <field name="phone"/>
+                                    </small>
+                                    <small style="color: #667781;">
+                                        <field name="create_date" widget="relative"/>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- ============================================
+         INBOX LIST VIEW
+         ============================================ -->
+    <record id="view_whatsapp_inbox_list" model="ir.ui.view">
+        <field name="name">whatsapp.inbox.list</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Messages"
+                  decoration-success="direction == 'outgoing' and status in ('sent', 'delivered', 'read')"
+                  decoration-info="direction == 'incoming'"
+                  decoration-danger="status == 'failed'"
+                  sample="1">
+                <field name="create_date" string="📅 Date" widget="datetime"/>
+                <field name="direction" string="↔️" widget="badge"
+                       decoration-success="direction == 'outgoing'"
+                       decoration-info="direction == 'incoming'"/>
+                <field name="partner_id" string="👤 Contact"/>
+                <field name="phone" string="📞 Phone"/>
+                <field name="message" string="💬 Message"/>
+                <field name="order_id" string="📋 Subscription" optional="show"/>
+                <field name="status" string="Status" widget="badge"
+                       decoration-success="status in ('sent', 'delivered', 'read', 'received')"
+                       decoration-danger="status == 'failed'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================
+         INBOX FORM VIEW (Message Detail)
+         ============================================ -->
+    <record id="view_whatsapp_inbox_form" model="ir.ui.view">
+        <field name="name">whatsapp.inbox.form</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Message">
+                <sheet style="background: #111b21; padding: 20px;">
+                    <!-- Header -->
+                    <div class="d-flex align-items-center mb-4 p-3" style="background: #202c33; border-radius: 8px;">
+                        <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                             style="width: 50px; height: 50px; background: linear-gradient(135deg, #00a884, #00d4aa); font-size: 24px;">
+                            <span invisible="direction != 'incoming'">📥</span>
+                            <span invisible="direction == 'incoming'">📤</span>
+                        </div>
+                        <div>
+                            <h3 style="color: #e9edef; margin: 0;">
+                                <span invisible="direction != 'incoming'">Incoming Message</span>
+                                <span invisible="direction == 'incoming'">Outgoing Message</span>
+                            </h3>
+                            <small style="color: #8696a0;"><field name="create_date" readonly="1"/></small>
+                        </div>
+                    </div>
+                    
+                    <!-- Details Grid -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <group string="📋 Message Details">
+                                <field name="partner_id" readonly="1"/>
+                                <field name="phone" readonly="1"/>
+                                <field name="direction" widget="badge" readonly="1"/>
+                                <field name="status" widget="badge" readonly="1"/>
+                            </group>
+                        </div>
+                        <div class="col-md-6">
+                            <group string="🔗 Related Records">
+                                <field name="order_id" readonly="1"/>
+                                <field name="conversation_id" readonly="1"/>
+                            </group>
+                        </div>
+                    </div>
+                    
+                    <!-- Message Content -->
+                    <group string="💬 Message Content">
+                        <field name="message" readonly="1" nolabel="1"/>
+                    </group>
+                    
+                    <!-- Error Details (if failed) -->
+                    <group string="⚠️ Error Details" invisible="status != 'failed'">
+                        <field name="failure_reason" readonly="1" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================
+         SEARCH VIEW
+         ============================================ -->
+    <record id="view_whatsapp_inbox_search" model="ir.ui.view">
+        <field name="name">whatsapp.inbox.search</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="arch" type="xml">
+            <search string="Search Messages">
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="message"/>
+                <field name="order_id"/>
+                <separator/>
+                <filter name="incoming" string="📥 Received" domain="[('direction', '=', 'incoming')]"/>
+                <filter name="outgoing" string="📤 Sent" domain="[('direction', '=', 'outgoing')]"/>
+                <separator/>
+                <filter name="success" string="✓ Delivered" domain="[('status', 'in', ['sent', 'delivered', 'read', 'received'])]"/>
+                <filter name="failed" string="✗ Failed" domain="[('status', '=', 'failed')]"/>
+                <separator/>
+                <filter name="today" string="📅 Today" domain="[('create_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0)))]"/>
+                <filter name="week" string="📅 This Week" domain="[('create_date', '&gt;=', (datetime.datetime.now() - datetime.timedelta(days=7)))]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_direction" string="Direction" context="{'group_by': 'direction'}"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_partner" string="Contact" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_order" string="Subscription" context="{'group_by': 'order_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================
+         ACTIONS
+         ============================================ -->
+    <record id="action_whatsapp_inbox" model="ir.actions.act_window">
+        <field name="name">📬 WhatsApp Inbox</field>
+        <field name="res_model">whatsapp.message.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_whatsapp_inbox_search"/>
+        <field name="context">{'search_default_today': 0}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No messages yet!
+            </p>
+            <p>
+                Send WhatsApp messages from your subscriptions.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_inbox_received" model="ir.actions.act_window">
+        <field name="name">📥 Received Messages</field>
+        <field name="res_model">whatsapp.message.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_whatsapp_inbox_search"/>
+        <field name="domain">[('direction', '=', 'incoming')]</field>
+        <field name="context">{'search_default_incoming': 1}</field>
+    </record>
+
+    <record id="action_whatsapp_inbox_sent" model="ir.actions.act_window">
+        <field name="name">📤 Sent Messages</field>
+        <field name="res_model">whatsapp.message.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_whatsapp_inbox_search"/>
+        <field name="domain">[('direction', '=', 'outgoing')]</field>
+        <field name="context">{'search_default_outgoing': 1}</field>
+    </record>
+
+    <!-- ============================================
+         MENU ITEMS
+         ============================================ -->
+    <menuitem id="menu_whatsapp_inbox_root"
+              name="📬 WhatsApp Inbox"
+              parent="sale_subscription.menu_sale_subscription"
+              sequence="100"/>
+    
+    <menuitem id="menu_whatsapp_inbox_all"
+              name="📬 All Messages"
+              parent="menu_whatsapp_inbox_root"
+              action="action_whatsapp_inbox"
+              sequence="1"/>
+    
+    <menuitem id="menu_whatsapp_inbox_received"
+              name="📥 Received"
+              parent="menu_whatsapp_inbox_root"
+              action="action_whatsapp_inbox_received"
+              sequence="2"/>
+    
+    <menuitem id="menu_whatsapp_inbox_sent"
+              name="📤 Sent"
+              parent="menu_whatsapp_inbox_root"
+              action="action_whatsapp_inbox_sent"
+              sequence="3"/>
+
+</odoo>

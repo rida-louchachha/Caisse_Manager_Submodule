@@ -1,0 +1,292 @@
+/* WhatsApp-Style Chat Interface for Odoo */
+
+/* ============================================
+   WHATSAPP DARK THEME COLORS
+   ============================================ */
+:root {
+    --wa-bg-dark: #111b21;
+    --wa-bg-sidebar: #111b21;
+    --wa-bg-chat: #0b141a;
+    --wa-bg-panel: #202c33;
+    --wa-bg-header: #202c33;
+    --wa-bg-incoming: #202c33;
+    --wa-bg-outgoing: #005c4b;
+    --wa-text-primary: #e9edef;
+    --wa-text-secondary: #8696a0;
+    --wa-text-meta: #667781;
+    --wa-border: #2a3942;
+    --wa-green: #00a884;
+    --wa-green-light: #25d366;
+    --wa-hover: #2a3942;
+    --wa-search-bg: #202c33;
+    --wa-input-bg: #2a3942;
+}
+
+/* ============================================
+   MAIN CONTAINER STYLING
+   ============================================ */
+.o_whatsapp_chat_container {
+    display: flex;
+    height: calc(100vh - 100px);
+    background: var(--wa-bg-dark);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* ============================================
+   CONVERSATION LIST (LEFT SIDEBAR)
+   ============================================ */
+.o_whatsapp_conversation_kanban {
+    background: var(--wa-bg-sidebar) !important;
+}
+
+.o_whatsapp_conversation_kanban .o_kanban_renderer {
+    background: var(--wa-bg-sidebar) !important;
+}
+
+.o_whatsapp_conversation_kanban .o_kanban_record {
+    background: transparent !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transition: background 0.15s ease;
+}
+
+.o_whatsapp_conversation_kanban .o_kanban_record:hover {
+    background: var(--wa-hover) !important;
+}
+
+.o_whatsapp_conv_card {
+    padding: 10px 15px !important;
+    border-bottom: 1px solid var(--wa-border);
+    cursor: pointer;
+}
+
+.o_whatsapp_conv_card .rounded-circle {
+    background: linear-gradient(135deg, var(--wa-green) 0%, #00d4aa 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+}
+
+/* ============================================
+   MESSAGE INBOX KANBAN
+   ============================================ */
+.o_whatsapp_inbox_kanban {
+    background: var(--wa-bg-dark) !important;
+}
+
+.o_whatsapp_inbox_kanban .o_kanban_renderer {
+    background: var(--wa-bg-dark) !important;
+}
+
+.o_whatsapp_inbox_kanban .o_kanban_record {
+    background: var(--wa-bg-panel) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    margin: 8px !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+
+.o_whatsapp_inbox_kanban .o_kanban_record:hover {
+    background: var(--wa-hover) !important;
+    transform: translateY(-1px);
+}
+
+.o_whatsapp_message_card {
+    color: var(--wa-text-primary) !important;
+}
+
+.o_whatsapp_message_card .text-muted {
+    color: var(--wa-text-secondary) !important;
+}
+
+/* ============================================
+   CHAT FORM VIEW
+   ============================================ */
+.o_whatsapp_chat_form {
+    background: var(--wa-bg-dark) !important;
+}
+
+.o_whatsapp_chat_form .o_form_sheet {
+    background: var(--wa-bg-chat) !important;
+    border: none !important;
+    max-width: none !important;
+    padding: 0 !important;
+}
+
+/* Chat header */
+.o_whatsapp_chat_form .o_whatsapp_chat_header {
+    background: var(--wa-bg-header) !important;
+    padding: 10px 16px !important;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--wa-border);
+}
+
+/* ============================================
+   MESSAGE BUBBLES
+   ============================================ */
+.o_whatsapp_messages_container {
+    background: var(--wa-bg-chat) !important;
+    padding: 20px !important;
+    min-height: 400px;
+    max-height: 60vh;
+    overflow-y: auto;
+}
+
+/* Custom message bubble styling */
+.o_whatsapp_message_bubble {
+    max-width: 65%;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.o_whatsapp_message_bubble.outgoing {
+    background: var(--wa-bg-outgoing);
+    color: var(--wa-text-primary);
+    margin-left: auto;
+    border-top-right-radius: 0;
+}
+
+.o_whatsapp_message_bubble.incoming {
+    background: var(--wa-bg-incoming);
+    color: var(--wa-text-primary);
+    margin-right: auto;
+    border-top-left-radius: 0;
+}
+
+.o_whatsapp_message_bubble .message-time {
+    font-size: 11px;
+    color: var(--wa-text-meta);
+    text-align: right;
+    margin-top: 4px;
+}
+
+.o_whatsapp_message_bubble .message-status {
+    font-size: 14px;
+    margin-left: 4px;
+}
+
+/* ============================================
+   LIST VIEW STYLING
+   ============================================ */
+.o_list_view.o_whatsapp_list {
+    background: var(--wa-bg-dark) !important;
+}
+
+.o_list_view.o_whatsapp_list .o_data_row {
+    background: var(--wa-bg-panel) !important;
+    color: var(--wa-text-primary) !important;
+    border-bottom: 1px solid var(--wa-border) !important;
+}
+
+.o_list_view.o_whatsapp_list .o_data_row:hover {
+    background: var(--wa-hover) !important;
+}
+
+.o_list_view.o_whatsapp_list th {
+    background: var(--wa-bg-header) !important;
+    color: var(--wa-text-secondary) !important;
+    border-bottom: 1px solid var(--wa-border) !important;
+}
+
+/* ============================================
+   SEARCH AND FILTERS
+   ============================================ */
+.o_whatsapp_search {
+    background: var(--wa-search-bg);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin: 10px;
+}
+
+.o_whatsapp_search input {
+    background: var(--wa-input-bg) !important;
+    border: none !important;
+    color: var(--wa-text-primary) !important;
+    border-radius: 8px;
+    padding: 8px 12px;
+}
+
+.o_whatsapp_search input::placeholder {
+    color: var(--wa-text-secondary) !important;
+}
+
+/* ============================================
+   STATUS BADGES
+   ============================================ */
+.badge.bg-success,
+.badge.text-bg-success {
+    background: var(--wa-green) !important;
+}
+
+.o_whatsapp_inbox_kanban .badge,
+.o_whatsapp_conversation_kanban .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+/* ============================================
+   SCROLLBAR STYLING
+   ============================================ */
+.o_whatsapp_messages_container::-webkit-scrollbar,
+.o_whatsapp_inbox_kanban::-webkit-scrollbar,
+.o_whatsapp_conversation_kanban::-webkit-scrollbar {
+    width: 6px;
+}
+
+.o_whatsapp_messages_container::-webkit-scrollbar-track,
+.o_whatsapp_inbox_kanban::-webkit-scrollbar-track,
+.o_whatsapp_conversation_kanban::-webkit-scrollbar-track {
+    background: var(--wa-bg-dark);
+}
+
+.o_whatsapp_messages_container::-webkit-scrollbar-thumb,
+.o_whatsapp_inbox_kanban::-webkit-scrollbar-thumb,
+.o_whatsapp_conversation_kanban::-webkit-scrollbar-thumb {
+    background: var(--wa-border);
+    border-radius: 3px;
+}
+
+/* ============================================
+   BUTTONS
+   ============================================ */
+.o_whatsapp_chat_form .btn-success {
+    background: var(--wa-green) !important;
+    border-color: var(--wa-green) !important;
+}
+
+.o_whatsapp_chat_form .btn-success:hover {
+    background: var(--wa-green-light) !important;
+    border-color: var(--wa-green-light) !important;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.o_whatsapp_message_bubble {
+    animation: slideIn 0.2s ease-out;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .o_whatsapp_message_bubble {
+        max-width: 85%;
+    }
+}

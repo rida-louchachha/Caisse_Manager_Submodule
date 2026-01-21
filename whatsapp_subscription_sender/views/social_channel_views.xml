@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========== SOCIAL CHANNEL CONFIGURATION VIEWS ========== -->
+    
+    <!-- Channel List View - Modern Card Style -->
+    <record id="view_social_channel_tree" model="ir.ui.view">
+        <field name="name">social.channel.tree</field>
+        <field name="model">social.channel</field>
+        <field name="arch" type="xml">
+            <list string="Social Channels" 
+                  decoration-success="state == 'connected'"
+                  decoration-danger="state == 'error'"
+                  decoration-muted="state == 'disconnected'">
+                <field name="sequence" widget="handle"/>
+                <field name="image_icon" widget="image" options="{'size': [40, 40]}"/>
+                <field name="name"/>
+                <field name="channel_type"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'connected'"
+                       decoration-warning="state == 'pending'"
+                       decoration-danger="state == 'error'"
+                       decoration-muted="state == 'disconnected'"/>
+                <field name="can_send_text"/>
+                <field name="can_receive"/>
+                <button name="action_test_connection" type="object" 
+                        string="Test" class="btn-outline-primary btn-sm"
+                        invisible="state == 'connected'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Channel Form View - Beautiful Configuration Form -->
+    <record id="view_social_channel_form" model="ir.ui.view">
+        <field name="name">social.channel.form</field>
+        <field name="model">social.channel</field>
+        <field name="arch" type="xml">
+            <form string="Social Channel Configuration">
+                <header>
+                    <button name="action_test_connection" type="object" 
+                            string="🔌 Test Connection" class="btn-primary"
+                            invisible="state == 'connected'"/>
+                    <button name="action_disconnect" type="object" 
+                            string="❌ Disconnect" class="btn-danger"
+                            invisible="state != 'connected'"
+                            confirm="Are you sure you want to disconnect this channel?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="disconnected,pending,connected"/>
+                </header>
+                <sheet>
+                    <!-- Channel Header with Image Icon -->
+                    <field name="image_icon" widget="image" class="oe_avatar" 
+                           options="{'size': [90, 90], 'preview_image': 'image_icon'}"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Channel Name" class="text-break"/>
+                        </h1>
+                        <field name="channel_type" class="fs-5"/>
+                    </div>
+
+                    <notebook>
+                        <!-- Basic Configuration Tab -->
+                        <page string="⚙️ Configuration" name="config">
+                            <group>
+                                <group string="📌 Basic Info">
+                                    <field name="code" readonly="state == 'connected'"/>
+                                    <field name="channel_type"/>
+                                    <field name="sequence"/>
+                                    <field name="active"/>
+                                </group>
+                                <group string="🎨 Appearance">
+                                    <field name="image_icon" widget="image"/>
+                                    <field name="icon"/>
+                                    <field name="color" widget="color"/>
+                                </group>
+                            </group>
+                            
+                            <group string="🔧 Capabilities">
+                                <group>
+                                    <field name="can_send_text"/>
+                                    <field name="can_send_media"/>
+                                </group>
+                                <group>
+                                    <field name="can_receive"/>
+                                    <field name="requires_template"/>
+                                </group>
+                            </group>
+                        </page>
+
+                        <!-- API Credentials Tab -->
+                        <page string="🔑 API Credentials" name="api">
+                            <div class="alert alert-info mb-4" role="alert">
+                                <strong>💡 Tip:</strong> Enter your API credentials below. These are securely stored and used to connect to the social platform.
+                            </div>
+                            
+                            <group>
+                                <group string="🌐 API Settings">
+                                    <field name="api_base_url" placeholder="https://api.example.com"/>
+                                    <field name="api_key" password="True"/>
+                                    <field name="api_secret" password="True"/>
+                                </group>
+                                <group string="🔐 OAuth Tokens">
+                                    <field name="access_token" password="True"/>
+                                    <field name="refresh_token" password="True"/>
+                                    <field name="token_expiry"/>
+                                </group>
+                            </group>
+
+                            <!-- WhatsApp Specific Fields -->
+                            <group string="📱 WhatsApp Settings" invisible="channel_type != 'whatsapp'">
+                                <field name="whatsapp_phone_number_id"/>
+                                <field name="whatsapp_business_account_id"/>
+                            </group>
+                        </page>
+
+                        <!-- Webhook Tab -->
+                        <page string="🔔 Webhook" name="webhook">
+                            <div class="alert alert-warning mb-4" role="alert">
+                                <strong>⚠️ Important:</strong> Configure this webhook URL in your social platform's developer settings to receive incoming messages.
+                            </div>
+                            
+                            <group>
+                                <group string="📡 Webhook Configuration">
+                                    <field name="webhook_url" readonly="1" widget="CopyClipboardChar"/>
+                                    <field name="webhook_secret"/>
+                                </group>
+                            </group>
+                            
+                            <div class="mt-4 p-4 rounded" style="background: #f8f9fa;">
+                                <h4>📋 Setup Instructions</h4>
+                                <ol class="mb-0">
+                                    <li>Copy the Webhook URL above</li>
+                                    <li>Go to your social platform's developer console</li>
+                                    <li>Paste the URL in the webhook configuration</li>
+                                    <li>Set the Verify Token (Webhook Secret) if required</li>
+                                    <li>Subscribe to message events</li>
+                                </ol>
+                            </div>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Channel Kanban View - Brand Icon Cards (Like Screenshot) -->
+    <record id="view_social_channel_kanban" model="ir.ui.view">
+        <field name="name">social.channel.kanban</field>
+        <field name="model">social.channel</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_small_column" sample="1">
+                <field name="name"/>
+                <field name="image_icon"/>
+                <field name="channel_type"/>
+                <field name="state"/>
+                <field name="color"/>
+                <field name="code"/>
+                <templates>
+                    <t t-name="card" class="flex-row p-0">
+                        <aside class="d-flex align-items-center justify-content-center p-3" style="min-width: 80px;">
+                            <field name="image_icon" widget="image" options="{'size': [48, 48]}" 
+                                   class="rounded" style="object-fit: contain;"/>
+                        </aside>
+                        <main class="flex-grow-1 p-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <strong class="d-block fs-5 mb-1"><field name="name"/></strong>
+                                    <small class="text-muted d-flex align-items-center">
+                                        <span class="me-1" t-attf-style="width: 8px; height: 8px; border-radius: 50%; background: #{record.color.raw_value || '#666'}; display: inline-block;"/>
+                                        <field name="channel_type"/>
+                                    </small>
+                                </div>
+                                <field name="state" widget="badge"
+                                       decoration-success="state == 'connected'"
+                                       decoration-warning="state == 'pending'"
+                                       decoration-danger="state == 'error'"
+                                       decoration-muted="state == 'disconnected'"/>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action to open Social Channels -->
+    <record id="action_social_channel" model="ir.actions.act_window">
+        <field name="name">Social Channels</field>
+        <field name="res_model">social.channel</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Connect your first social channel!
+            </p>
+            <p>
+                Configure WhatsApp, Instagram, Facebook, SMS, and more to manage all conversations in one place.
+            </p>
+        </field>
+    </record>
+
+    <!-- ========== MENU ITEMS ========== -->
+    
+    <!-- Root Menu for Social Inbox -->
+    <menuitem id="menu_social_inbox_root"
+              name="🗨️ Social Inbox"
+              sequence="65"/>
+    
+    <!-- Channels submenu -->
+    <menuitem id="menu_social_channels"
+              name="📡 Channels"
+              parent="menu_social_inbox_root"
+              action="action_social_channel"
+              sequence="10"/>
+
+</odoo>

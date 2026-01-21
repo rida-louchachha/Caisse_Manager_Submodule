@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Default Social Channels with Brand Icons -->
+        
+        <record id="channel_whatsapp" model="social.channel">
+            <field name="name">WhatsApp</field>
+            <field name="code">whatsapp</field>
+            <field name="channel_type">whatsapp</field>
+            <field name="icon">💬</field>
+            <field name="color">#25D366</field>
+            <field name="sequence">1</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">True</field>
+            <field name="state">connected</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/whatsapp.svg"/>
+        </record>
+        
+        <record id="channel_instagram" model="social.channel">
+            <field name="name">Instagram</field>
+            <field name="code">instagram</field>
+            <field name="channel_type">instagram</field>
+            <field name="icon">📸</field>
+            <field name="color">#E4405F</field>
+            <field name="sequence">2</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/instagram.svg"/>
+        </record>
+        
+        <record id="channel_facebook" model="social.channel">
+            <field name="name">Facebook</field>
+            <field name="code">facebook</field>
+            <field name="channel_type">facebook</field>
+            <field name="icon">📘</field>
+            <field name="color">#1877F2</field>
+            <field name="sequence">3</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/facebook.svg"/>
+        </record>
+        
+        <record id="channel_twitter" model="social.channel">
+            <field name="name">X (Twitter)</field>
+            <field name="code">twitter</field>
+            <field name="channel_type">twitter</field>
+            <field name="icon">𝕏</field>
+            <field name="color">#000000</field>
+            <field name="sequence">4</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/twitter.svg"/>
+        </record>
+        
+        <record id="channel_linkedin" model="social.channel">
+            <field name="name">LinkedIn</field>
+            <field name="code">linkedin</field>
+            <field name="channel_type">linkedin</field>
+            <field name="icon">💼</field>
+            <field name="color">#0A66C2</field>
+            <field name="sequence">5</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">False</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/linkedin.svg"/>
+        </record>
+        
+        <record id="channel_youtube" model="social.channel">
+            <field name="name">YouTube</field>
+            <field name="code">youtube</field>
+            <field name="channel_type">youtube</field>
+            <field name="icon">▶️</field>
+            <field name="color">#FF0000</field>
+            <field name="sequence">6</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">False</field>
+            <field name="can_receive">False</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/youtube.svg"/>
+        </record>
+        
+        <record id="channel_sms" model="social.channel">
+            <field name="name">SMS</field>
+            <field name="code">sms</field>
+            <field name="channel_type">sms</field>
+            <field name="icon">📱</field>
+            <field name="color">#4CAF50</field>
+            <field name="sequence">7</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">False</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/sms.svg"/>
+        </record>
+        
+        <record id="channel_email" model="social.channel">
+            <field name="name">Email</field>
+            <field name="code">email</field>
+            <field name="channel_type">email</field>
+            <field name="icon">✉️</field>
+            <field name="color">#EA4335</field>
+            <field name="sequence">8</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/email.svg"/>
+        </record>
+        
+        <record id="channel_telegram" model="social.channel">
+            <field name="name">Telegram</field>
+            <field name="code">telegram</field>
+            <field name="channel_type">telegram</field>
+            <field name="icon">✈️</field>
+            <field name="color">#0088CC</field>
+            <field name="sequence">9</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/telegram.svg"/>
+        </record>
+        
+        <record id="channel_messenger" model="social.channel">
+            <field name="name">Messenger</field>
+            <field name="code">messenger</field>
+            <field name="channel_type">messenger</field>
+            <field name="icon">💬</field>
+            <field name="color">#006AFF</field>
+            <field name="sequence">10</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/messenger.svg"/>
+        </record>
+        
+        <record id="channel_tiktok" model="social.channel">
+            <field name="name">TikTok</field>
+            <field name="code">tiktok</field>
+            <field name="channel_type">tiktok</field>
+            <field name="icon">🎵</field>
+            <field name="color">#000000</field>
+            <field name="sequence">11</field>
+            <field name="can_send_text">True</field>
+            <field name="can_send_media">True</field>
+            <field name="can_receive">True</field>
+            <field name="requires_template">False</field>
+            <field name="image_icon" type="base64" file="whatsapp_subscription_sender/static/src/img/tiktok.svg"/>
+        </record>
+        
+    </data>
+</odoo>

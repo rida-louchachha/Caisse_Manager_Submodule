@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- Unified Social Inbox - GHL-Style Conversation View -->
+    <t t-name="whatsapp_subscription_sender.WhatsAppChatView">
+        <div class="wa-chat-container d-flex h-100" style="background: #111b21; min-height: calc(100vh - 100px);">
+            
+            <!-- Left Sidebar: Conversation List -->
+            <div class="wa-sidebar" style="width: 350px; background: #111b21; border-right: 1px solid #2a3942; display: flex; flex-direction: column;">
+                
+                <!-- Sidebar Header -->
+                <div class="wa-sidebar-header d-flex align-items-center justify-content-between p-3" style="background: #202c33; border-bottom: 1px solid #2a3942;">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 18px;">
+                            🗨️
+                        </div>
+                        <h5 class="ms-3 mb-0" style="color: #e9edef;">Conversations</h5>
+                    </div>
+                    <!-- Channel Filter Badges -->
+                    <div class="d-flex gap-1">
+                        <span class="badge" style="background: #25D366; cursor: pointer;" title="WhatsApp">💬</span>
+                        <span class="badge" style="background: #E4405F; cursor: pointer;" title="Instagram">📸</span>
+                        <span class="badge" style="background: #4CAF50; cursor: pointer;" title="SMS">📱</span>
+                    </div>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="p-2" style="background: #111b21;">
+                    <div class="d-flex align-items-center px-3 py-2" style="background: #202c33; border-radius: 8px;">
+                        <span style="color: #8696a0;">🔍</span>
+                        <input type="text" class="form-control border-0 bg-transparent ms-2" 
+                               placeholder="Search or start new chat" 
+                               style="color: #e9edef; outline: none; box-shadow: none;"/>
+                    </div>
+                </div>
+                
+                <!-- Conversation List -->
+                <div class="wa-conversation-list flex-grow-1 overflow-auto">
+                    <t t-if="state.loading">
+                        <div class="p-4 text-center" style="color: #8696a0;">
+                            <div class="spinner-border text-success mb-2" role="status"></div>
+                            <div>Loading conversations...</div>
+                        </div>
+                    </t>
+                    <t t-elif="state.conversations.length === 0">
+                        <div class="p-4 text-center" style="color: #8696a0;">
+                            <div style="font-size: 48px; margin-bottom: 10px;">🗨️</div>
+                            <div>No conversations yet</div>
+                            <small>Send a message from a subscription to start</small>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="state.conversations" t-as="conv" t-key="conv.id">
+                            <div class="wa-conv-item d-flex align-items-center p-3"
+                                 t-att-class="{'wa-selected': isSelected(conv)}"
+                                 t-att-style="isSelected(conv) ? 'cursor: pointer; border-bottom: 1px solid #2a3942; background: #2a3942;' : 'cursor: pointer; border-bottom: 1px solid #2a3942;'"
+                                 t-on-click="() => this.selectConversation(conv)">
+                                
+                                <!-- Avatar with Channel Indicator -->
+                                <div class="position-relative flex-shrink-0">
+                                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                                         style="width: 48px; height: 48px; background: linear-gradient(135deg, #00a884, #00d4aa); color: white; font-weight: 600; font-size: 20px;">
+                                        <t t-esc="getAvatarLetter(getPartnerName(conv))"/>
+                                    </div>
+                                    <!-- Channel Badge on Avatar -->
+                                    <div class="position-absolute d-flex align-items-center justify-content-center"
+                                         style="width: 18px; height: 18px; background: #25D366; border-radius: 50%; bottom: -2px; right: -2px; border: 2px solid #111b21; font-size: 10px;">
+                                        💬
+                                    </div>
+                                </div>
+                                
+                                <!-- Info -->
+                                <div class="flex-grow-1 ms-3 overflow-hidden">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <span class="text-truncate" style="color: #e9edef; font-size: 16px; font-weight: 500;">
+                                            <t t-esc="getPartnerName(conv)"/>
+                                        </span>
+                                        <small style="color: #8696a0; font-size: 12px; white-space: nowrap;">
+                                            <t t-esc="formatDate(conv.last_message_date)"/>
+                                        </small>
+                                    </div>
+                                    <div class="d-flex justify-content-between align-items-center mt-1">
+                                        <span class="text-truncate" style="color: #8696a0; font-size: 14px; max-width: 200px;">
+                                            <t t-esc="conv.last_message || 'No messages'"/>
+                                        </span>
+                                        <t t-if="conv.unread_count > 0">
+                                            <span class="badge rounded-pill" style="background: #00a884; color: white; font-size: 11px;">
+                                                <t t-esc="conv.unread_count"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Chat Area -->
+            <div class="wa-chat-area flex-grow-1 d-flex flex-column" style="background: #0b141a;">
+                
+                <t t-if="state.selectedConversation">
+                    <!-- Chat Header -->
+                    <div class="wa-chat-header d-flex align-items-center p-3" style="background: #202c33; border-bottom: 1px solid #2a3942;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                             style="width: 40px; height: 40px; background: linear-gradient(135deg, #00a884, #00d4aa); color: white; font-weight: 600; font-size: 16px;">
+                            <t t-esc="getAvatarLetter(getPartnerName(state.selectedConversation))"/>
+                        </div>
+                        <div class="ms-3 flex-grow-1">
+                            <div style="color: #e9edef; font-size: 16px; font-weight: 500;">
+                                <t t-esc="getPartnerName(state.selectedConversation)"/>
+                            </div>
+                            <div class="d-flex align-items-center" style="gap: 6px;">
+                                <span style="color: #8696a0; font-size: 13px;">
+                                    <t t-esc="state.selectedConversation.phone"/>
+                                </span>
+                                <!-- Channel Badges in Header -->
+                                <span class="badge" style="background: #25D366; font-size: 10px;">💬 WhatsApp</span>
+                            </div>
+                        </div>
+                        <div class="d-flex">
+                            <button class="btn btn-sm btn-link text-decoration-none" t-on-click="onRefresh" title="Refresh Messages" style="color: #8696a0; font-size: 20px;">
+                                ↻
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Messages Area -->
+                    <div class="wa-messages flex-grow-1 overflow-auto p-4" t-ref="messagesContainer"
+                         style="background: #0b141a;">
+                        
+                        <t t-if="state.messages.length === 0">
+                            <div class="text-center py-5" style="color: #8696a0;">
+                                <div style="font-size: 64px; margin-bottom: 16px;">🗨️</div>
+                                <div>No messages in this conversation</div>
+                                <small>Use the 📎 button to send a template message</small>
+                            </div>
+                        </t>
+                        
+                        <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                            <div class="wa-message-wrapper d-flex mb-2"
+                                 t-att-class="{'justify-content-end': msg.direction === 'outgoing', 'justify-content-start': msg.direction === 'incoming' || !msg.direction}">
+                                
+                                <!-- Channel Icon for Incoming Messages -->
+                                <t t-if="msg.direction === 'incoming'">
+                                    <div class="me-2 d-flex flex-column align-items-center">
+                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
+                                             t-att-style="'width: 24px; height: 24px; font-size: 12px; background: ' + getChannelColor(msg.channel_type || 'whatsapp') + ';'">
+                                            <t t-esc="getChannelIcon(msg.channel_type || 'whatsapp')"/>
+                                        </div>
+                                    </div>
+                                </t>
+                                
+                                <div class="wa-bubble px-3 py-2"
+                                     t-att-style="(msg.direction === 'outgoing') ? 'background: #005c4b; border-radius: 8px 0 8px 8px; max-width: 65%; min-width: 100px;' : 'background: #202c33; border-radius: 0 8px 8px 8px; max-width: 65%; min-width: 100px;'">
+                                    <div style="color: #e9edef; font-size: 14px; word-wrap: break-word; white-space: pre-wrap;">
+                                        <t t-esc="msg.message"/>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center mt-1" style="gap: 4px;">
+                                        <!-- Channel Badge for Outgoing -->
+                                        <t t-if="msg.direction === 'outgoing' || !msg.direction">
+                                            <span class="badge me-1" 
+                                                  t-att-style="'font-size: 8px; padding: 2px 4px; background: ' + getChannelColor(msg.channel_type || 'whatsapp') + ';'"
+                                                  t-att-title="getChannelName(msg.channel_type || 'whatsapp')">
+                                                <t t-esc="getChannelIcon(msg.channel_type || 'whatsapp')"/>
+                                            </span>
+                                        </t>
+                                        <small style="color: #8696a0; font-size: 11px;">
+                                            <t t-esc="formatTime(msg.create_date)"/>
+                                        </small>
+                                        <t t-if="msg.direction === 'outgoing' || !msg.direction">
+                                            <small t-att-style="'color: ' + getStatusColor(msg.status) + '; font-size: 14px;'">
+                                                <t t-esc="getStatusIcon(msg.status)"/>
+                                            </small>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+                    
+                    <!-- Message Input with Channel Selector -->
+                    <div class="wa-input d-flex align-items-center p-3" style="background: #202c33; border-top: 1px solid #2a3942;">
+                        <!-- Channel Selector Dropdown -->
+                        <div class="dropdown me-2">
+                            <button class="btn dropdown-toggle d-flex align-items-center" 
+                                    type="button" 
+                                    data-bs-toggle="dropdown"
+                                    t-att-style="'background: ' + getChannelColor(state.selectedChannel || 'whatsapp') + '; color: white; border: none; border-radius: 8px; padding: 8px 12px;'">
+                                <span class="me-1"><t t-esc="getChannelIcon(state.selectedChannel || 'whatsapp')"/></span>
+                                <span style="font-size: 12px;"><t t-esc="getChannelName(state.selectedChannel || 'whatsapp')"/></span>
+                            </button>
+                            <ul class="dropdown-menu" style="background: #2a3942; border: 1px solid #3b4a54;">
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="#" style="color: #e9edef;">
+                                        <span class="me-2" style="background: #25D366; padding: 4px 8px; border-radius: 4px;">💬</span>
+                                        WhatsApp
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="#" style="color: #e9edef;">
+                                        <span class="me-2" style="background: #E4405F; padding: 4px 8px; border-radius: 4px;">📸</span>
+                                        Instagram
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="#" style="color: #e9edef;">
+                                        <span class="me-2" style="background: #4CAF50; padding: 4px 8px; border-radius: 4px;">📱</span>
+                                        SMS
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item d-flex align-items-center" href="#" style="color: #e9edef;">
+                                        <span class="me-2" style="background: #EA4335; padding: 4px 8px; border-radius: 4px;">✉️</span>
+                                        Email
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <span class="me-2" style="color: #8696a0; font-size: 24px; cursor: pointer;" title="Emojis">😊</span>
+                        <span class="me-2" t-on-click="onOpenTemplateSelector" style="color: #8696a0; font-size: 24px; cursor: pointer;" title="Send Template">📎</span>
+                        <input type="text" 
+                               class="form-control flex-grow-1" 
+                               placeholder="Type a message"
+                               t-model="state.newMessage"
+                               t-on-keydown="onInputKeydown"
+                               style="background: #2a3942; border: none; color: #e9edef; border-radius: 8px; padding: 12px 16px;"/>
+                        <button class="btn ms-2" 
+                                t-on-click="onSendMessage"
+                                style="background: #00a884; color: white; border: none; border-radius: 50%; width: 45px; height: 45px;">
+                            ➤
+                        </button>
+                    </div>
+                </t>
+                
+                <t t-else="">
+                    <!-- No Conversation Selected -->
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100" style="color: #8696a0;">
+                        <div style="font-size: 100px; margin-bottom: 20px; opacity: 0.5;">🗨️</div>
+                        <h4 style="color: #e9edef;">Unified Social Inbox</h4>
+                        <p>Select a conversation to view messages</p>
+                        <div class="d-flex gap-2 mt-3">
+                            <span class="badge" style="background: #25D366; padding: 8px 12px;">💬 WhatsApp</span>
+                            <span class="badge" style="background: #E4405F; padding: 8px 12px;">📸 Instagram</span>
+                            <span class="badge" style="background: #4CAF50; padding: 8px 12px;">📱 SMS</span>
+                            <span class="badge" style="background: #1877F2; padding: 8px 12px;">📘 Facebook</span>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>
