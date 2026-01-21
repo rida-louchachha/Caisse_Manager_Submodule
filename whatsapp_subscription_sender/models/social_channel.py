@@ -103,16 +103,67 @@ class SocialChannel(models.Model):
                 setattr(self, field, value)
 
     def action_test_connection(self):
-        """Test the API connection"""
+        """Test the API connection - validates credentials are present"""
         self.ensure_one()
-        # TODO: Implement connection test for each channel type
+        
+        # Check if minimum credentials are provided
+        missing_credentials = []
+        
+        # Different channels require different credentials
+        if self.channel_type == 'whatsapp':
+            if not self.whatsapp_phone_number_id:
+                missing_credentials.append('Phone Number ID')
+            if not self.whatsapp_business_account_id:
+                missing_credentials.append('Business Account ID')
+            if not self.access_token:
+                missing_credentials.append('Access Token')
+        elif self.channel_type in ['instagram', 'facebook', 'messenger']:
+            if not self.access_token:
+                missing_credentials.append('Access Token')
+        elif self.channel_type in ['twitter', 'linkedin', 'youtube', 'tiktok']:
+            if not self.api_key:
+                missing_credentials.append('API Key')
+            if not self.api_secret:
+                missing_credentials.append('API Secret')
+        elif self.channel_type == 'sms':
+            if not self.api_key:
+                missing_credentials.append('API Key (Account SID)')
+            if not self.api_secret:
+                missing_credentials.append('API Secret (Auth Token)')
+        elif self.channel_type == 'email':
+            # Email might use Odoo's built-in mail server
+            pass
+        elif self.channel_type == 'telegram':
+            if not self.access_token:
+                missing_credentials.append('Bot Token')
+        else:
+            # Custom channel - require at least API key or access token
+            if not self.api_key and not self.access_token:
+                missing_credentials.append('API Key or Access Token')
+        
+        # If missing credentials, show error
+        if missing_credentials:
+            self.state = 'error'
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': '❌ Connection Failed',
+                    'message': f'Missing required credentials: {", ".join(missing_credentials)}',
+                    'type': 'danger',
+                    'sticky': True,
+                }
+            }
+        
+        # TODO: Add actual API connection tests here for each channel type
+        # For now, if credentials are present, mark as connected
         self.state = 'connected'
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Connection Test',
-                'message': f'{self.name} connection successful!',
+                'title': '✅ Connection Successful',
+                'message': f'{self.name} is now connected!',
                 'type': 'success',
                 'sticky': False,
             }

@@ -8,9 +8,13 @@
             <list string="Scheduled Messages">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
-                <field name="schedule_type"/>
+                <field name="schedule_type" widget="badge"
+                       decoration-info="schedule_type == 'early_month'"
+                       decoration-warning="schedule_type == 'late_month'"/>
                 <field name="template_id"/>
-                <field name="auto_run"/>
+                <field name="auto_run" widget="boolean_toggle"/>
+                <field name="last_run_date"/>
+                <field name="last_run_count"/>
                 <field name="active"/>
             </list>
         </field>
@@ -25,26 +29,39 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="action_send_now" type="object" class="oe_stat_button" icon="fa-paper-plane">
-                            <span>Send Now</span>
+                            <span>📤 Send Now</span>
                         </button>
                     </div>
                     <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Message Name"/></h1>
+                    </div>
+                    
                     <group>
-                        <group string="Configuration">
-                            <field name="name"/>
+                        <group string="⚙️ Configuration">
                             <field name="active"/>
-                        </group>
-                        <group string="Schedule">
-                            <field name="schedule_type" widget="radio"/>
                             <field name="auto_run"/>
                         </group>
+                        <group string="📅 Schedule">
+                            <field name="schedule_type" widget="radio"/>
+                        </group>
                     </group>
-                    <group string="Template">
+                    
+                    <group string="📋 Template">
                         <field name="template_id" options="{'no_create': True}"/>
                         <div class="text-muted">
-                            Templates are managed in Subscriptions → WhatsApp Templates
+                            <em>ℹ️ Templates are managed in WhatsApp → Templates</em>
                         </div>
                     </group>
+                    
+                    <group string="📊 Statistics" invisible="not last_run_date">
+                        <group>
+                            <field name="last_run_date"/>
+                            <field name="last_run_count"/>
+                        </group>
+                    </group>
+                    
                     <group>
                         <div class="alert alert-info" role="alert">
                             <strong>📅 Schedule Periods:</strong><br/>
@@ -59,7 +76,7 @@
 
     <!-- Action -->
     <record id="action_whatsapp_scheduled_messages" model="ir.actions.act_window">
-        <field name="name">Scheduled Messages</field>
+        <field name="name">📆 Scheduled Messages</field>
         <field name="res_model">whatsapp.scheduled.message</field>
         <field name="view_mode">list,form</field>
         <field name="help" type="html">
@@ -75,9 +92,9 @@
     <!-- Menu -->
     <menuitem id="menu_whatsapp_scheduled_messages"
               name="📆 Scheduled Messages"
-              parent="sale_subscription.menu_sale_subscription"
+              parent="menu_whatsapp_inbox_root"
               action="action_whatsapp_scheduled_messages"
-              sequence="116"/>
+              sequence="10"/>
 
     <!-- Cron Job -->
     <record id="ir_cron_whatsapp_scheduled_messages" model="ir.cron">

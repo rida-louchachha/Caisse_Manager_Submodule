@@ -1,28 +1,41 @@
 {
-    'name': 'WhatsApp Subscription Sender',
-    'version': '3.0',
+    'name': 'Unified Social Inbox',
+    'version': '5.0',
     'category': 'Sales/Subscriptions',
-    'summary': 'Send WhatsApp messages to subscription clients with automated reminders',
+    'summary': 'Unified inbox for WhatsApp, Instagram, SMS, Email and more - like GoHighLevel',
     'description': """
-        This module allows sending WhatsApp messages to subscription clients.
+        Unified Social Inbox - Multi-Channel Conversations
+        ===================================================
+        
         Features:
-        - Automated monthly payment reminders
-        - Automated shutdown warnings for unpaid subscriptions  
-        - Bulk sending from subscription list
-        - Template messages support (Meta Cloud API)
-        - Message history and delivery status tracking
+        - 💬 WhatsApp, 📸 Instagram, 📱 SMS, ✉️ Email - All in one place
+        - GHL-style unified conversation view
+        - Channel badges on each message
+        - Configurable social media channels
+        - Automated messaging and templates
+        - Two-way communication support
     """,
-    'depends': ['sale', 'cm_subscription_alerts'],
+    'depends': ['sale', 'whatsapp', 'cm_subscription_alerts'],
     'data': [
         'security/ir.model.access.csv',
-        'views/whatsapp_template_views.xml',
+        'data/social_channel_data.xml',
+        'views/social_channel_views.xml',
+        'views/whatsapp_inbox_views.xml',
         'views/whatsapp_scheduled_message_views.xml',
         'views/whatsapp_message_log_views.xml',
-        'views/whatsapp_webhook_config_views.xml',
         'views/whatsapp_chat_views.xml',
         'wizard/whatsapp_sender_wizard_views.xml',
         'views/sale_order_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'whatsapp_subscription_sender/static/src/css/whatsapp_chat.css',
+            'whatsapp_subscription_sender/static/src/js/whatsapp_chat.js',
+            'whatsapp_subscription_sender/static/src/js/whatsapp_chat_widget.js',
+            'whatsapp_subscription_sender/static/src/xml/whatsapp_chat_templates.xml',
+            'whatsapp_subscription_sender/static/src/xml/whatsapp_chat_widget.xml',
+        ],
+    },
     'installable': True,
     'application': True,
     'license': 'LGPL-3',
