@@ -16,6 +16,7 @@ export class WhatsAppChatView extends Component {
         this.actionService = useService("action");
         this.notification = useService("notification");
         this.messagesRef = useRef("messagesContainer");
+        this.pollInterval = null;
 
         this.state = useState({
             conversations: [],
@@ -32,7 +33,36 @@ export class WhatsAppChatView extends Component {
 
         onMounted(() => {
             this.scrollToBottom();
+            // Start auto-polling every 5 seconds for real-time updates
+            this.startPolling();
         });
+    }
+
+    startPolling() {
+        // Clear any existing interval
+        if (this.pollInterval) {
+            clearInterval(this.pollInterval);
+        }
+        // Poll every 5 seconds for new messages
+        this.pollInterval = setInterval(async () => {
+            if (this.state.selectedConversation) {
+                const currentMessageCount = this.state.messages.length;
+                await this.loadMessages(this.state.selectedConversation);
+                // Only scroll if new messages arrived
+                if (this.state.messages.length > currentMessageCount) {
+                    this.scrollToBottom();
+                }
+            }
+            // Also refresh conversation list to update unread counts
+            await this.loadConversations(true);  // silent refresh
+        }, 5000);
+    }
+
+    stopPolling() {
+        if (this.pollInterval) {
+            clearInterval(this.pollInterval);
+            this.pollInterval = null;
+        }
     }
 
     scrollToBottom() {
@@ -41,11 +71,13 @@ export class WhatsAppChatView extends Component {
         }
     }
 
-    async loadConversations() {
-        this.state.loading = true;
+    async loadConversations(silent = false) {
+        if (!silent) {
+            this.state.loading = true;
+        }
         try {
-            // We'll rebuild the conversation list completely dynamically from message logs
-            // This ensures we catch everything even if 'whatsapp.conversation' records are missing
+            // Build conversation list from message logs, keyed by PHONE NUMBER
+            // This prevents mixing between different contacts with similar data
             const messages = await this.orm.searchRead(
                 "whatsapp.message.log",
                 [],
@@ -53,19 +85,20 @@ export class WhatsAppChatView extends Component {
                 { order: "create_date desc" }
             );
 
-            const partnerMap = new Map();
+            // Key by PHONE NUMBER, not partner_id
+            const phoneMap = new Map();
 
             for (const msg of messages) {
-                if (!msg.partner_id) continue;
+                if (!msg.phone) continue;
 
-                const partnerId = msg.partner_id[0];
+                const phone = msg.phone;
 
-                // If we haven't seen this partner yet, or if this message is newer than what we have
-                if (!partnerMap.has(partnerId)) {
-                    partnerMap.set(partnerId, {
-                        id: partnerId, // Use partner ID as the key ID strictly
+                // If we haven't seen this phone yet
+                if (!phoneMap.has(phone)) {
+                    phoneMap.set(phone, {
+                        id: phone, // Use phone as the unique ID
                         partner_id: msg.partner_id,
-                        phone: msg.phone,
+                        phone: phone,
                         last_message: this.truncateMessage(msg.message),
                         last_message_date: msg.create_date,
                         unread_count: 0
@@ -74,12 +107,12 @@ export class WhatsAppChatView extends Component {
 
                 // Calculate unread count (incoming and not read)
                 if (msg.direction === 'incoming' && !msg.is_read) {
-                    const conv = partnerMap.get(partnerId);
+                    const conv = phoneMap.get(phone);
                     conv.unread_count = (conv.unread_count || 0) + 1;
                 }
             }
 
-            this.state.conversations = Array.from(partnerMap.values());
+            this.state.conversations = Array.from(phoneMap.values());
 
         } catch (e) {
             console.error("Failed to load conversations:", e);
@@ -101,10 +134,16 @@ export class WhatsAppChatView extends Component {
 
     async loadMessages(conversation) {
         try {
-            // STRICTLY load by partner_id. This is the most reliable way.
-            const partnerId = conversation.partner_id[0];
+            // Load messages by PHONE NUMBER for more accurate matching
+            // This prevents messages from mixing between different conversations
+            const phone = conversation.phone;
 
-            const domain = [["partner_id", "=", partnerId]];
+            // Build domain - match phone number (with or without + prefix)
+            const domain = [
+                "|",
+                ["phone", "=", phone],
+                ["phone", "like", phone.replace("+", "")]
+            ];
 
             this.state.messages = await this.orm.searchRead(
                 "whatsapp.message.log",
@@ -247,24 +286,32 @@ export class WhatsAppChatView extends Component {
 
         const conversation = this.state.selectedConversation;
         const messageText = this.state.newMessage.trim();
-        const partnerId = conversation.partner_id[0];
+        const partnerId = conversation.partner_id ? conversation.partner_id[0] : null;
+        const phone = conversation.phone;
 
         this.state.newMessage = "";
 
         try {
-            // Call the backend to send the message (which creates the log and triggers the API)
+            // Call the backend to send the message - pass phone for reliable matching
             const result = await this.orm.call(
                 "whatsapp.conversation",
                 "send_chat_message",
                 [],
                 {
                     partner_id: partnerId,
-                    message_text: messageText
+                    message_text: messageText,
+                    phone: phone  // Pass phone for better conversation matching
                 }
             );
 
             if (result.status === 'error') {
-                this.notification.add("Error sending message: " + result.message, { type: "danger" });
+                this.notification.add(result.message, {
+                    type: "danger",
+                    sticky: result.message.includes("24-hour"),  // Make 24h errors sticky
+                    title: "Message Not Sent"
+                });
+            } else {
+                this.notification.add("Message sent!", { type: "success" });
             }
 
             // Reload messages regardless (to show the new message, even if failed)
