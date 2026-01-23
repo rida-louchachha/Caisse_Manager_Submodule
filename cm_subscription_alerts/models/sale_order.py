@@ -94,6 +94,49 @@ class SaleOrder(models.Model):
     ], string='Client Validated', default='not_validated', store=True,
        help='Manual field to indicate if client information has been verified and validated.')
     
+    # ===== Free Subscription Fields =====
+    # For influencers, partners, promotional accounts, etc.
+    is_free_subscription = fields.Boolean(
+        string='Free Subscription',
+        default=False,
+        store=True,
+        help='Mark as FREE subscription - no payment alerts will be shown'
+    )
+    
+    free_subscription_reason = fields.Selection([
+        ('influencer', '🎬 Influencer'),
+        ('partner', '🤝 Partner'),
+        ('promo', '🎁 Promotional'),
+        ('vip', '⭐ VIP Client'),
+        ('test', '🧪 Test Account'),
+        ('other', '📋 Other'),
+    ], string='Free Reason', store=True,
+       help='Reason why this subscription is free')
+    
+    free_subscription_note = fields.Text(
+        string='Free Sub Notes',
+        help='Additional notes about this free subscription (e.g., influencer name, campaign, etc.)'
+    )
+    
+    free_subscription_expiry = fields.Date(
+        string='Free Until',
+        help='Optional: Date when the free period ends. Leave empty for permanent free subscription.'
+    )
+    
+    free_subscription_expired = fields.Boolean(
+        string='Free Period Expired',
+        compute='_compute_free_subscription_expired',
+        store=True,
+        help='True if the free subscription period has expired'
+    )
+    
+    free_days_remaining = fields.Integer(
+        string='Free Days Left',
+        compute='_compute_free_subscription_expired',
+        store=True,
+        help='Number of days remaining in free subscription period'
+    )
+    
     # ===== Client Contact Info =====
     client_phone = fields.Char(
         string='Client Phone',
@@ -158,6 +201,7 @@ class SaleOrder(models.Model):
     
     # ===== Enhanced Status Fields =====
     # Logic based on NEXT invoice date:
+    # - free: Free subscription (influencer, partner, promo)
     # - paid: Invoice for the target period is PAID
     # - in_payment: Invoice is partially paid or in payment
     # - requires_payment: Before deadline, invoice exists but NOT paid
@@ -165,6 +209,7 @@ class SaleOrder(models.Model):
     # - should_invoice: Before deadline, NO invoice exists - need to create
     # - expired: After deadline, NO invoice exists
     subscription_payment_status = fields.Selection([
+        ('free', 'Free'),
         ('paid', 'Paid'),
         ('in_payment', 'In Payment'),
         ('requires_payment', 'Requires Payment'),
@@ -235,6 +280,18 @@ class SaleOrder(models.Model):
     )
 
     # ===== Compute Methods =====
+
+    @api.depends('is_free_subscription', 'free_subscription_expiry')
+    def _compute_free_subscription_expired(self):
+        """Check if the free subscription period has expired"""
+        today = fields.Date.today()
+        for order in self:
+            if order.is_free_subscription and order.free_subscription_expiry:
+                order.free_subscription_expired = today > order.free_subscription_expiry
+                order.free_days_remaining = (order.free_subscription_expiry - today).days
+            else:
+                order.free_subscription_expired = False
+                order.free_days_remaining = 0
 
     @api.depends('invoice_ids', 'invoice_ids.payment_state', 'invoice_ids.invoice_date', 
                  'invoice_ids.amount_total', 'invoice_ids.amount_residual', 'invoice_ids.partner_id', 'invoice_ids.state')
@@ -339,10 +396,12 @@ class SaleOrder(models.Model):
 
     @api.depends('invoice_ids', 'invoice_ids.payment_state', 'invoice_ids.invoice_date_due',
                  'invoice_ids.state', 'invoice_ids.invoice_date', 'invoice_ids.amount_total',
-                 'invoice_ids.amount_residual', 'is_cm_subscription', 'state')
+                 'invoice_ids.amount_residual', 'is_cm_subscription', 'state',
+                 'is_free_subscription', 'free_subscription_expired')
     def _compute_subscription_payment_status(self):
         """
         Compute payment status based on NEXT invoice date:
+        - free: Free subscription (influencer, partner, promo) - no payment required
         - paid: Invoice for the target period is PAID
         - in_payment: Invoice is partially paid or in payment
         - requires_payment: Invoice exists but NOT paid
@@ -368,6 +427,12 @@ class SaleOrder(models.Model):
         for order in self:
             if not order.is_cm_subscription:
                 order.subscription_payment_status = False
+                continue
+            
+            # ===== FREE SUBSCRIPTION HANDLING =====
+            # Free subscriptions skip all payment logic unless their free period expired
+            if order.is_free_subscription and not order.free_subscription_expired:
+                order.subscription_payment_status = 'free'
                 continue
             
             # Determine target month based on current day
@@ -557,13 +622,25 @@ class SaleOrder(models.Model):
     @api.depends('subscription_payment_status', 'has_pending_invoice', 
                  'has_missing_invoice', 'is_payment_window_active', 'is_cm_subscription',
                  'last_payment_date', 'last_payment_partner_id', 'last_payment_amount',
-                 'total_invoiced_amount', 'amount_to_pay', 'days_until_next_invoice')
+                 'total_invoiced_amount', 'amount_to_pay', 'days_until_next_invoice',
+                 'is_free_subscription', 'free_subscription_reason', 'free_subscription_expiry',
+                 'free_days_remaining', 'free_subscription_expired')
     def _compute_payment_alert_message(self):
         """Generate HTML alert message with hover tooltip showing payment details"""
         from markupsafe import Markup
         
         today = fields.Date.today()
         is_past_5th = today.day > 5
+        
+        # Reason display mapping
+        reason_labels = {
+            'influencer': '🎬 Influencer',
+            'partner': '🤝 Partner',
+            'promo': '🎁 Promotional',
+            'vip': '⭐ VIP Client',
+            'test': '🧪 Test Account',
+            'other': '📋 Other',
+        }
         
         for order in self:
             if not order.is_cm_subscription:
@@ -575,9 +652,32 @@ class SaleOrder(models.Model):
             status_emoji = ""
             alert_class = ""  # CSS class for animation
             is_shutdown_state = False  # Flag for shutdown alert
+            is_free_state = False  # Flag for free subscription
             
+            # ===== FREE SUBSCRIPTION HANDLING =====
+            if order.is_free_subscription and not order.free_subscription_expired:
+                is_free_state = True
+                reason_label = reason_labels.get(order.free_subscription_reason, '🎁 Free')
+                
+                if order.free_subscription_expiry and order.free_days_remaining <= 30:
+                    # Expiring soon warning
+                    if order.free_days_remaining <= 7:
+                        status_msg = f"{reason_label} - {order.free_days_remaining}d left!"
+                        alert_class = "o_free_expiring_soon"
+                    else:
+                        status_msg = f"{reason_label} - {order.free_days_remaining}d"
+                        alert_class = "o_free_subscription_badge"
+                else:
+                    status_msg = reason_label
+                    alert_class = "o_free_subscription_badge"
+                status_emoji = "🎁"
+            elif order.free_subscription_expired:
+                # Free period has expired - treat as regular subscription
+                status_msg = "Free period ended"
+                status_emoji = "⚡"
+                alert_class = "o_free_expired"
             # Check for SHUTDOWN condition: past 5th AND (pending or expired or requires_payment)
-            if is_past_5th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
+            elif is_past_5th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
                 is_shutdown_state = True
                 if order.is_server_shutdown:
                     # Server is ALREADY shutdown
@@ -655,6 +755,20 @@ class SaleOrder(models.Model):
                     f'<span class="o_payment_alert_badge" title="{tooltip_text}" style="cursor: help;">'
                     f'<span class="o_shutdown_indicator">{status_emoji}</span>'
                     f'<span class="{alert_class}">{status_msg}</span>'
+                    f'</span>'
+                )
+            elif is_free_state:
+                # Free subscription - beautiful purple gradient badge
+                order.payment_alert_message = Markup(
+                    f'<span class="o_payment_alert_badge" title="{tooltip_text}" style="cursor: help;">'
+                    f'<span class="{alert_class}">{status_emoji} {status_msg}</span>'
+                    f'</span>'
+                )
+            elif order.free_subscription_expired:
+                # Expired free subscription - orange alert
+                order.payment_alert_message = Markup(
+                    f'<span class="o_payment_alert_badge" title="{tooltip_text}" style="cursor: help;">'
+                    f'<span class="{alert_class}">{status_emoji} {status_msg}</span>'
                     f'</span>'
                 )
             elif alert_class and order.subscription_payment_status in ('expired', 'requires_payment', 'pending', 'should_invoice'):
@@ -776,10 +890,15 @@ class SaleOrder(models.Model):
         """Scheduled action to check and update subscription payment statuses"""
         today = fields.Date.today()
         
-        # Get all active subscriptions
+        # Get all active subscriptions (EXCLUDE free subscriptions from alerts)
         subscriptions = self.search([
             ('is_cm_subscription', '=', True),
             ('state', '=', 'sale'),
+            '|',
+            ('is_free_subscription', '=', False),
+            '&',
+            ('is_free_subscription', '=', True),
+            ('free_subscription_expired', '=', True),  # Include expired free subs
         ])
         
         # Send alerts for expired subscriptions (no invoice created for next month)

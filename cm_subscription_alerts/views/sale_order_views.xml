@@ -77,6 +77,30 @@
                        string="Client Validated"
                        widget="selection"
                        optional="show"/>
+                <!-- ===== FREE SUBSCRIPTION COLUMNS ===== -->
+                <!-- Free Subscription Toggle -->
+                <field name="is_free_subscription" 
+                       string="🎁 Free"
+                       widget="boolean_toggle"
+                       optional="show"/>
+                <!-- Free Subscription Reason - Only visible when is_free_subscription is True -->
+                <field name="free_subscription_reason" 
+                       string="Free Reason"
+                       widget="badge"
+                       decoration-info="free_subscription_reason in ('influencer', 'partner', 'vip')"
+                       decoration-success="free_subscription_reason == 'promo'"
+                       decoration-muted="free_subscription_reason in ('test', 'other')"
+                       optional="hide"/>
+                <!-- Free Until Date -->
+                <field name="free_subscription_expiry" 
+                       string="Free Until"
+                       optional="hide"/>
+                <!-- Free Days Remaining -->
+                <field name="free_days_remaining" 
+                       string="Free Days Left"
+                       decoration-danger="free_days_remaining &lt;= 7 and free_days_remaining &gt; 0"
+                       decoration-warning="free_days_remaining &lt;= 30 and free_days_remaining &gt; 7"
+                       optional="hide"/>
             </xpath>
             
             <!-- Add hidden fields for status logic and tooltip data -->
@@ -87,6 +111,7 @@
                 <field name="invoice_created_for_period" column_invisible="1"/>
                 <field name="is_cm_subscription" column_invisible="1"/>
                 <field name="payment_info_tooltip" column_invisible="1"/>
+                <field name="free_subscription_expired" column_invisible="1"/>
             </xpath>
         </field>
     </record>
@@ -170,6 +195,25 @@
                         <field name="payment_info_tooltip" readonly="1" nolabel="1" colspan="2" widget="text"/>
                     </group>
                     
+                    <!-- ===== FREE SUBSCRIPTION SECTION ===== -->
+                    <group string="🎁 Free Subscription Settings">
+                        <group>
+                            <field name="is_free_subscription" widget="boolean_toggle"/>
+                            <field name="free_subscription_reason" invisible="not is_free_subscription"/>
+                        </group>
+                        <group>
+                            <field name="free_subscription_expiry" invisible="not is_free_subscription"/>
+                            <field name="free_days_remaining" readonly="1" invisible="not is_free_subscription or not free_subscription_expiry"/>
+                        </group>
+                    </group>
+                    <field name="free_subscription_note" invisible="not is_free_subscription" 
+                           placeholder="Notes about this free subscription (e.g., influencer name, campaign, conditions...)"/>
+                    
+                    <!-- Alert for expired free period -->
+                    <div class="alert alert-warning" role="alert" invisible="not free_subscription_expired">
+                        <strong>⚡ FREE PERIOD ENDED</strong> - This subscription's free period has expired. Convert to a paid subscription or extend the free period.
+                    </div>
+                    
                     <!-- Button to view pending invoices -->
                     <div>
                         <button name="action_view_pending_invoices" 
@@ -215,6 +259,20 @@
                         string="📝 Should Invoice" 
                         domain="[('subscription_payment_status', '=', 'should_invoice')]"/>
                 <separator/>
+                <!-- ===== FREE SUBSCRIPTION FILTERS ===== -->
+                <filter name="filter_free_subscriptions" 
+                        string="🎁 Free Subscriptions" 
+                        domain="[('is_free_subscription', '=', True)]"/>
+                <filter name="filter_paid_subscriptions" 
+                        string="💰 Paid Subs Only" 
+                        domain="[('is_free_subscription', '=', False)]"/>
+                <filter name="filter_free_expiring" 
+                        string="⏰ Free Expiring Soon" 
+                        domain="[('is_free_subscription', '=', True), ('free_days_remaining', '&gt;', 0), ('free_days_remaining', '&lt;=', 30)]"/>
+                <filter name="filter_free_expired" 
+                        string="⚡ Free Period Ended" 
+                        domain="[('free_subscription_expired', '=', True)]"/>
+                <separator/>
                 <filter name="filter_pending_invoice" 
                         string="Has Pending Invoice" 
                         domain="[('has_pending_invoice', '=', True)]"/>
@@ -226,6 +284,9 @@
                     <filter name="group_payment_status" 
                             string="Payment Status" 
                             context="{'group_by': 'subscription_payment_status'}"/>
+                    <filter name="group_free_reason" 
+                            string="Free Reason" 
+                            context="{'group_by': 'free_subscription_reason'}"/>
                     <filter name="group_last_payment_partner" 
                             string="Last Paid By" 
                             context="{'group_by': 'last_payment_partner_id'}"/>

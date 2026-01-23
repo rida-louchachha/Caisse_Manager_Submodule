@@ -82,6 +82,97 @@
     box-shadow: 0 2px 8px rgba(74, 0, 0, 0.4);
 }
 
+/* ===== FREE SUBSCRIPTION BADGES ===== */
+/* Beautiful purple gradient for free subscriptions (influencers, partners, etc.) */
+.o_free_subscription_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(102, 126, 234, 0.5);
+    box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+    animation: free-subtle-glow 3s ease-in-out infinite;
+}
+
+@keyframes free-subtle-glow {
+    0%, 100% {
+        box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        box-shadow: 0 3px 18px rgba(118, 75, 162, 0.6);
+    }
+}
+
+/* Free subscription expiring soon (within 7 days) - orange warning */
+.o_free_expiring_soon {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(245, 87, 108, 0.5);
+    box-shadow: 0 3px 12px rgba(245, 87, 108, 0.4);
+    animation: expiring-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes expiring-pulse {
+    0%, 100% {
+        box-shadow: 0 3px 12px rgba(245, 87, 108, 0.4);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 3px 20px rgba(245, 87, 108, 0.7);
+        transform: scale(1.02);
+    }
+}
+
+/* Free period has expired - needs to convert to paid */
+.o_free_expired {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(238, 90, 36, 0.5);
+    box-shadow: 0 3px 12px rgba(238, 90, 36, 0.4);
+    animation: expired-flash 1s ease-in-out infinite;
+}
+
+@keyframes expired-flash {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Row styling for free subscriptions - subtle purple left border */
+.o_list_view tr.o_data_row:has(td [name="is_free_subscription"] input:checked) {
+    border-left: 4px solid #667eea;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, transparent 30%);
+}
+
+.o_list_view tr.o_data_row:has(td [name="is_free_subscription"] input:checked):hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.12) 0%, rgba(255, 255, 255, 0.05) 30%);
+}
+
 /* Pulsing/Flashing Red Circle for Unpaid Subscriptions */
 .o_unpaid_alert {
     display: inline-flex;

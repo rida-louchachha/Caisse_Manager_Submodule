@@ -54,5 +54,56 @@ else:
         <field name="state">code</field>
         <field name="code">action = env['sale.order'].action_show_summary()</field>
     </record>
+    
+    <!-- ===== FREE SUBSCRIPTION SERVER ACTIONS ===== -->
+    <!-- Quick action to mark as free subscription (Influencer) -->
+    <record id="action_mark_free_influencer" model="ir.actions.server">
+        <field name="name">🎬 Mark as Free (Influencer)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.write({'is_free_subscription': True, 'free_subscription_reason': 'influencer'})</field>
+    </record>
+    
+    <!-- Quick action to mark as free subscription (Partner) -->
+    <record id="action_mark_free_partner" model="ir.actions.server">
+        <field name="name">🤝 Mark as Free (Partner)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.write({'is_free_subscription': True, 'free_subscription_reason': 'partner'})</field>
+    </record>
+    
+    <!-- Quick action to mark as free subscription (Promo) -->
+    <record id="action_mark_free_promo" model="ir.actions.server">
+        <field name="name">🎁 Mark as Free (Promo)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.write({'is_free_subscription': True, 'free_subscription_reason': 'promo'})</field>
+    </record>
+    
+    <!-- Quick action to mark as free subscription (VIP) -->
+    <record id="action_mark_free_vip" model="ir.actions.server">
+        <field name="name">⭐ Mark as Free (VIP)</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.write({'is_free_subscription': True, 'free_subscription_reason': 'vip'})</field>
+    </record>
+    
+    <!-- Convert back to paid subscription -->
+    <record id="action_convert_to_paid" model="ir.actions.server">
+        <field name="name">💰 Convert to Paid Subscription</field>
+        <field name="model_id" ref="sale.model_sale_order"/>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">records.write({'is_free_subscription': False, 'free_subscription_reason': False, 'free_subscription_expiry': False})</field>
+    </record>
 </odoo>
 
