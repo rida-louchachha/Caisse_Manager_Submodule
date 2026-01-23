@@ -404,10 +404,10 @@ class SaleOrder(models.Model):
         - free: Free subscription (influencer, partner, promo) - no payment required
         - paid: Invoice for the target period is PAID
         - in_payment: Invoice is partially paid or in payment
-        - requires_payment: Invoice exists but NOT paid
-        - pending: After 5th of target month, invoice exists but NOT paid  
+        - requires_payment: Before 15th, invoice exists but NOT paid
+        - pending: After 15th, invoice exists but NOT paid (SHUTDOWN!)
         - should_invoice: NO invoice exists - need to create
-        - expired: After 5th of target month, NO invoice exists
+        - expired: After 15th, NO invoice exists (SHUTDOWN!)
         
         Target Month Logic:
         - Before the 20th of current month: target = CURRENT month
@@ -447,8 +447,9 @@ class SaleOrder(models.Model):
             
             target_month_end = (target_month_start + relativedelta(months=1)) - timedelta(days=1)
             
-            # The deadline is the 5th of the target month
-            deadline_date = target_month_start.replace(day=5)
+            # The deadline is the 15th of the target month (changed from 5th)
+            # Users can pay from 1st-15th, after 15th = system should shutdown
+            deadline_date = target_month_start.replace(day=15)
             is_past_deadline = today > deadline_date
             
             # CRITICAL CHECK: If next_invoice_date is AFTER the target month,
@@ -614,10 +615,10 @@ class SaleOrder(models.Model):
             order.has_missing_invoice = not bool(target_period_invoices)
 
     def _compute_payment_window(self):
-        """Check if current date is within payment window (1st-5th of month)"""
+        """Check if current date is within payment window (1st-15th of month)"""
         today = fields.Date.today()
         for order in self:
-            order.is_payment_window_active = 1 <= today.day <= 5
+            order.is_payment_window_active = 1 <= today.day <= 15
 
     @api.depends('subscription_payment_status', 'has_pending_invoice', 
                  'has_missing_invoice', 'is_payment_window_active', 'is_cm_subscription',
@@ -630,7 +631,8 @@ class SaleOrder(models.Model):
         from markupsafe import Markup
         
         today = fields.Date.today()
-        is_past_5th = today.day > 5
+        is_past_15th = today.day > 15  # Deadline for payment (changed from 5th)
+        is_past_25th = today.day > 25  # For paid subs: remind to invoice next month
         
         # Reason display mapping
         reason_labels = {
@@ -676,8 +678,8 @@ class SaleOrder(models.Model):
                 status_msg = "Free period ended"
                 status_emoji = "⚡"
                 alert_class = "o_free_expired"
-            # Check for SHUTDOWN condition: past 5th AND (pending or expired or requires_payment)
-            elif is_past_5th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
+            # Check for SHUTDOWN condition: past 15th AND (pending or expired or requires_payment)
+            elif is_past_15th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
                 is_shutdown_state = True
                 if order.is_server_shutdown:
                     # Server is ALREADY shutdown
@@ -698,7 +700,7 @@ class SaleOrder(models.Model):
                 status_emoji = "⚠️"
                 alert_class = "o_warning_alert"
             elif order.subscription_payment_status == 'requires_payment':
-                status_msg = "Pay before the 5th"
+                status_msg = "Pay before the 15th"
                 status_emoji = "🔴"
                 alert_class = "o_unpaid_alert"
             elif order.subscription_payment_status == 'in_payment':
@@ -706,9 +708,15 @@ class SaleOrder(models.Model):
                 status_emoji = "🔵"
                 alert_class = ""
             elif order.subscription_payment_status == 'paid':
-                status_msg = "Paid"
-                status_emoji = "✅"
-                alert_class = "o_success_indicator"
+                # For paid subscriptions after 25th: remind to invoice next month
+                if is_past_25th:
+                    status_msg = "📋 Invoice next month"
+                    status_emoji = "✅"
+                    alert_class = "o_invoice_reminder"
+                else:
+                    status_msg = "Paid"
+                    status_emoji = "✅"
+                    alert_class = "o_success_indicator"
             elif order.subscription_payment_status == 'should_invoice':
                 status_msg = "Should create invoice"
                 status_emoji = "📋"
@@ -912,14 +920,14 @@ class SaleOrder(models.Model):
                 subtype_xmlid='mail.mt_note'
             )
         
-        # Send alerts for requiring payment (1st-5th)
-        if 1 <= today.day <= 5:
+        # Send alerts for requiring payment (1st-15th)
+        if 1 <= today.day <= 15:
             pending_subs = subscriptions.filtered(
                 lambda s: s.subscription_payment_status == 'requires_payment'
             )
             for sub in pending_subs:
                 sub.message_post(
-                    body=_("⚠️ Payment reminder: Invoice pending for subscription %s. Pay before the 5th!") % sub.name,
+                    body=_("⚠️ Payment reminder: Invoice pending for subscription %s. Pay before the 15th!") % sub.name,
                     message_type='notification',
                     subtype_xmlid='mail.mt_note'
                 )

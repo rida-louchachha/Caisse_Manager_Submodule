@@ -101,9 +101,12 @@
 }
 
 @keyframes free-subtle-glow {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 3px 12px rgba(102, 126, 234, 0.4);
     }
+
     50% {
         box-shadow: 0 3px 18px rgba(118, 75, 162, 0.6);
     }
@@ -127,10 +130,13 @@
 }
 
 @keyframes expiring-pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 3px 12px rgba(245, 87, 108, 0.4);
         transform: scale(1);
     }
+
     50% {
         box-shadow: 0 3px 20px rgba(245, 87, 108, 0.7);
         transform: scale(1.02);
@@ -155,9 +161,12 @@
 }
 
 @keyframes expired-flash {
-    0%, 100% {
+
+    0%,
+    100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.7;
     }
@@ -288,6 +297,35 @@
     background: linear-gradient(135deg, #28a745 0%, #218838 100%);
     color: white;
     font-size: 12px;
+}
+
+/* Invoice reminder badge (teal) - for paid subs after 25th */
+.o_invoice_reminder {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 14px;
+    background: linear-gradient(135deg, #17a2b8 0%, #0dcaf0 100%);
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    border: 2px solid rgba(23, 162, 184, 0.5);
+    box-shadow: 0 3px 12px rgba(23, 162, 184, 0.3);
+    animation: invoice-pulse 2s ease-in-out infinite;
+}
+
+@keyframes invoice-pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 3px 12px rgba(23, 162, 184, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 3px 18px rgba(13, 202, 240, 0.5);
+    }
 }
 
 /* Row highlighting for unpaid */
