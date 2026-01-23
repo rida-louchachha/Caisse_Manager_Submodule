@@ -122,27 +122,38 @@ class WhatsAppWebhookController(http.Controller):
                 # Find or create partner
                 partner = self._find_or_create_partner(phone, sender_name)
                 
-                # Find or create conversation
+                # USE receive_incoming_message to properly handle the message
+                # This updates the 24-hour window and creates the message log
                 try:
-                    Conversation = request.env['whatsapp.conversation'].sudo()
-                    conversation = Conversation.get_or_create_conversation(partner, phone)
+                    result = request.env['whatsapp.conversation'].sudo().receive_incoming_message(
+                        phone=phone,
+                        message_text=text,
+                        partner_id=partner.id if partner else None,
+                        message_id=msg_id
+                    )
+                    _logger.info("Incoming message processed: %s", result)
                 except Exception as e:
-                    _logger.warning("Could not create conversation: %s", str(e))
-                    conversation = None
-                
-                # Log the incoming message
-                try:
-                    request.env['whatsapp.message.log'].sudo().create({
-                        'partner_id': partner.id if partner else False,
-                        'phone': phone,
-                        'message': text,
-                        'status': 'received',
-                        'direction': 'incoming',
-                        'message_id': msg_id,
-                        'conversation_id': conversation.id if conversation else False,
-                    })
-                except Exception as e:
-                    _logger.error("Could not log message: %s", str(e))
+                    _logger.error("Error using receive_incoming_message: %s - falling back to direct log", str(e))
+                    # Fallback: Log the incoming message directly
+                    try:
+                        Conversation = request.env['whatsapp.conversation'].sudo()
+                        conversation = Conversation.get_or_create_conversation(partner, phone)
+                        
+                        # Update 24h window manually
+                        from odoo import fields
+                        conversation.write({'last_customer_message_date': fields.Datetime.now()})
+                        
+                        request.env['whatsapp.message.log'].sudo().create({
+                            'partner_id': partner.id if partner else False,
+                            'phone': phone,
+                            'message': text,
+                            'status': 'received',
+                            'direction': 'incoming',
+                            'message_id': msg_id,
+                            'conversation_id': conversation.id if conversation else False,
+                        })
+                    except Exception as e2:
+                        _logger.error("Could not log message: %s", str(e2))
         except Exception as e:
             _logger.error("Error processing incoming messages: %s", str(e))
     

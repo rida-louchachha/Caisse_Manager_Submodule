@@ -86,6 +86,17 @@ export class WhatsAppChatWidget extends Component {
         }, 100);
     }
 
+    // Safe notification helper
+    notify(message, type = "info") {
+        if (this.notification && this.notification.add) {
+            try {
+                this.notification.add(message, { type });
+            } catch (e) {
+                console.log("Notification:", message);
+            }
+        }
+    }
+
     toggleExpanded() {
         this.state.isExpanded = !this.state.isExpanded;
     }
@@ -104,14 +115,14 @@ export class WhatsAppChatWidget extends Component {
             );
 
             if (result.status === "success") {
-                this.notification.add("Message sent!", { type: "success" });
+                this.notify("Message sent!", "success");
             } else {
-                this.notification.add(`Error: ${result.message}`, { type: "warning" });
+                this.notify(`Error: ${result.message}`, "warning");
             }
 
             await this.loadMessages();
         } catch (e) {
-            this.notification.add(`Failed to send: ${e.message}`, { type: "danger" });
+            this.notify(`Failed to send: ${e.message}`, "danger");
         }
     }
 

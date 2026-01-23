@@ -89,12 +89,7 @@
         </field>
     </record>
 
-    <!-- Menu -->
-    <menuitem id="menu_whatsapp_scheduled_messages"
-              name="📆 Scheduled Messages"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_scheduled_messages"
-              sequence="10"/>
+    <!-- NOTE: Menu items are centralized in social_channel_views.xml -->
 
     <!-- Cron Job -->
     <record id="ir_cron_whatsapp_scheduled_messages" model="ir.cron">

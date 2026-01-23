@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import { registry } from "@web/core/registry";
-import { Component, useState, onWillStart, onMounted, useRef } from "@odoo/owl";
+import { Component, useState, onWillStart, onMounted, onWillUnmount, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 
 export class WhatsAppChatView extends Component {
@@ -25,7 +25,17 @@ export class WhatsAppChatView extends Component {
             loading: true,
             newMessage: "",
             selectedChannel: "whatsapp",  // Default channel for sending
+            searchQuery: "",  // Search/filter query
+            showNewChatModal: false,  // New chat modal visibility
+            newChatPhone: "",  // Phone for new chat
+            newChatName: "",  // Name for new contact
+            searchResults: [],  // Contact search results
+            showEmojiPicker: false,  // Emoji picker visibility
+            showDeleteConfirm: false,  // Delete confirmation modal
+            pendingDeleteConv: null,  // Conversation pending deletion
         });
+
+        this.isDestroyed = false;  // Track if component is destroyed
 
         onWillStart(async () => {
             await this.loadConversations();
@@ -36,6 +46,12 @@ export class WhatsAppChatView extends Component {
             // Start auto-polling every 5 seconds for real-time updates
             this.startPolling();
         });
+
+        onWillUnmount(() => {
+            // Stop polling when component is destroyed
+            this.isDestroyed = true;
+            this.stopPolling();
+        });
     }
 
     startPolling() {
@@ -45,6 +61,11 @@ export class WhatsAppChatView extends Component {
         }
         // Poll every 5 seconds for new messages
         this.pollInterval = setInterval(async () => {
+            // Skip if component is destroyed
+            if (this.isDestroyed) {
+                this.stopPolling();
+                return;
+            }
             if (this.state.selectedConversation) {
                 const currentMessageCount = this.state.messages.length;
                 await this.loadMessages(this.state.selectedConversation);
@@ -71,32 +92,64 @@ export class WhatsAppChatView extends Component {
         }
     }
 
+    // Safe notification helper - checks if service exists
+    notify(message, type = "info") {
+        if (this.notification && this.notification.add && !this.isDestroyed) {
+            try {
+                this.notification.add(message, { type });
+            } catch (e) {
+                console.log("Notification:", message);
+            }
+        }
+    }
+
     async loadConversations(silent = false) {
         if (!silent) {
             this.state.loading = true;
         }
         try {
-            // Build conversation list from message logs, keyed by PHONE NUMBER
-            // This prevents mixing between different contacts with similar data
-            const messages = await this.orm.searchRead(
-                "whatsapp.message.log",
+            // Load conversations directly from whatsapp.conversation model
+            // This ensures new conversations (even without messages) appear
+            const conversations = await this.orm.searchRead(
+                "whatsapp.conversation",
                 [],
-                ["partner_id", "phone", "message", "create_date", "direction", "status", "is_read"],
-                { order: "create_date desc" }
+                ["id", "partner_id", "phone", "last_message", "last_message_date", "unread_count"],
+                { order: "last_message_date desc" }
             );
 
-            // Key by PHONE NUMBER, not partner_id
+            // Transform to our format, using phone as unique key
             const phoneMap = new Map();
+
+            for (const conv of conversations) {
+                const phone = conv.phone || '';
+                if (!phoneMap.has(phone)) {
+                    phoneMap.set(phone, {
+                        id: conv.id,  // Use actual conversation ID
+                        conversation_id: conv.id,
+                        partner_id: conv.partner_id,
+                        phone: phone,
+                        last_message: this.truncateMessage(conv.last_message || ''),
+                        last_message_date: conv.last_message_date,
+                        unread_count: conv.unread_count || 0
+                    });
+                }
+            }
+
+            // Also check message logs for any phone numbers without a conversation record
+            const messages = await this.orm.searchRead(
+                "whatsapp.message.log",
+                [["conversation_id", "=", false]],  // Only orphan messages
+                ["partner_id", "phone", "message", "create_date", "direction", "is_read"],
+                { order: "create_date desc", limit: 100 }
+            );
 
             for (const msg of messages) {
                 if (!msg.phone) continue;
-
                 const phone = msg.phone;
 
-                // If we haven't seen this phone yet
                 if (!phoneMap.has(phone)) {
                     phoneMap.set(phone, {
-                        id: phone, // Use phone as the unique ID
+                        id: phone,  // Use phone as fallback ID
                         partner_id: msg.partner_id,
                         phone: phone,
                         last_message: this.truncateMessage(msg.message),
@@ -105,7 +158,7 @@ export class WhatsAppChatView extends Component {
                     });
                 }
 
-                // Calculate unread count (incoming and not read)
+                // Count unread
                 if (msg.direction === 'incoming' && !msg.is_read) {
                     const conv = phoneMap.get(phone);
                     conv.unread_count = (conv.unread_count || 0) + 1;
@@ -130,6 +183,57 @@ export class WhatsAppChatView extends Component {
         this.state.selectedConversation = conversation;
         await this.loadMessages(conversation);
         setTimeout(() => this.scrollToBottom(), 100);
+    }
+
+    async deleteConversation(conv) {
+        // Show confirmation modal instead of deleting immediately
+        this.state.pendingDeleteConv = conv;
+        this.state.showDeleteConfirm = true;
+    }
+
+    cancelDelete() {
+        this.state.showDeleteConfirm = false;
+        this.state.pendingDeleteConv = null;
+    }
+
+    async confirmDelete() {
+        const conv = this.state.pendingDeleteConv;
+        if (!conv) return;
+
+        // Close the modal
+        this.state.showDeleteConfirm = false;
+        this.state.pendingDeleteConv = null;
+
+        // Remove from UI immediately (archive behavior)
+        const convIndex = this.state.conversations.findIndex(c => c.id === conv.id);
+        if (convIndex > -1) {
+            this.state.conversations.splice(convIndex, 1);
+        }
+
+        // If this was the selected conversation, select another
+        if (this.state.selectedConversation && this.state.selectedConversation.id === conv.id) {
+            this.state.selectedConversation = this.state.conversations[0] || null;
+            if (this.state.selectedConversation) {
+                await this.loadMessages(this.state.selectedConversation);
+            } else {
+                this.state.messages = [];
+            }
+        }
+
+        // Archive the conversation (delete conversation record but KEEP messages)
+        // Messages are NOT deleted - they stay linked by phone number
+        // If user starts a new chat with same phone, old messages will appear
+        try {
+            const convId = conv.conversation_id || conv.id;
+            if (typeof convId === 'number') {
+                // Only delete the conversation record, not the messages
+                await this.orm.unlink("whatsapp.conversation", [convId]);
+            }
+            this.notification.add("Conversation archived", { type: "success" });
+        } catch (e) {
+            console.error("Failed to archive conversation:", e);
+            await this.loadConversations();
+        }
     }
 
     async loadMessages(conversation) {
@@ -173,6 +277,198 @@ export class WhatsAppChatView extends Component {
         return conversation.partner_id;
     }
 
+    // ===== SEARCH & FILTER FUNCTIONALITY =====
+
+    get filteredConversations() {
+        const query = (this.state.searchQuery || "").toLowerCase().trim();
+        if (!query) {
+            return this.state.conversations;
+        }
+        return this.state.conversations.filter(conv => {
+            const name = this.getPartnerName(conv).toLowerCase();
+            const phone = (conv.phone || "").toLowerCase();
+            const message = (conv.last_message || "").toLowerCase();
+            return name.includes(query) || phone.includes(query) || message.includes(query);
+        });
+    }
+
+    onSearchInput(ev) {
+        this.state.searchQuery = ev.target.value;
+    }
+
+    // ===== EMOJI PICKER =====
+
+    toggleEmojiPicker() {
+        this.state.showEmojiPicker = !this.state.showEmojiPicker;
+    }
+
+    getCommonEmojis() {
+        return [
+            // Smileys
+            "😀", "😃", "😄", "😁", "😅", "😂", "🤣", "😊", "😇", "🙂", "😉", "😍", "🥰", "😘", "😋", "😎",
+            // Gestures
+            "👍", "👎", "👌", "✌️", "🤞", "🤙", "👋", "🙏", "💪", "👏", "🤝", "❤️", "💯", "🔥", "⭐", "✨",
+            // Objects
+            "📱", "💻", "📧", "📞", "💰", "💵", "🏠", "🚗", "✈️", "🎉", "🎁", "📦", "📄", "✅", "❌", "⏰",
+            // Arrows & symbols  
+            "➡️", "⬅️", "⬆️", "⬇️", "↩️", "🔄", "ℹ️", "❓", "❗", "💡", "🔔", "📌", "🔗", "💬", "📝", "🗓️"
+        ];
+    }
+
+    insertEmoji(emoji) {
+        this.state.newMessage = (this.state.newMessage || "") + emoji;
+        this.state.showEmojiPicker = false;
+    }
+
+    // ===== NEW CHAT MODAL =====
+
+    openNewChatModal() {
+        this.state.showNewChatModal = true;
+        this.state.newChatPhone = "";
+        this.state.newChatName = "";
+        this.state.searchResults = [];
+    }
+
+    closeNewChatModal() {
+        this.state.showNewChatModal = false;
+    }
+
+    onNewChatPhoneInput(ev) {
+        this.state.newChatPhone = ev.target.value;
+    }
+
+    onNewChatNameInput(ev) {
+        this.state.newChatName = ev.target.value;
+    }
+
+    async searchContacts() {
+        const query = this.state.newChatPhone || this.state.newChatName;
+        if (!query || query.length < 2) {
+            this.state.searchResults = [];
+            return;
+        }
+        try {
+            // Search contacts by name, phone, or mobile
+            this.state.searchResults = await this.orm.searchRead(
+                "res.partner",
+                [
+                    "|", "|", "|",
+                    ["name", "ilike", query],
+                    ["phone", "ilike", query],
+                    ["mobile", "ilike", query],
+                    ["email", "ilike", query]
+                ],
+                ["id", "name", "phone", "mobile", "email"],
+                { limit: 10 }
+            );
+        } catch (e) {
+            console.error("Failed to search contacts:", e);
+            this.state.searchResults = [];
+        }
+    }
+
+    async startChatWithContact(contact) {
+        // Get phone from contact
+        const phone = contact.mobile || contact.phone;
+        if (!phone) {
+            this.notification.add("Contact has no phone number", { type: "warning" });
+            return;
+        }
+
+        // Create or find conversation
+        await this.startNewChat(phone, contact.name, contact.id);
+    }
+
+    async startNewChat(phone, name, partnerId = null) {
+        if (!phone) {
+            this.notification.add("Please enter a phone number", { type: "warning" });
+            return;
+        }
+
+        // Clean phone number
+        const cleanPhone = phone.replace(/[^\d+]/g, "");
+
+        try {
+            // Check if conversation already exists (in current list)
+            let existingConv = this.state.conversations.find(c =>
+                c.phone && c.phone.replace(/[^\d]/g, "").slice(-9) === cleanPhone.replace(/[^\d]/g, "").slice(-9)
+            );
+
+            if (existingConv) {
+                // Select existing conversation
+                await this.selectConversation(existingConv);
+                this.closeNewChatModal();
+                this.notification.add("Opened existing conversation", { type: "info" });
+                return;
+            }
+
+            // Create new conversation via backend
+            const result = await this.orm.call(
+                "whatsapp.conversation",
+                "get_or_create_conversation_by_phone",
+                [cleanPhone, name, partnerId]
+            );
+
+            if (result && result.id) {
+                // Reload conversations
+                await this.loadConversations();
+
+                // Find the new conversation by ID first, then by phone
+                let newConv = this.state.conversations.find(c => c.id === result.id || c.conversation_id === result.id);
+                if (!newConv) {
+                    // Fallback to phone matching
+                    const resultPhone = (result.phone || cleanPhone).replace(/[^\d]/g, "").slice(-9);
+                    newConv = this.state.conversations.find(c =>
+                        c.phone && c.phone.replace(/[^\d]/g, "").slice(-9) === resultPhone
+                    );
+                }
+
+                if (newConv) {
+                    this.state.selectedConversation = newConv;
+                    await this.loadMessages(newConv);
+                    this.scrollToBottom();
+                    this.notification.add("Chat started!", { type: "success" });
+                } else {
+                    // Conversation created but not found in list - try selecting first one
+                    if (this.state.conversations.length > 0) {
+                        await this.selectConversation(this.state.conversations[0]);
+                    }
+                    this.notification.add("Chat created! Check your conversations.", { type: "success" });
+                }
+            }
+        } catch (e) {
+            console.error("Failed to start new chat:", e);
+            this.notification.add("Failed to start chat: " + (e.message || e), { type: "danger" });
+        }
+
+        this.closeNewChatModal();
+    }
+
+    async createNewContact() {
+        const phone = this.state.newChatPhone;
+        const name = this.state.newChatName || `Contact ${phone}`;
+
+        if (!phone) {
+            this.notification.add("Please enter a phone number", { type: "warning" });
+            return;
+        }
+
+        try {
+            // Create new contact
+            const partnerId = await this.orm.create("res.partner", [{
+                name: name,
+                mobile: phone,
+            }]);
+
+            // Start chat with this new contact
+            await this.startNewChat(phone, name, partnerId);
+            this.notification.add(`Contact "${name}" created!`, { type: "success" });
+        } catch (e) {
+            console.error("Failed to create contact:", e);
+            this.notification.add("Failed to create contact: " + e.message, { type: "danger" });
+        }
+    }
+
     formatTime(dateString) {
         if (!dateString) return "";
         const date = new Date(dateString);
@@ -187,6 +483,21 @@ export class WhatsAppChatView extends Component {
             return this.formatTime(dateString);
         }
         return date.toLocaleDateString();
+    }
+
+    formatFullDate(dateString) {
+        if (!dateString) return "";
+        const date = new Date(dateString);
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit'
+        };
+        return date.toLocaleDateString(undefined, options);
     }
 
     isSelected(conversation) {

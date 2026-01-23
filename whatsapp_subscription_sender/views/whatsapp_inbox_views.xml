@@ -46,7 +46,7 @@
                                         <field name="phone"/>
                                     </small>
                                     <small style="color: #667781;">
-                                        <field name="create_date" widget="relative"/>
+                                        <field name="create_date"/>
                                     </small>
                                 </div>
                             </div>
@@ -213,30 +213,6 @@
         <field name="context">{'search_default_outgoing': 1}</field>
     </record>
 
-    <!-- ============================================
-         MENU ITEMS
-         ============================================ -->
-    <menuitem id="menu_whatsapp_inbox_root"
-              name="📬 WhatsApp Inbox"
-              parent="sale_subscription.menu_sale_subscription"
-              sequence="100"/>
-    
-    <menuitem id="menu_whatsapp_inbox_all"
-              name="📬 All Messages"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_inbox"
-              sequence="1"/>
-    
-    <menuitem id="menu_whatsapp_inbox_received"
-              name="📥 Received"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_inbox_received"
-              sequence="2"/>
-    
-    <menuitem id="menu_whatsapp_inbox_sent"
-              name="📤 Sent"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_inbox_sent"
-              sequence="3"/>
+    <!-- NOTE: Menu items are centralized in social_channel_views.xml -->
 
 </odoo>

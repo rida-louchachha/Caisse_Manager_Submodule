@@ -198,9 +198,12 @@
 
     <!-- ========== MENU ITEMS ========== -->
     
-    <!-- Root Menu for Social Inbox -->
+    <!-- Root Menu for Social Inbox - Opens WhatsApp Chat directly -->
+    <!-- Using PNG icon for web_icon (SVG not supported) -->
     <menuitem id="menu_social_inbox_root"
-              name="🗨️ Social Inbox"
+              name="Social Inbox"
+              action="action_whatsapp_chat_client"
+              web_icon="whatsapp_subscription_sender,static/src/img/social_inbox_icon.png"
               sequence="65"/>
     
     <!-- Channels submenu -->
@@ -209,5 +212,90 @@
               parent="menu_social_inbox_root"
               action="action_social_channel"
               sequence="10"/>
+
+    <!-- ========== SERVER ACTIONS ========== -->
+    
+    <!-- Server action to fix all conversations -->
+    <record id="action_fix_conversations" model="ir.actions.server">
+        <field name="name">🔧 Fix All Conversations (Link Messages &amp; 24h Window)</field>
+        <field name="model_id" ref="model_whatsapp_conversation"/>
+        <field name="binding_model_id" ref="model_whatsapp_conversation"/>
+        <field name="state">code</field>
+        <field name="code">
+for conv in env['whatsapp.conversation'].search([]):
+    conv.link_orphan_messages()
+    conv._compute_is_24h_window_active()
+action = {'type': 'ir.actions.client', 'tag': 'display_notification', 'params': {'title': '✅ Done', 'message': 'All conversations have been fixed!', 'type': 'success'}}
+        </field>
+    </record>
+
+    <!-- Configuration submenu -->
+    <menuitem id="menu_social_configuration"
+              name="⚙️ Configuration"
+              parent="menu_social_inbox_root"
+              sequence="90"/>
+              
+    <menuitem id="menu_fix_conversations"
+              name="🔧 Fix Conversations"
+              parent="menu_social_configuration"
+              action="action_fix_conversations"
+              sequence="10"/>
+
+    <!-- ========== WHATSAPP MENUS UNDER SOCIAL INBOX ========== -->
+    
+    <!-- WhatsApp submenu (parent) -->
+    <menuitem id="menu_whatsapp_section"
+              name="💬 WhatsApp"
+              parent="menu_social_inbox_root"
+              sequence="20"/>
+    
+    <!-- All Messages -->
+    <menuitem id="menu_social_all_messages"
+              name="📬 All Messages"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_inbox"
+              sequence="1"/>
+    
+    <!-- Received Messages -->
+    <menuitem id="menu_social_received"
+              name="📥 Received"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_inbox_received"
+              sequence="2"/>
+    
+    <!-- Sent Messages -->
+    <menuitem id="menu_social_sent"
+              name="📤 Sent"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_inbox_sent"
+              sequence="3"/>
+    
+    <!-- WhatsApp Chat (the main chat interface) -->
+    <menuitem id="menu_social_chat"
+              name="🗨️ WhatsApp Chat"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_chat_client"
+              sequence="4"/>
+    
+    <!-- Conversations List -->
+    <menuitem id="menu_social_conversations"
+              name="📋 Conversations List"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_chat"
+              sequence="5"/>
+    
+    <!-- Scheduled Messages -->
+    <menuitem id="menu_social_scheduled"
+              name="⏰ Scheduled Messages"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_scheduled_messages"
+              sequence="6"/>
+
+    <!-- WhatsApp Logs -->
+    <menuitem id="menu_social_logs"
+              name="📋 WhatsApp Logs"
+              parent="menu_whatsapp_section"
+              action="action_whatsapp_message_logs"
+              sequence="7"/>
 
 </odoo>

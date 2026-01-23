@@ -25,13 +25,21 @@
                 </div>
                 
                 <!-- Search Bar -->
-                <div class="p-2" style="background: #111b21;">
-                    <div class="d-flex align-items-center px-3 py-2" style="background: #202c33; border-radius: 8px;">
+                <div class="p-2 d-flex gap-2" style="background: #111b21;">
+                    <div class="d-flex align-items-center px-3 py-2 flex-grow-1" style="background: #202c33; border-radius: 8px;">
                         <span style="color: #8696a0;">🔍</span>
                         <input type="text" class="form-control border-0 bg-transparent ms-2" 
-                               placeholder="Search or start new chat" 
+                               placeholder="Search conversations..." 
+                               t-att-value="state.searchQuery"
+                               t-on-input="onSearchInput"
                                style="color: #e9edef; outline: none; box-shadow: none;"/>
                     </div>
+                    <button class="btn d-flex align-items-center justify-content-center" 
+                            style="background: #00a884; color: white; border-radius: 8px; width: 44px;"
+                            t-on-click="openNewChatModal"
+                            title="Start new chat">
+                        ➕
+                    </button>
                 </div>
                 
                 <!-- Conversation List -->
@@ -50,8 +58,8 @@
                         </div>
                     </t>
                     <t t-else="">
-                        <t t-foreach="state.conversations" t-as="conv" t-key="conv.id">
-                            <div class="wa-conv-item d-flex align-items-center p-3"
+                        <t t-foreach="filteredConversations" t-as="conv" t-key="conv.id">
+                            <div class="wa-conv-item d-flex align-items-center p-3 position-relative"
                                  t-att-class="{'wa-selected': isSelected(conv)}"
                                  t-att-style="isSelected(conv) ? 'cursor: pointer; border-bottom: 1px solid #2a3942; background: #2a3942;' : 'cursor: pointer; border-bottom: 1px solid #2a3942;'"
                                  t-on-click="() => this.selectConversation(conv)">
@@ -80,14 +88,23 @@
                                         </small>
                                     </div>
                                     <div class="d-flex justify-content-between align-items-center mt-1">
-                                        <span class="text-truncate" style="color: #8696a0; font-size: 14px; max-width: 200px;">
+                                        <span class="text-truncate" style="color: #8696a0; font-size: 14px; max-width: 180px;">
                                             <t t-esc="conv.last_message || 'No messages'"/>
                                         </span>
-                                        <t t-if="conv.unread_count > 0">
-                                            <span class="badge rounded-pill" style="background: #00a884; color: white; font-size: 11px;">
-                                                <t t-esc="conv.unread_count"/>
-                                            </span>
-                                        </t>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <t t-if="conv.unread_count > 0">
+                                                <span class="badge rounded-pill" style="background: #00a884; color: white; font-size: 11px;">
+                                                    <t t-esc="conv.unread_count"/>
+                                                </span>
+                                            </t>
+                                            <!-- Delete Button -->
+                                            <span class="delete-conv-btn" 
+                                                  style="color: #ea4335; font-size: 16px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;"
+                                                  t-on-click.stop="() => this.deleteConversation(conv)"
+                                                  t-on-mouseover="(e) => e.target.style.opacity='1'"
+                                                  t-on-mouseout="(e) => e.target.style.opacity='0.7'"
+                                                  title="Delete conversation">🗑️</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -138,18 +155,8 @@
                         </t>
                         
                         <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
-                            <div class="wa-message-wrapper d-flex mb-2"
-                                 t-att-class="{'justify-content-end': msg.direction === 'outgoing', 'justify-content-start': msg.direction === 'incoming' || !msg.direction}">
-                                
-                                <!-- Channel Icon for Incoming Messages -->
-                                <t t-if="msg.direction === 'incoming'">
-                                    <div class="me-2 d-flex flex-column align-items-center">
-                                        <div class="rounded-circle d-flex align-items-center justify-content-center"
-                                             t-att-style="'width: 24px; height: 24px; font-size: 12px; background: ' + getChannelColor(msg.channel_type || 'whatsapp') + ';'">
-                                            <t t-esc="getChannelIcon(msg.channel_type || 'whatsapp')"/>
-                                        </div>
-                                    </div>
-                                </t>
+                            <div class="wa-message-wrapper d-flex flex-column mb-2"
+                                 t-att-class="{'align-items-end': msg.direction === 'outgoing', 'align-items-start': msg.direction === 'incoming' || !msg.direction}">
                                 
                                 <div class="wa-bubble px-3 py-2"
                                      t-att-style="(msg.direction === 'outgoing') ? 'background: #005c4b; border-radius: 8px 0 8px 8px; max-width: 65%; min-width: 100px;' : 'background: #202c33; border-radius: 0 8px 8px 8px; max-width: 65%; min-width: 100px;'">
@@ -157,15 +164,8 @@
                                         <t t-esc="msg.message"/>
                                     </div>
                                     <div class="d-flex justify-content-end align-items-center mt-1" style="gap: 4px;">
-                                        <!-- Channel Badge for Outgoing -->
-                                        <t t-if="msg.direction === 'outgoing' || !msg.direction">
-                                            <span class="badge me-1" 
-                                                  t-att-style="'font-size: 8px; padding: 2px 4px; background: ' + getChannelColor(msg.channel_type || 'whatsapp') + ';'"
-                                                  t-att-title="getChannelName(msg.channel_type || 'whatsapp')">
-                                                <t t-esc="getChannelIcon(msg.channel_type || 'whatsapp')"/>
-                                            </span>
-                                        </t>
-                                        <small style="color: #8696a0; font-size: 11px;">
+                                        <small style="color: #8696a0; font-size: 11px; cursor: help;"
+                                               t-att-title="formatFullDate(msg.create_date)">
                                             <t t-esc="formatTime(msg.create_date)"/>
                                         </small>
                                         <t t-if="msg.direction === 'outgoing' || !msg.direction">
@@ -174,6 +174,16 @@
                                             </small>
                                         </t>
                                     </div>
+                                </div>
+                                
+                                <!-- Channel Source Icon BELOW message bubble -->
+                                <div class="d-flex align-items-center mt-1" style="gap: 4px;">
+                                    <span class="badge" 
+                                          t-att-style="'font-size: 9px; padding: 2px 6px; background: ' + getChannelColor(msg.channel_type || 'whatsapp') + '; opacity: 0.9;'"
+                                          t-att-title="getChannelName(msg.channel_type || 'whatsapp')">
+                                        <t t-esc="getChannelIcon(msg.channel_type || 'whatsapp')"/>
+                                        <span class="ms-1" style="font-size: 8px;"><t t-esc="getChannelName(msg.channel_type || 'whatsapp')"/></span>
+                                    </span>
                                 </div>
                             </div>
                         </t>
@@ -218,8 +228,32 @@
                             </ul>
                         </div>
                         
-                        <span class="me-2" style="color: #8696a0; font-size: 24px; cursor: pointer;" title="Emojis">😊</span>
-                        <span class="me-2" t-on-click="onOpenTemplateSelector" style="color: #8696a0; font-size: 24px; cursor: pointer;" title="Send Template">📎</span>
+                        <!-- Emoji Picker -->
+                        <div class="position-relative">
+                            <span class="me-2" style="color: #8696a0; font-size: 24px; cursor: pointer;" 
+                                  title="Emojis" t-on-click="toggleEmojiPicker">😊</span>
+                            <t t-if="state.showEmojiPicker">
+                                <div class="position-absolute bottom-100 start-0 mb-2 p-2" 
+                                     style="background: #202c33; border: 1px solid #3b4a54; border-radius: 8px; width: 280px; z-index: 1000;">
+                                    <div class="d-flex flex-wrap gap-1" style="max-height: 200px; overflow-y: auto;">
+                                        <t t-foreach="getCommonEmojis()" t-as="emoji" t-key="emoji">
+                                            <span class="emoji-btn p-1" 
+                                                  style="cursor: pointer; font-size: 20px; border-radius: 4px;"
+                                                  t-on-click="() => this.insertEmoji(emoji)"
+                                                  t-on-mouseover="(e) => e.target.style.background='#3b4a54'"
+                                                  t-on-mouseout="(e) => e.target.style.background='transparent'">
+                                                <t t-esc="emoji"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        
+                        <!-- Attachment / Template Button -->
+                        <span class="me-2" t-on-click="onOpenTemplateSelector" 
+                              style="color: #8696a0; font-size: 24px; cursor: pointer;" 
+                              title="Send Template Message">📎</span>
                         <input type="text" 
                                class="form-control flex-grow-1" 
                                placeholder="Type a message"
@@ -250,5 +284,123 @@
                 </t>
             </div>
         </div>
+        
+        <!-- New Chat Modal -->
+        <t t-if="state.showNewChatModal">
+            <div class="modal d-block" style="background: rgba(0,0,0,0.7);" t-on-click="closeNewChatModal">
+                <div class="modal-dialog modal-dialog-centered" t-on-click.stop="">
+                    <div class="modal-content" style="background: #202c33; border: 1px solid #2a3942;">
+                        <div class="modal-header border-bottom" style="border-color: #2a3942 !important;">
+                            <h5 class="modal-title" style="color: #e9edef;">
+                                ➕ Start New Chat
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" t-on-click="closeNewChatModal"/>
+                        </div>
+                        <div class="modal-body">
+                            <!-- Phone Number Input -->
+                            <div class="mb-3">
+                                <label class="form-label" style="color: #8696a0;">Phone Number</label>
+                                <input type="tel" class="form-control" 
+                                       placeholder="+212 6XX XXX XXX"
+                                       t-att-value="state.newChatPhone"
+                                       t-on-input="onNewChatPhoneInput"
+                                       style="background: #2a3942; border-color: #3b4a54; color: #e9edef;"/>
+                            </div>
+                            
+                            <!-- Contact Name Input -->
+                            <div class="mb-3">
+                                <label class="form-label" style="color: #8696a0;">Contact Name (optional)</label>
+                                <input type="text" class="form-control" 
+                                       placeholder="Enter contact name..."
+                                       t-att-value="state.newChatName"
+                                       t-on-input="onNewChatNameInput"
+                                       style="background: #2a3942; border-color: #3b4a54; color: #e9edef;"/>
+                            </div>
+                            
+                            <!-- Search Contacts Button -->
+                            <div class="mb-3">
+                                <button class="btn w-100" style="background: #3b4a54; color: #e9edef;" 
+                                        t-on-click="searchContacts">
+                                    🔍 Search Existing Contacts
+                                </button>
+                            </div>
+                            
+                            <!-- Search Results -->
+                            <t t-if="state.searchResults.length > 0">
+                                <div class="mb-3">
+                                    <label class="form-label" style="color: #8696a0;">Select a contact:</label>
+                                    <div class="list-group" style="max-height: 200px; overflow-y: auto;">
+                                        <t t-foreach="state.searchResults" t-as="contact" t-key="contact.id">
+                                            <button class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                                                    style="background: #2a3942; border-color: #3b4a54; color: #e9edef;"
+                                                    t-on-click="() => this.startChatWithContact(contact)">
+                                                <div>
+                                                    <div><t t-esc="contact.name"/></div>
+                                                    <small style="color: #8696a0;">
+                                                        <t t-esc="contact.mobile || contact.phone || 'No phone'"/>
+                                                    </small>
+                                                </div>
+                                                <span style="color: #00a884;">→</span>
+                                            </button>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                        <div class="modal-footer border-top" style="border-color: #2a3942 !important;">
+                            <button class="btn" style="background: #3b4a54; color: #e9edef;" 
+                                    t-on-click="closeNewChatModal">
+                                Cancel
+                            </button>
+                            <button class="btn" style="background: #00a884; color: white;" 
+                                    t-on-click="() => this.startNewChat(state.newChatPhone, state.newChatName)">
+                                💬 Start Chat
+                            </button>
+                            <button class="btn" style="background: #667eea; color: white;" 
+                                    t-on-click="createNewContact">
+                                ➕ Create &amp; Chat
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+        
+        <!-- Delete Confirmation Modal -->
+        <t t-if="state.showDeleteConfirm">
+            <div class="modal d-block" style="background: rgba(0,0,0,0.7);" t-on-click="cancelDelete">
+                <div class="modal-dialog modal-dialog-centered modal-sm" t-on-click.stop="">
+                    <div class="modal-content" style="background: #202c33; border: 1px solid #2a3942;">
+                        <div class="modal-header border-bottom" style="border-color: #2a3942 !important;">
+                            <h5 class="modal-title" style="color: #e9edef;">
+                                🗑️ Archive Conversation?
+                            </h5>
+                            <button type="button" class="btn-close btn-close-white" t-on-click="cancelDelete"/>
+                        </div>
+                        <div class="modal-body text-center">
+                            <div style="color: #e9edef; margin-bottom: 12px;">
+                                Are you sure you want to archive this conversation with:
+                            </div>
+                            <div style="color: #00a884; font-size: 18px; font-weight: 600; margin-bottom: 12px;">
+                                <t t-esc="state.pendingDeleteConv ? getPartnerName(state.pendingDeleteConv) : ''"/>
+                            </div>
+                            <div style="color: #8696a0; font-size: 13px;">
+                                ⚠️ Messages will be kept. If you start a new chat with this contact, old messages will appear.
+                            </div>
+                        </div>
+                        <div class="modal-footer border-top justify-content-center gap-2" style="border-color: #2a3942 !important;">
+                            <button class="btn px-4" style="background: #3b4a54; color: #e9edef;" 
+                                    t-on-click="cancelDelete">
+                                Cancel
+                            </button>
+                            <button class="btn px-4" style="background: #ea4335; color: white;" 
+                                    t-on-click="confirmDelete">
+                                🗑️ Archive
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
     </t>
 </templates>

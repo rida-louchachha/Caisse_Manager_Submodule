@@ -31,7 +31,7 @@
                                         <field name="partner_id"/>
                                     </strong>
                                     <small style="color: #8696a0; font-size: 12px;">
-                                        <field name="last_message_date" widget="relative"/>
+                                        <field name="last_message_date"/>
                                     </small>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center">
@@ -72,8 +72,16 @@
                             <small style="color: #8696a0;"><field name="phone" readonly="1" nolabel="1"/></small>
                         </div>
                         <button name="action_mark_as_read" type="object" 
-                                class="btn btn-sm" style="background: #00a884; color: white; border: none;">
+                                class="btn btn-sm me-2" style="background: #00a884; color: white; border: none;">
                             ✓ Mark Read
+                        </button>
+                        <button name="action_refresh_24h_window" type="object" 
+                                class="btn btn-sm me-2" style="background: #3b82f6; color: white; border: none;">
+                            🔄 Refresh 24h
+                        </button>
+                        <button name="action_debug_24h" type="object" 
+                                class="btn btn-sm" style="background: #8b5cf6; color: white; border: none;">
+                            🔍 Debug
                         </button>
                     </div>
                     
@@ -108,7 +116,7 @@
                 <field name="partner_id" string="👤 Contact"/>
                 <field name="phone" string="📞 Phone"/>
                 <field name="last_message" string="💬 Last Message"/>
-                <field name="last_message_date" string="🕐 Time" widget="relative"/>
+                <field name="last_message_date" string="🕐 Time"/>
                 <field name="unread_count" string="📬 Unread"/>
             </list>
         </field>
@@ -156,20 +164,7 @@
         </field>
     </record>
 
-    <!-- ============================================
-         MENU ITEMS
-         ============================================ -->
-    <menuitem id="menu_whatsapp_conversations"
-              name="💬 WhatsApp Chat"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_chat_client"
-              sequence="5"/>
-    
-    <menuitem id="menu_whatsapp_conversations_list"
-              name="📋 Conversations List"
-              parent="menu_whatsapp_inbox_root"
-              action="action_whatsapp_chat"
-              sequence="6"/>
+    <!-- NOTE: Menu items are centralized in social_channel_views.xml -->
 
 </odoo>
 
