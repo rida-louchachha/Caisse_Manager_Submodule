@@ -32,12 +32,15 @@ Status Logic:
     'depends': [
         'sale_subscription',
         'account',
+        'ma_regional_access',  # For city_ma_id, region_id, system_version_ids on sale.order
     ],
     'data': [
+        'security/security.xml',
         'security/ir.model.access.csv',
         'data/server_actions.xml',
         'views/sale_order_views.xml',
         'views/subscription_summary_wizard_views.xml',
+        'views/res_users_views.xml',
         'data/cron_jobs.xml',
     ],
     'assets': {

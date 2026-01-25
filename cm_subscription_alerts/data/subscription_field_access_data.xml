@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Pre-defined subscription fields that can be assigned to users -->
+        
+        <record id="field_access_is_server_shutdown" model="subscription.field.access">
+            <field name="name">Shutdown Toggle</field>
+            <field name="field_name">is_server_shutdown</field>
+            <field name="sequence">10</field>
+            <field name="description">Allow toggling the server shutdown status for subscriptions</field>
+        </record>
+        
+        <record id="field_access_client_info_validated" model="subscription.field.access">
+            <field name="name">Client Validated</field>
+            <field name="field_name">client_info_validated</field>
+            <field name="sequence">20</field>
+            <field name="description">Allow changing the client validation status</field>
+        </record>
+        
+        <record id="field_access_is_free_subscription" model="subscription.field.access">
+            <field name="name">Free Subscription Toggle</field>
+            <field name="field_name">is_free_subscription</field>
+            <field name="sequence">30</field>
+            <field name="description">Allow toggling free subscription status</field>
+        </record>
+        
+        <record id="field_access_free_subscription_reason" model="subscription.field.access">
+            <field name="name">Free Reason</field>
+            <field name="field_name">free_subscription_reason</field>
+            <field name="sequence">40</field>
+            <field name="description">Allow setting the reason for free subscription</field>
+        </record>
+        
+        <record id="field_access_free_subscription_expiry" model="subscription.field.access">
+            <field name="name">Free Until Date</field>
+            <field name="field_name">free_subscription_expiry</field>
+            <field name="sequence">50</field>
+            <field name="description">Allow setting the expiry date for free subscription</field>
+        </record>
+        
+        <record id="field_access_payment_alert_message" model="subscription.field.access">
+            <field name="name">Payment Alert Message</field>
+            <field name="field_name">payment_alert_message</field>
+            <field name="sequence">60</field>
+            <field name="description">Allow editing the payment alert message</field>
+        </record>
+    </data>
+</odoo>

@@ -1,3 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_sale_order_subscription_alerts,sale.order.subscription.alerts,sale.model_sale_order,sales_team.group_sale_salesman,1,1,1,0
 access_subscription_summary_wizard,subscription.summary.wizard,model_subscription_summary_wizard,sales_team.group_sale_salesman,1,1,1,1
+access_subscription_field_access_admin,subscription.field.access.admin,model_subscription_field_access,base.group_system,1,1,1,1
+access_subscription_field_access_user,subscription.field.access.user,model_subscription_field_access,sales_team.group_sale_salesman,1,0,0,0
+access_sale_order_limited,sale.order.limited.access,sale.model_sale_order,cm_subscription_alerts.group_subscription_limited_access,1,1,0,0

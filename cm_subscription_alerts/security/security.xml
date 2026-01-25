@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Subscription Limited Access Group -->
+    <record id="group_subscription_limited_access" model="res.groups">
+        <field name="name">Subscription Limited Access</field>
+        <field name="category_id" ref="base.module_category_sales_sales"/>
+        <field name="comment">Users in this group can only view subscriptions and modify specific fields assigned to them in their user profile.</field>
+    </record>
+</odoo>
+

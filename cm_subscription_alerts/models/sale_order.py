@@ -38,7 +38,31 @@ class SaleOrder(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
-        """Override create to set is_cm_subscription for new subscriptions"""
+        """Override create to enforce permissions for limited access users.
+        
+        Users in 'Subscription Limited Access' group cannot create subscriptions
+        unless they have explicit create permission.
+        """
+        # Check if current user is in the limited access group
+        user = self.env.user
+        limited_group = self.env.ref(
+            'cm_subscription_alerts.group_subscription_limited_access',
+            raise_if_not_found=False
+        )
+        
+        # If user is in restricted group, block create
+        if limited_group and limited_group in user.groups_id:
+            # Check if user has any field with create permission
+            has_create_permission = user.subscription_allowed_fields.filtered(
+                lambda f: f.perm_create
+            )
+            if not has_create_permission:
+                from odoo.exceptions import AccessError
+                raise AccessError(
+                    "You don't have permission to create subscriptions.\n"
+                    "Contact your administrator to get create access."
+                )
+        
         records = super().create(vals_list)
         # Set is_cm_subscription for records with plan_id
         for record in records:
@@ -53,9 +77,61 @@ class SaleOrder(models.Model):
         return records
 
     def write(self, vals):
-        """Override write to set is_cm_subscription when plan_id changes"""
+        """Override write to enforce field-level permissions for limited access users.
+        
+        Users in 'Subscription Limited Access' group can ONLY modify fields
+        that are explicitly assigned to them. All other field modifications are blocked.
+        """
+        # Check if current user is in the limited access group
+        user = self.env.user
+        limited_group = self.env.ref(
+            'cm_subscription_alerts.group_subscription_limited_access',
+            raise_if_not_found=False
+        )
+        
+        # If user is in restricted group, check field permissions
+        if limited_group and limited_group in user.groups_id:
+            # Get user's allowed fields (with write permission)
+            allowed_field_names = user.subscription_allowed_fields.filtered(
+                lambda f: f.perm_write
+            ).mapped('field_name')
+            
+            # System fields that are always allowed (internal Odoo fields)
+            always_allowed = {
+                'message_main_attachment_id', 'message_follower_ids', 'activity_ids',
+                'message_ids', 'message_attachment_count', 'website_message_ids',
+                '__last_update', 'display_name', 'access_url', 'access_token',
+                'access_warning', 'write_date', 'write_uid', 'create_date', 'create_uid',
+            }
+            
+            # Check each field being modified
+            unauthorized_fields = []
+            for field_name in vals.keys():
+                # Skip system fields
+                if field_name in always_allowed:
+                    continue
+                # Skip computed/related fields that might be in vals
+                field = self._fields.get(field_name)
+                if field and (field.compute or field.related):
+                    continue
+                # Check if field is allowed
+                if field_name not in allowed_field_names:
+                    # Get field label for error message
+                    field_label = field.string if field else field_name
+                    unauthorized_fields.append(f"'{field_label}' ({field_name})")
+            
+            if unauthorized_fields:
+                from odoo.exceptions import AccessError
+                raise AccessError(
+                    f"You don't have permission to modify the following field(s):\n"
+                    f"{', '.join(unauthorized_fields)}\n\n"
+                    f"Contact your administrator to get access to these fields."
+                )
+        
+        # Proceed with normal write
         result = super().write(vals)
-        # Only update is_cm_subscription if we're not already setting it
+        
+        # Set is_cm_subscription when plan_id changes (existing logic)
         if 'is_cm_subscription' not in vals:
             for record in self:
                 plan_id = getattr(record, 'plan_id', None)
@@ -77,6 +153,68 @@ class SaleOrder(models.Model):
         store=True,
         help='True if this order has a recurring plan'
     )
+    
+    # ===== Field Access Control (for Subscription Limited Access group) =====
+    # These computed fields determine if the current user can edit each restricted field
+    
+    field_readonly_is_server_shutdown = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Server Shutdown Readonly'
+    )
+    field_readonly_client_info_validated = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Client Validated Readonly'
+    )
+    field_readonly_is_free_subscription = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Free Subscription Readonly'
+    )
+    field_readonly_free_subscription_reason = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Free Reason Readonly'
+    )
+    field_readonly_free_subscription_expiry = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Free Until Readonly'
+    )
+    field_readonly_payment_alert_message = fields.Boolean(
+        compute='_compute_field_readonly',
+        string='Is Payment Alert Message Readonly'
+    )
+    
+    @api.depends_context('uid')
+    def _compute_field_readonly(self):
+        """Compute readonly status for each restricted field based on user's permissions."""
+        user = self.env.user
+        
+        # Check if user is in the limited access group
+        limited_group = self.env.ref(
+            'cm_subscription_alerts.group_subscription_limited_access',
+            raise_if_not_found=False
+        )
+        
+        # If user is NOT in limited group (admin/manager), all fields are editable
+        if not limited_group or limited_group not in user.groups_id:
+            for record in self:
+                record.field_readonly_is_server_shutdown = False
+                record.field_readonly_client_info_validated = False
+                record.field_readonly_is_free_subscription = False
+                record.field_readonly_free_subscription_reason = False
+                record.field_readonly_free_subscription_expiry = False
+                record.field_readonly_payment_alert_message = False
+            return
+        
+        # User is in limited group - check allowed fields
+        allowed_fields = user.subscription_allowed_fields.mapped('field_name')
+        
+        for record in self:
+            record.field_readonly_is_server_shutdown = 'is_server_shutdown' not in allowed_fields
+            record.field_readonly_client_info_validated = 'client_info_validated' not in allowed_fields
+            record.field_readonly_is_free_subscription = 'is_free_subscription' not in allowed_fields
+            record.field_readonly_free_subscription_reason = 'free_subscription_reason' not in allowed_fields
+            record.field_readonly_free_subscription_expiry = 'free_subscription_expiry' not in allowed_fields
+            record.field_readonly_payment_alert_message = 'payment_alert_message' not in allowed_fields
+
     
     # Boolean field to mark if server has been shutdown for this subscription
     is_server_shutdown = fields.Boolean(
@@ -255,6 +393,14 @@ class SaleOrder(models.Model):
         compute='_compute_payment_alert_message',
         sanitize=False,
         help='Alert message with hover tooltip showing payment details'
+    )
+    
+    # Searchable text version of alert for custom filters
+    alert_text = fields.Char(
+        string='Alert Text',
+        compute='_compute_payment_alert_message',
+        store=True,
+        help='Text version of the alert for searching/filtering'
     )
     
     payment_status_display = fields.Char(
@@ -793,6 +939,9 @@ class SaleOrder(models.Model):
                 order.payment_alert_message = Markup(
                     f'<span title="{tooltip_text}" style="cursor: help; white-space: nowrap;">{visible_text}</span>'
                 )
+            
+            # Set searchable alert text (stored field for filtering)
+            order.alert_text = f"{status_emoji} {status_msg}".strip()
 
     @api.depends('subscription_payment_status')
     def _compute_payment_status_display(self):

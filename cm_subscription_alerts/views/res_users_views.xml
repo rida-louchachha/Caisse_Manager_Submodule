@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Extend User Form to Add Subscription Access Tab -->
+    <record id="view_users_form_subscription_access" model="ir.ui.view">
+        <field name="name">res.users.form.subscription.access</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <!-- Add Subscription Access page after Preferences -->
+            <xpath expr="//page[@name='preferences']" position="after">
+                <page name="subscription_access" string="Subscription Access"
+                      groups="cm_subscription_alerts.group_subscription_limited_access,base.group_system">
+                    <group string="Subscription Field Permissions">
+                        <field name="subscription_allowed_fields" 
+                               widget="many2many_tags"
+                               placeholder="Select fields this user can edit..."
+                               options="{'no_create': True, 'no_create_edit': True}"/>
+                    </group>
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>ℹ️ How This Works:</strong>
+                            <ul>
+                                <li>Users in the <strong>Subscription Limited Access</strong> group can only view subscriptions by default.</li>
+                                <li>Add fields above to allow this user to edit those specific fields.</li>
+                                <li>Administrators and Sales Managers bypass these restrictions.</li>
+                                <li>Configure available fields in <strong>Subscriptions → Configuration → Subscription Field Access</strong>.</li>
+                            </ul>
+                        </div>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+    
+    <!-- Subscription Field Access List View -->
+    <record id="view_subscription_field_access_list" model="ir.ui.view">
+        <field name="name">subscription.field.access.list</field>
+        <field name="model">subscription.field.access</field>
+        <field name="arch" type="xml">
+            <list string="Subscription Field Access" editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="field_id" 
+                       string="Sale Order Field"
+                       required="1"
+                       options="{'no_create': True, 'no_create_edit': True}"/>
+                <field name="field_description" string="Label" readonly="1"/>
+                <field name="field_type" string="Type" readonly="1" optional="show"/>
+                <field name="group_id" string="Group" optional="hide"/>
+                <field name="perm_read" string="Read"/>
+                <field name="perm_write" string="Write"/>
+                <field name="perm_create" string="Create"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- Subscription Field Access Form View -->
+    <record id="view_subscription_field_access_form" model="ir.ui.view">
+        <field name="name">subscription.field.access.form</field>
+        <field name="model">subscription.field.access</field>
+        <field name="arch" type="xml">
+            <form string="Subscription Field Access">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="display_name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Field Selection">
+                            <field name="field_id" 
+                                   options="{'no_create': True, 'no_create_edit': True}"
+                                   placeholder="Select a field from Sale Order..."/>
+                            <field name="field_description" readonly="1"/>
+                            <field name="field_type" readonly="1"/>
+                            <field name="field_name" readonly="1"/>
+                        </group>
+                        <group string="Permissions">
+                            <field name="perm_read"/>
+                            <field name="perm_write"/>
+                            <field name="perm_create"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Advanced">
+                            <field name="group_id" 
+                                   options="{'no_create': True}"
+                                   placeholder="Leave empty for all limited access users"/>
+                            <field name="sequence"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Custom Settings">
+                            <field name="name" placeholder="Optional custom label"/>
+                            <field name="description" placeholder="Notes about this field access..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- Search View -->
+    <record id="view_subscription_field_access_search" model="ir.ui.view">
+        <field name="name">subscription.field.access.search</field>
+        <field name="model">subscription.field.access</field>
+        <field name="arch" type="xml">
+            <search string="Subscription Field Access">
+                <field name="field_id"/>
+                <field name="field_name"/>
+                <field name="group_id"/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Write Permission" name="write" domain="[('perm_write', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Security Group" name="group_by_group" context="{'group_by': 'group_id'}"/>
+                    <filter string="Field Type" name="group_by_type" context="{'group_by': 'field_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    
+    <!-- Menu Item for Managing Field Access (under Configuration) -->
+    <record id="action_subscription_field_access" model="ir.actions.act_window">
+        <field name="name">Subscription Field Access</field>
+        <field name="res_model">subscription.field.access</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'active_test': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure which Sale Order fields can be edited by limited access users
+            </p>
+            <p>
+                Click <strong>New</strong> to add a field from the Sale Order model.<br/>
+                Each field can have read, write, and create permissions.<br/>
+                Assign these fields to users in their profile's <strong>Subscription Access</strong> tab.
+            </p>
+        </field>
+    </record>
+    
+    <menuitem id="menu_subscription_field_access"
+              name="Subscription Field Access"
+              parent="sale_subscription.menu_sale_subscription_config"
+              action="action_subscription_field_access"
+              sequence="50"
+              groups="base.group_system"/>
+</odoo>

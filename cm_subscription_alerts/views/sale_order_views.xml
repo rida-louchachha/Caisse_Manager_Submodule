@@ -27,94 +27,176 @@
         <field name="inherit_id" ref="sale_subscription.sale_subscription_view_tree"/>
         <field name="priority">200</field>
         <field name="arch" type="xml">
-            <!-- Enable multi-edit: click opens form, but selecting rows allows bulk edit -->
-            <xpath expr="//list" position="attributes">
-                <attribute name="multi_edit">1</attribute>
-            </xpath>
-            
-            <!-- Add Refresh All button to header -->
-            <xpath expr="//list" position="inside">
-                <header>
-                    <button name="action_refresh_all_button" 
-                            type="object" 
-                            string="🔄 Refresh All Alerts"
-                            class="btn-primary"/>
-                </header>
-            </xpath>
-            
-            <!-- Add payment status after subscription_state field -->
-            <xpath expr="//field[@name='subscription_state']" position="after">
-                <!-- Client Phone - Hidden by default -->
-                <field name="client_phone" string="Phone" optional="hide"/>
-                <!-- Payment Status Badge -->
-                <field name="subscription_payment_status" 
-                       string="Payment Status" 
-                       widget="badge"
-                       decoration-success="subscription_payment_status in ('paid', 'in_payment')"
-                       decoration-warning="subscription_payment_status in ('requires_payment', 'pending', 'should_invoice')"
-                       decoration-danger="subscription_payment_status == 'expired'"
-                       optional="show"/>
-                <!-- Next Invoice Date -->
-                <field name="next_invoice_date" string="Next Invoice" optional="show"/>
-                <!-- Last Payment Info -->
-                <field name="last_payment_date" string="Last Invoice Date" optional="show"/>
-                <field name="last_payment_amount" string="Last Amount" optional="hide"/>
-                <!-- Totals with sum aggregation -->
-                <field name="total_invoiced_amount" string="Total Invoiced" optional="hide" sum="Total Invoiced"/>
-                <field name="total_paid_amount" string="Total Paid" optional="show" sum="Total Paid"/>
-                <field name="amount_to_pay" string="Amount To Pay" optional="show" sum="Total To Pay"/>
-                <!-- Alerts with hover tooltip - uses help attribute for native browser tooltip -->
-                <field name="payment_alert_message" 
-                       string="Alerts" 
-                       optional="show"/>
-                <!-- Server Shutdown Toggle - Boolean to mark if server is shutdown -->
-                <field name="is_server_shutdown" 
-                       string="Shutdown?" 
-                       widget="boolean_toggle"
-                       optional="show"/>
-                <!-- Client Validation Status - Editable selection with decorations -->
-                <field name="client_info_validated" 
-                       string="Client Validated"
-                       widget="selection"
-                       optional="show"/>
-                <!-- ===== FREE SUBSCRIPTION COLUMNS ===== -->
-                <!-- Free Subscription Toggle -->
-                <field name="is_free_subscription" 
-                       string="🎁 Free"
-                       widget="boolean_toggle"
-                       optional="show"/>
-                <!-- Free Subscription Reason - Only visible when is_free_subscription is True -->
-                <field name="free_subscription_reason" 
-                       string="Free Reason"
-                       widget="badge"
-                       decoration-info="free_subscription_reason in ('influencer', 'partner', 'vip')"
-                       decoration-success="free_subscription_reason == 'promo'"
-                       decoration-muted="free_subscription_reason in ('test', 'other')"
-                       optional="hide"/>
-                <!-- Free Until Date -->
-                <field name="free_subscription_expiry" 
-                       string="Free Until"
-                       optional="hide"/>
-                <!-- Free Days Remaining -->
-                <field name="free_days_remaining" 
-                       string="Free Days Left"
-                       decoration-danger="free_days_remaining &lt;= 7 and free_days_remaining &gt; 0"
-                       decoration-warning="free_days_remaining &lt;= 30 and free_days_remaining &gt; 7"
-                       optional="hide"/>
-            </xpath>
-            
-            <!-- Add hidden fields for status logic and tooltip data -->
-            <xpath expr="//list" position="inside">
-                <field name="has_pending_invoice" column_invisible="1"/>
-                <field name="has_missing_invoice" column_invisible="1"/>
-                <field name="is_payment_window_active" column_invisible="1"/>
-                <field name="invoice_created_for_period" column_invisible="1"/>
-                <field name="is_cm_subscription" column_invisible="1"/>
-                <field name="payment_info_tooltip" column_invisible="1"/>
-                <field name="free_subscription_expired" column_invisible="1"/>
+            <!-- Replace entire list content to control exact field order -->
+            <xpath expr="//list" position="replace">
+                <list string="Subscriptions" multi_edit="1" sample="1"
+                      decoration-muted="subscription_state in ('6_churn', '5_renewed')"
+                      decoration-info="subscription_state == '2_renewal'"
+                      decoration-warning="subscription_state == '4_paused'"
+                      default_order="next_invoice_date asc">
+                    
+                    <!-- Header with Refresh Button -->
+                    <header>
+                        <button name="action_refresh_all_button" 
+                                type="object" 
+                                string="🔄 Refresh All Alerts"
+                                class="btn-primary"/>
+                    </header>
+                    
+                    <!-- ========== FIELDS SHOWN BY DEFAULT (in order) ========== -->
+                    
+                    <!-- 1. Customer (partner_id) -->
+                    <field name="partner_id" optional="show"/>
+                    
+                    <!-- 2. City (city_ma_id from ma_regional_access) -->
+                    <field name="city_ma_id" string="City" optional="show"/>
+                    
+                    <!-- Optional: Region (appears after City when enabled) -->
+                    <field name="region_id" string="Region" optional="hide"/>
+                    
+                    <!-- Optional: Phone (appears after Region when enabled) -->
+                    <field name="client_phone" string="Phone" optional="hide"/>
+                    
+                    <!-- 3. Payment Status -->
+                    <field name="subscription_payment_status" 
+                           string="Payment Status" 
+                           widget="badge"
+                           decoration-success="subscription_payment_status in ('paid', 'in_payment', 'free')"
+                           decoration-warning="subscription_payment_status in ('requires_payment', 'pending', 'should_invoice')"
+                           decoration-danger="subscription_payment_status == 'expired'"
+                           optional="show"/>
+                    
+                    <!-- 4. Total Paid -->
+                    <field name="total_paid_amount" string="Total Paid" optional="show" sum="Total Paid"/>
+                    
+                    <!-- 5. Amount To Pay -->
+                    <field name="amount_to_pay" string="Amount To Pay" optional="show" sum="Total To Pay"/>
+                    
+                    <!-- 6. Last Invoice Date -->
+                    <field name="last_payment_date" string="Last Invoice Date" optional="show"/>
+                    
+                    <!-- 7. Next Invoice Date -->
+                    <field name="next_invoice_date" string="Next Invoice" optional="show"/>
+                    
+                    <!-- 8. System Versions (from ma_regional_access) -->
+                    <field name="system_version_ids" 
+                           string="System Versions" 
+                           widget="many2many_tags"
+                           options="{'color_field': 'color'}"
+                           optional="show"/>
+                    
+                    <!-- 9. ========== OPTIONAL HIDDEN FIELDS (will appear before Alerts when enabled) ========== -->
+                    
+                    <!-- name (Order Reference) -->
+                    <field name="name" optional="hide" readonly="1"/>
+                    
+                    <!-- user_id (Salesperson) -->
+                    <field name="user_id" optional="hide" widget="many2one_avatar_user"/>
+                    
+                    <!-- recurring_monthly (Monetary) -->
+                    <field name="recurring_monthly" string="Recurring" optional="hide"/>
+                    
+                    <!-- plan_id -->
+                    <field name="plan_id" optional="hide"/>
+                    
+                    <!-- company_id -->
+                    <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                    
+                    <!-- activity_ids -->
+                    <field name="activity_ids" widget="list_activity" optional="hide"/>
+                    
+                    <!-- subscription_state (Subscription Status) -->
+                    <field name="subscription_state" 
+                           string="Status" 
+                           widget="badge"
+                           decoration-success="subscription_state == '3_progress'"
+                           decoration-info="subscription_state == '2_renewal'"
+                           decoration-warning="subscription_state == '4_paused'"
+                           decoration-muted="subscription_state in ('5_renewed', '6_churn')"
+                           optional="hide"/>
+                    
+                    <!-- Last Amount -->
+                    <field name="last_payment_amount" string="Last Amount" optional="hide"/>
+                    
+                    <!-- Total Invoiced -->
+                    <field name="total_invoiced_amount" string="Total Invoiced" optional="hide" sum="Total Invoiced"/>
+                    
+                    <!-- Server Shutdown Toggle (restricted field) -->
+                    <field name="is_server_shutdown" 
+                           string="Shutdown?"
+                           widget="boolean_toggle"
+                           readonly="field_readonly_is_server_shutdown"
+                           optional="hide"/>
+                    
+                    <!-- 10. ========== ALERTS (always near end) ========== -->
+                    <field name="payment_alert_message" 
+                           string="Alerts" 
+                           readonly="field_readonly_payment_alert_message"
+                           optional="show"/>
+                    
+                    <!-- 11. Client Validated (restricted field) -->
+                    <field name="client_info_validated" 
+                           string="Client Validated"
+                           widget="selection"
+                           readonly="field_readonly_client_info_validated"
+                           optional="show"/>
+                    
+                    <!-- ========== FREE SUBSCRIPTION FIELDS (after Client Validated, restricted) ========== -->
+                    
+                    <!-- Free Subscription Toggle (restricted field) -->
+                    <field name="is_free_subscription" 
+                           string="🎁 Free"
+                           widget="boolean_toggle"
+                           readonly="field_readonly_is_free_subscription"
+                           optional="hide"/>
+                    
+                    <!-- Free Subscription Reason (restricted field) -->
+                    <field name="free_subscription_reason" 
+                           string="Free Reason"
+                           widget="badge"
+                           decoration-info="free_subscription_reason in ('influencer', 'partner', 'vip')"
+                           decoration-success="free_subscription_reason == 'promo'"
+                           decoration-muted="free_subscription_reason in ('test', 'other')"
+                           readonly="field_readonly_free_subscription_reason"
+                           optional="hide"/>
+                    
+                    <!-- Free Until Date (restricted field) -->
+                    <field name="free_subscription_expiry" 
+                           string="Free Until"
+                           readonly="field_readonly_free_subscription_expiry"
+                           optional="hide"/>
+                    
+                    <!-- Free Days Remaining -->
+                    <field name="free_days_remaining" 
+                           string="Free Days Left"
+                           decoration-danger="free_days_remaining &lt;= 7 and free_days_remaining &gt; 0"
+                           decoration-warning="free_days_remaining &lt;= 30 and free_days_remaining &gt; 7"
+                           optional="hide"/>
+                    
+                    <!-- ========== INVISIBLE FIELDS FOR LOGIC ========== -->
+                    <field name="has_pending_invoice" column_invisible="1"/>
+                    <field name="has_missing_invoice" column_invisible="1"/>
+                    <field name="is_payment_window_active" column_invisible="1"/>
+                    <field name="invoice_created_for_period" column_invisible="1"/>
+                    <field name="is_cm_subscription" column_invisible="1"/>
+                    <field name="payment_info_tooltip" column_invisible="1"/>
+                    <field name="free_subscription_expired" column_invisible="1"/>
+                    <field name="state" column_invisible="1"/>
+                    <field name="pricelist_id" column_invisible="1"/>
+                    <field name="currency_id" column_invisible="1"/>
+                    
+                    <!-- Field Access Control (invisible) -->
+                    <field name="field_readonly_is_server_shutdown" column_invisible="1"/>
+                    <field name="field_readonly_client_info_validated" column_invisible="1"/>
+                    <field name="field_readonly_is_free_subscription" column_invisible="1"/>
+                    <field name="field_readonly_free_subscription_reason" column_invisible="1"/>
+                    <field name="field_readonly_free_subscription_expiry" column_invisible="1"/>
+                    <field name="field_readonly_payment_alert_message" column_invisible="1"/>
+                </list>
             </xpath>
         </field>
     </record>
+
 
     <!-- Also extend the base sale.view_order_tree for non-subscription orders -->
     <record id="sale_order_view_list_inherit_cm_base" model="ir.ui.view">
@@ -235,6 +317,14 @@
         <field name="priority">100</field>
         <field name="arch" type="xml">
             <xpath expr="//search" position="inside">
+                <!-- ===== SEARCHABLE FIELDS FOR CUSTOM FILTER ===== -->
+                <!-- These fields will appear in the "Select a field" dropdown -->
+                <field name="alert_text" string="Alerts"/>
+                <field name="subscription_payment_status" string="Payment Status"/>
+                <field name="is_free_subscription" string="Is Free Subscription"/>
+                <field name="free_subscription_reason" string="Free Reason"/>
+                <field name="is_server_shutdown" string="Server Shutdown"/>
+                <field name="is_cm_subscription" string="Is Subscription"/>
                 <separator/>
                 <filter name="filter_cm_subscriptions" 
                         string="📋 Subscriptions Only" 
@@ -258,6 +348,17 @@
                 <filter name="filter_should_invoice" 
                         string="📝 Should Invoice" 
                         domain="[('subscription_payment_status', '=', 'should_invoice')]"/>
+                <filter name="filter_free_status" 
+                        string="🎁 Free Status" 
+                        domain="[('subscription_payment_status', '=', 'free')]"/>
+                <separator/>
+                <!-- ===== SHUTDOWN ALERT FILTERS ===== -->
+                <filter name="filter_should_shutdown" 
+                        string="⚠️ System Should Shutdown" 
+                        domain="[('subscription_payment_status', 'in', ['pending', 'expired', 'requires_payment']), ('is_server_shutdown', '=', False)]"/>
+                <filter name="filter_already_shutdown" 
+                        string="🔴 Server Already Shutdown" 
+                        domain="[('is_server_shutdown', '=', True)]"/>
                 <separator/>
                 <!-- ===== FREE SUBSCRIPTION FILTERS ===== -->
                 <filter name="filter_free_subscriptions" 
