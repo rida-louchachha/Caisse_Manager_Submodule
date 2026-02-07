@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_revenue_analysis_user,cm.revenue.analysis.user,model_cm_revenue_analysis,sales_team.group_sale_salesman,1,0,0,0
+access_revenue_analysis_manager,cm.revenue.analysis.manager,model_cm_revenue_analysis,sales_team.group_sale_manager,1,1,1,1
+access_partner_classification_wizard,partner.classification.wizard,model_partner_classification_wizard,sales_team.group_sale_manager,1,1,1,1
+access_partner_resume_wizard,partner.resume.wizard,model_partner_resume_wizard,sales_team.group_sale_salesman,1,1,1,1

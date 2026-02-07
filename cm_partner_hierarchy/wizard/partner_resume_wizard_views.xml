@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Partner Resume Wizard Form View -->
+    <!-- ============================================= -->
+    <record id="view_partner_resume_wizard_form" model="ir.ui.view">
+        <field name="name">partner.resume.wizard.form</field>
+        <field name="model">partner.resume.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Partner Resume">
+                <sheet>
+                    <!-- Header with partner info -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="partner_id" readonly="1" options="{'no_open': True}"/>
+                        </h1>
+                        <field name="partner_level" widget="badge"
+                               decoration-info="partner_level == 'client'"
+                               decoration-success="partner_level == 'franchise'"
+                               decoration-warning="partner_level == 'company'"/>
+                    </div>
+                    
+                    <!-- Hierarchy Info -->
+                    <group>
+                        <group string="Hierarchy">
+                            <field name="client_id" invisible="partner_level == 'client'"/>
+                            <field name="franchise_id" invisible="partner_level in ('client', 'franchise')"/>
+                        </group>
+                        <group string="Location">
+                            <field name="city_ma_id"/>
+                            <field name="region_id"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Statistics Cards -->
+                    <group string="📊 Statistics">
+                        <group>
+                            <field name="total_sales"/>
+                            <field name="total_subscriptions"/>
+                            <field name="total_revenue"/>
+                        </group>
+                        <group>
+                            <field name="subscription_revenue"/>
+                            <field name="total_invoiced"/>
+                            <field name="total_paid"/>
+                            <field name="amount_to_pay" decoration-danger="amount_to_pay > 0"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <!-- Child Partners Tab (for Clients/Franchises) -->
+                        <page string="🏢 Child Partners" name="children" 
+                              invisible="partner_level not in ('client', 'franchise')">
+                            <field name="child_partner_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="partner_level" widget="badge"/>
+                                    <field name="city_ma_id"/>
+                                    <field name="region_id"/>
+                                    <field name="phone"/>
+                                    <field name="email"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Sales Orders Tab -->
+                        <page string="🛒 Sales Orders" name="sales">
+                            <field name="sale_order_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="date_order"/>
+                                    <field name="amount_total"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Subscriptions Tab -->
+                        <page string="📅 Subscriptions" name="subscriptions">
+                            <field name="subscription_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="partner_id"/>
+                                    <field name="subscription_state" widget="badge"/>
+                                    <field name="next_invoice_date"/>
+                                    <field name="recurring_total"/>
+                                    <field name="amount_to_pay" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Materials (Products from Sales) -->
+                        <page string="🔧 Materials" name="materials">
+                            <field name="material_line_ids" nolabel="1">
+                                <list>
+                                    <field name="order_id"/>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Abonnement Products (from Subscriptions) -->
+                        <page string="📦 Abonnement Products" name="abonnement">
+                            <field name="subscription_line_ids" nolabel="1">
+                                <list>
+                                    <field name="order_id"/>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_unit"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Server Action to Open Resume from Partner -->
+    <!-- ============================================= -->
+    <record id="action_open_partner_resume" model="ir.actions.server">
+        <field name="name">View Resume</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">form,list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    partner = records[0]
+    wizard = env['partner.resume.wizard'].create({'partner_id': partner.id})
+    action = {
+        'type': 'ir.actions.act_window',
+        'name': f'Resume: {partner.name}',
+        'res_model': 'partner.resume.wizard',
+        'res_id': wizard.id,
+        'view_mode': 'form',
+        'target': 'new',
+    }
+        </field>
+    </record>
+</odoo>

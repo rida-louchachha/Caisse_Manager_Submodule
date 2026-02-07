@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Partner Classification Wizard Form -->
+    <record id="view_partner_classification_wizard_form" model="ir.ui.view">
+        <field name="name">partner.classification.wizard.form</field>
+        <field name="model">partner.classification.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Partner Classification Wizard">
+                <group>
+                    <group string="Configuration">
+                        <field name="mode" widget="radio"/>
+                        <field name="partner_ids" 
+                               widget="many2many_tags"
+                               invisible="mode != 'selected'"
+                               domain="[('partner_level', '=', False)]"
+                               placeholder="Select partners to classify..."/>
+                    </group>
+                    <group string="Preview - Partners to be assigned">
+                        <field name="preview_total" string="Total Partners"/>
+                        <field name="preview_client_count" string="→ As Clients"/>
+                        <field name="preview_franchise_count" string="→ As Franchises"/>
+                        <field name="preview_company_count" string="→ As Companies"/>
+                    </group>
+                </group>
+                <group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>ℹ️ Classification Logic:</strong>
+                        <ul>
+                            <li>Partners <strong>without parent</strong> → <strong>Client</strong></li>
+                            <li>Partners whose parent is a <strong>Client</strong> → <strong>Franchise</strong></li>
+                            <li>Partners whose parent is a <strong>Franchise</strong> → <strong>Company</strong></li>
+                        </ul>
+                        <p>Only partners without a level assigned will be processed.</p>
+                    </div>
+                </group>
+                <footer>
+                    <button name="action_classify" string="Apply Classification" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_partner_classification_wizard" model="ir.actions.act_window">
+        <field name="name">Classify Partners</field>
+        <field name="res_model">partner.classification.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Menu under Contacts Configuration -->
+    <menuitem id="menu_partner_classification_wizard"
+              name="Classify Partner Levels"
+              parent="contacts.res_partner_menu_config"
+              action="action_partner_classification_wizard"
+              sequence="50"/>
+</odoo>

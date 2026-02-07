@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Revenue Analysis List View -->
+    <!-- ============================================= -->
+    <!-- ============================================= -->
+    <!-- Revenue Analysis Form View (Resume) -->
+    <!-- ============================================= -->
+    <record id="view_revenue_analysis_form" model="ir.ui.view">
+        <field name="name">cm.revenue.analysis.form</field>
+        <field name="model">cm.revenue.analysis</field>
+        <field name="arch" type="xml">
+            <form string="Partner Resume" create="0" edit="0" delete="0">
+                <sheet>
+                    <!-- Header with partner info -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="partner_id" readonly="1" options="{'no_open': True}"/>
+                        </h1>
+                        <field name="partner_level" widget="badge"
+                               decoration-info="partner_level == 'client'"
+                               decoration-success="partner_level == 'franchise'"
+                               decoration-warning="partner_level == 'company'"/>
+                    </div>
+                    
+                    <!-- Hierarchy Info -->
+                    <group>
+                        <group string="Hierarchy">
+                            <field name="client_id" invisible="partner_level == 'client'"/>
+                            <field name="franchise_id" invisible="partner_level in ('client', 'franchise')"/>
+                        </group>
+                        <group string="Location">
+                            <field name="city_ma_id"/>
+                            <field name="region_id"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Statistics Cards (Using fields directly from analysis) -->
+                    <group string="📊 Statistics (Current View)">
+                        <group>
+                            <field name="total_orders"/>
+                            <field name="subscription_orders"/>
+                            <field name="total_revenue"/>
+                            <field name="subscription_revenue"/>
+                        </group>
+                        <group>
+                            <field name="total_invoiced"/>
+                            <field name="total_paid"/>
+                            <field name="amount_to_pay" decoration-danger="amount_to_pay > 0"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <!-- Child Partners per Hierarchy -->
+                        <page string="🏢 Child Partners" name="children" 
+                              invisible="partner_level not in ('client', 'franchise')">
+                            <field name="child_partner_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="partner_level" widget="badge"/>
+                                    <field name="city_ma_id"/>
+                                    <field name="region_id"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Sales Orders -->
+                        <page string="🛒 Sales Orders" name="sales">
+                            <field name="sale_order_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="date_order"/>
+                                    <field name="amount_total"/>
+                                    <field name="state" widget="badge"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Subscriptions -->
+                        <page string="📅 Subscriptions" name="subscriptions">
+                            <field name="subscription_ids" nolabel="1">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="next_invoice_date"/>
+                                    <field name="recurring_total"/>
+                                    <field name="amount_to_pay" optional="show"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Materials -->
+                        <page string="🔧 Materials" name="materials">
+                            <field name="material_line_ids" nolabel="1">
+                                <list>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                        </page>
+                        
+                        <!-- Abonnement Products -->
+                        <page string="📦 Abonnement Products" name="abonnement">
+                            <field name="subscription_line_ids" nolabel="1">
+                                <list>
+                                    <field name="product_id"/>
+                                    <field name="product_uom_qty"/>
+                                    <field name="price_subtotal"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Revenue Analysis List View -->
+    <!-- ============================================= -->
+    <record id="view_revenue_analysis_list" model="ir.ui.view">
+        <field name="name">cm.revenue.analysis.list</field>
+        <field name="model">cm.revenue.analysis</field>
+        <field name="arch" type="xml">
+            <list string="Revenue Analysis" default_order="total_revenue desc">
+                <field name="client_id" string="Client"/>
+                <field name="franchise_id" string="Franchise" optional="show"/>
+                <field name="partner_id" string="Company/Store" optional="show"/>
+                <field name="city_ma_id" string="City" optional="hide"/>
+                <field name="region_id" string="Region" optional="hide"/>
+                <field name="year" optional="hide"/>
+                <field name="month" optional="hide"/>
+                <field name="total_orders" string="# Orders" sum="Total"/>
+                <field name="total_revenue" string="Total Revenue" sum="Total"/>
+                <field name="subscription_revenue" string="Subscription Rev." sum="Total"/>
+                <field name="non_subscription_revenue" string="Non-Sub Rev." sum="Total" optional="hide"/>
+                <!-- Subscription Payment Tracking -->
+                <field name="total_invoiced" string="Total Invoiced" sum="Total" optional="show"/>
+                <field name="total_paid" string="Total Paid" sum="Total" optional="show"/>
+                <field name="amount_to_pay" string="Amount To Pay" sum="Total" optional="show"
+                       decoration-danger="amount_to_pay > 0"/>
+                <field name="currency_id" column_invisible="1"/>
+                <button name="action_open_franchise_resume" string="Franchise" type="object" icon="fa-building" 
+                        invisible="not franchise_id" title="View Franchise Resume" class="btn-secondary"/>
+                <button name="action_open_client_resume" string="Client" type="object" icon="fa-user-circle" 
+                        invisible="not client_id" title="View Client Resume" class="btn-secondary"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Revenue Analysis Pivot View -->
+    <!-- ============================================= -->
+    <record id="view_revenue_analysis_pivot" model="ir.ui.view">
+        <field name="name">cm.revenue.analysis.pivot</field>
+        <field name="model">cm.revenue.analysis</field>
+        <field name="arch" type="xml">
+            <pivot string="Revenue Analysis">
+                <field name="client_id" type="row"/>
+                <field name="total_revenue" type="measure"/>
+                <field name="subscription_revenue" type="measure"/>
+                <field name="non_subscription_revenue" type="measure"/>
+                <field name="total_invoiced" type="measure"/>
+                <field name="total_paid" type="measure"/>
+                <field name="amount_to_pay" type="measure"/>
+                <field name="total_orders" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Revenue Analysis Graph View -->
+    <!-- ============================================= -->
+    <record id="view_revenue_analysis_graph" model="ir.ui.view">
+        <field name="name">cm.revenue.analysis.graph</field>
+        <field name="model">cm.revenue.analysis</field>
+        <field name="arch" type="xml">
+            <graph string="Revenue Analysis" type="bar">
+                <field name="client_id"/>
+                <field name="total_revenue" type="measure"/>
+                <field name="subscription_revenue" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Revenue Analysis Search View -->
+    <!-- ============================================= -->
+    <record id="view_revenue_analysis_search" model="ir.ui.view">
+        <field name="name">cm.revenue.analysis.search</field>
+        <field name="model">cm.revenue.analysis</field>
+        <field name="arch" type="xml">
+            <search string="Revenue Analysis">
+                <field name="client_id"/>
+                <field name="franchise_id"/>
+                <field name="partner_id" string="Company/Store"/>
+                <field name="city_ma_id" string="City"/>
+                <field name="region_id" string="Region"/>
+                
+                <separator/>
+                <filter string="Has Subscription Revenue" name="has_subscription" 
+                        domain="[('subscription_revenue', '&gt;', 0)]"/>
+                <filter string="Has Non-Subscription Revenue" name="has_non_subscription" 
+                        domain="[('non_subscription_revenue', '&gt;', 0)]"/>
+                
+                <separator/>
+                <filter string="2026" name="year_2026" domain="[('year', '=', '2026')]"/>
+                <filter string="2025" name="year_2025" domain="[('year', '=', '2025')]"/>
+                <filter string="2024" name="year_2024" domain="[('year', '=', '2024')]"/>
+                
+                <group expand="1" string="Group By">
+                    <filter string="Client" name="group_by_client" context="{'group_by': 'client_id'}"/>
+                    <filter string="Franchise" name="group_by_franchise" context="{'group_by': 'franchise_id'}"/>
+                    <filter string="Company/Store" name="group_by_partner" context="{'group_by': 'partner_id'}"/>
+                    <separator/>
+                    <filter string="City" name="group_by_city" context="{'group_by': 'city_ma_id'}"/>
+                    <filter string="Region" name="group_by_region" context="{'group_by': 'region_id'}"/>
+                    <filter string="Country" name="group_by_country" context="{'group_by': 'country_id'}"/>
+                    <separator/>
+                    <filter string="Year" name="group_by_year" context="{'group_by': 'year'}"/>
+                    <filter string="Month" name="group_by_month" context="{'group_by': 'month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Revenue Analysis Action -->
+    <!-- ============================================= -->
+    <record id="action_revenue_analysis" model="ir.actions.act_window">
+        <field name="name">Revenue Analysis</field>
+        <field name="res_model">cm.revenue.analysis</field>
+        <field name="view_mode">list,pivot,graph</field>
+        <field name="search_view_id" ref="view_revenue_analysis_search"/>
+        <field name="context">{'search_default_group_by_client': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Revenue analysis by Client, Franchise, and Company
+            </p>
+            <p>
+                View total revenue split into subscription and non-subscription sales.<br/>
+                Group by Client, Franchise, Company, City, or Region.
+            </p>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Menu Items -->
+    <!-- ============================================= -->
+    <menuitem id="menu_revenue_analysis"
+              name="Revenue Analysis"
+              parent="sale_subscription.menu_sale_subscription"
+              action="action_partner_revenue_hierarchy"
+              sequence="100"/>
+</odoo>

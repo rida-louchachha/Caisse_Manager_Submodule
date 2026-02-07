@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Sale Order List View Extension -->
+    <!-- ============================================= -->
+    <record id="view_sale_order_list_hierarchy" model="ir.ui.view">
+        <field name="name">sale.order.list.hierarchy</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="subscription_client_id" string="Client" optional="hide"/>
+                <field name="subscription_franchise_id" string="Franchise" optional="hide"/>
+                <field name="partner_level" string="Level" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Sale Order Form View Extension -->
+    <!-- ============================================= -->
+    <record id="view_sale_order_form_hierarchy" model="ir.ui.view">
+        <field name="name">sale.order.form.hierarchy</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="subscription_client_id" string="Client" readonly="1" 
+                       invisible="not subscription_client_id"/>
+                <field name="subscription_franchise_id" string="Franchise" readonly="1"
+                       invisible="not subscription_franchise_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Sale Order Search View Extension -->
+    <!-- ============================================= -->
+    <record id="view_sale_order_search_hierarchy" model="ir.ui.view">
+        <field name="name">sale.order.search.hierarchy</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="subscription_client_id" string="Client"/>
+                <field name="subscription_franchise_id" string="Franchise"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter string="Client" name="group_by_client" context="{'group_by': 'subscription_client_id'}"/>
+                <filter string="Franchise" name="group_by_franchise" context="{'group_by': 'subscription_franchise_id'}"/>
+                <filter string="Partner Level" name="group_by_partner_level" context="{'group_by': 'partner_level'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

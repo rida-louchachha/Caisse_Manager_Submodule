@@ -1,0 +1,36 @@
+/**
+ * Styles for Partner Hierarchy Resume buttons on group headers
+ */
+
+/* Resume button on group headers */
+.o_group_header .o_hierarchy_resume_btn {
+    font-size: 0.75rem;
+    padding: 0.15rem 0.5rem;
+    margin-left: 0.5rem;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: white;
+    line-height: 1.2;
+
+    &:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        color: white;
+    }
+
+    i.fa {
+        margin-right: 0.25rem;
+    }
+}
+
+/* Container for the button */
+.o_group_header .o_group_buttons {
+    display: inline-flex;
+    margin-left: 0.5rem;
+}
+
+/* Ensure buttons don't expand group header too much */
+.o_group_header .o_group_name .d-flex {
+    flex-wrap: nowrap;
+    align-items: center;
+}

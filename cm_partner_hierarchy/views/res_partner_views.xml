@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Partner Form View Extension -->
+    <!-- ============================================= -->
+    <record id="view_partner_form_hierarchy" model="ir.ui.view">
+        <field name="name">res.partner.form.hierarchy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <!-- Add partner_level in header area -->
+            <xpath expr="//field[@name='category_id']" position="before">
+                <header>
+                    <button name="%(action_open_partner_resume)d" type="action" 
+                            string="📊 View Resume" class="oe_highlight"
+                             />
+                </header>
+                <field name="partner_level" widget="badge"
+                       decoration-info="partner_level == 'client'"
+                       decoration-success="partner_level == 'franchise'"
+                       decoration-warning="partner_level == 'company'"/>
+            </xpath>
+            
+            <!-- Add hierarchy fields in a new group -->
+            <xpath expr="//page[@name='internal_notes']" position="before">
+                <page name="hierarchy" string="Hierarchy">
+                    <group>
+                        <group string="Partner Classification">
+                            <field name="partner_level"/>
+                            <field name="hierarchy_client_id" readonly="1"/>
+                            <field name="hierarchy_franchise_id" readonly="1"/>
+                        </group>
+                        <group string="Statistics" invisible="partner_level not in ('client', 'franchise')">
+                            <field name="franchise_count" invisible="partner_level != 'client'"/>
+                            <field name="company_count"/>
+                        </group>
+                    </group>
+                    
+                    <!-- Show child franchises for clients -->
+                    <group string="Franchises" invisible="partner_level != 'client'">
+                        <field name="child_franchise_ids" nolabel="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="city"/>
+                                <field name="company_count" string="# Companies"/>
+                            </list>
+                        </field>
+                    </group>
+                    
+                    <!-- Show child companies for franchises -->
+                    <group string="Companies / Stores" invisible="partner_level != 'franchise'">
+                        <field name="child_company_ids" nolabel="1">
+                            <list>
+                                <field name="name"/>
+                                <field name="city"/>
+                                <field name="state_id" string="Region"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Partner List View Extension -->
+    <!-- ============================================= -->
+    <record id="view_partner_list_hierarchy" model="ir.ui.view">
+        <field name="name">res.partner.list.hierarchy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_tree"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="inside">
+                <field name="partner_level" 
+                       widget="badge"
+                       decoration-info="partner_level == 'client'"
+                       decoration-success="partner_level == 'franchise'"
+                       decoration-warning="partner_level == 'company'"
+                       optional="show"/>
+                <field name="hierarchy_client_id" string="Client" optional="hide"/>
+                <field name="hierarchy_franchise_id" string="Franchise" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Partner Search View Extension -->
+    <!-- ============================================= -->
+    <record id="view_partner_search_hierarchy" model="ir.ui.view">
+        <field name="name">res.partner.search.hierarchy</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <separator/>
+                <filter string="Clients" name="filter_client" domain="[('partner_level', '=', 'client')]"/>
+                <filter string="Franchises" name="filter_franchise" domain="[('partner_level', '=', 'franchise')]"/>
+                <filter string="Companies" name="filter_company" domain="[('partner_level', '=', 'company')]"/>
+                <separator/>
+            </xpath>
+            
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="hierarchy_client_id" string="Client"/>
+                <field name="hierarchy_franchise_id" string="Franchise"/>
+            </xpath>
+            
+            <xpath expr="//group" position="inside">
+                <filter string="Partner Level" name="group_by_level" context="{'group_by': 'partner_level'}"/>
+                <filter string="Client" name="group_by_client" context="{'group_by': 'hierarchy_client_id'}"/>
+                <filter string="Franchise" name="group_by_franchise" context="{'group_by': 'hierarchy_franchise_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Clients Action (Filtered View) -->
+    <!-- ============================================= -->
+    <record id="action_partner_clients" model="ir.actions.act_window">
+        <field name="name">Clients</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('partner_level', '=', 'client')]</field>
+        <field name="context">{'default_partner_level': 'client'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first client
+            </p>
+            <p>
+                Clients are top-level commercial entities that own franchises and companies.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_partner_franchises" model="ir.actions.act_window">
+        <field name="name">Franchises</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('partner_level', '=', 'franchise')]</field>
+        <field name="context">{'default_partner_level': 'franchise'}</field>
+    </record>
+
+    <record id="action_partner_companies" model="ir.actions.act_window">
+        <field name="name">Companies / Stores</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('partner_level', '=', 'company')]</field>
+        <field name="context">{'default_partner_level': 'company'}</field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Menu Items -->
+    <!-- ============================================= -->
+    <menuitem id="menu_partner_hierarchy_root"
+              name="Partner Hierarchy"
+              parent="contacts.menu_contacts"
+              sequence="5"/>
+
+    <menuitem id="menu_partner_clients"
+              name="Clients"
+              parent="menu_partner_hierarchy_root"
+              action="action_partner_clients"
+              sequence="10"/>
+
+    <menuitem id="menu_partner_franchises"
+              name="Franchises"
+              parent="menu_partner_hierarchy_root"
+              action="action_partner_franchises"
+              sequence="20"/>
+
+    <menuitem id="menu_partner_companies"
+              name="Companies / Stores"
+              parent="menu_partner_hierarchy_root"
+              action="action_partner_companies"
+              sequence="30"/>
+</odoo>

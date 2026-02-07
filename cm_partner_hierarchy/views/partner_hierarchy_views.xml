@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Partner Revenue Hierarchy - Tree View -->
+    <!-- ============================================= -->
+    <record id="view_partner_revenue_hierarchy_tree" model="ir.ui.view">
+        <field name="name">res.partner.revenue.hierarchy.tree</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <!-- Revenue Hierarchy List View -->
+            <list string="Revenue Hierarchy" expand="1" default_order="name">
+                <field name="hierarchy_parent_id" string="Parent"/>
+                
+                
+                <field name="name" string="Partner"/>
+                <field name="partner_level" widget="badge" optional="show"
+                       decoration-info="partner_level == 'client'"
+                       decoration-success="partner_level == 'franchise'"
+                       decoration-warning="partner_level == 'company'"/>
+                <field name="city_ma_id" optional="hide"/>
+                <field name="region_id" optional="hide"/>
+                
+                <!-- Computed Stats - All Optional (show/hide via gear icon) -->
+                <field name="report_total_revenue" string="Total Revenue" sum="Total" optional="show"/>
+                <field name="report_subscription_revenue" string="Subscription Rev." sum="Total" optional="show"/>
+                <field name="report_total_invoiced" string="Total Invoiced" sum="Total" optional="show"/>
+                <field name="report_total_paid" string="Total Paid" sum="Total" optional="show"/>
+                <field name="report_amount_to_pay" string="Amount To Pay" sum="Total" optional="show"
+                       decoration-danger="report_amount_to_pay > 0"/>
+                
+                <field name="currency_id" column_invisible="1"/>
+                
+                <!-- Resume Button (On Every Line) -->
+                <button name="%(action_open_partner_resume)d" string="Resume" type="action" 
+                        icon="fa-list-alt" title="View Resume" class="btn-secondary"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- ============================================= -->
+    <!-- Search View -->
+    <!-- ============================================= -->
+    <record id="view_partner_revenue_hierarchy_search" model="ir.ui.view">
+        <field name="name">res.partner.revenue.hierarchy.search</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <search string="Partner Hierarchy">
+                <field name="name"/>
+                <field name="hierarchy_client_id" string="Client"/>
+                <field name="hierarchy_franchise_id" string="Franchise"/>
+                <field name="city_ma_id" string="City"/>
+                <field name="region_id" string="Region"/>
+                
+                <group expand="1" string="Group By">
+                    <filter string="Client" name="group_by_client" context="{'group_by': 'hierarchy_client_id'}"/>
+                    <filter string="Franchise" name="group_by_franchise" context="{'group_by': 'hierarchy_franchise_id'}"/>
+                    <separator/>
+                    <filter string="City" name="group_by_city" context="{'group_by': 'city_ma_id'}"/>
+                    <filter string="Region" name="group_by_region" context="{'group_by': 'region_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Action -->
+    <!-- ============================================= -->
+    <record id="action_partner_revenue_hierarchy" model="ir.actions.act_window">
+        <field name="name">Revenue Analysis</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="view_partner_revenue_hierarchy_tree"/>
+        <field name="search_view_id" ref="view_partner_revenue_hierarchy_search"/>
+        <field name="domain">[('partner_level', '=', 'company')]</field>
+        <field name="context">{'search_default_group_by_client': 1, 'search_default_group_by_franchise': 1}</field>
+    </record>
+</odoo>

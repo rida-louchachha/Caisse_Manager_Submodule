@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ============================================= -->
+    <!-- Server Action: Auto-Classify Partners -->
+    <!-- ============================================= -->
+    <record id="action_server_auto_classify_partners" model="ir.actions.server">
+        <field name="name">Auto-Classify Partner Levels</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+if records:
+    # Filter to only partners without level
+    to_classify = records.filtered(lambda r: not r.partner_level)
+    if to_classify:
+        counts = env['res.partner'].auto_assign_partner_levels(to_classify.ids)
+        msg = f"Assigned: {counts['client']} clients, {counts['franchise']} franchises, {counts['company']} companies"
+    else:
+        msg = "All selected partners already have a level assigned."
+    action = {
+        'type': 'ir.actions.client',
+        'tag': 'display_notification',
+        'params': {
+            'title': 'Partner Classification',
+            'message': msg,
+            'type': 'success',
+            'sticky': False,
+        }
+    }
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Server Action: Set as Client -->
+    <!-- ============================================= -->
+    <record id="action_server_set_as_client" model="ir.actions.server">
+        <field name="name">Set as Client</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'partner_level': 'client'})
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Server Action: Set as Franchise -->
+    <!-- ============================================= -->
+    <record id="action_server_set_as_franchise" model="ir.actions.server">
+        <field name="name">Set as Franchise</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'partner_level': 'franchise'})
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Server Action: Set as Company/Store -->
+    <!-- ============================================= -->
+    <record id="action_server_set_as_company" model="ir.actions.server">
+        <field name="name">Set as Company/Store</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+records.write({'partner_level': 'company'})
+        </field>
+    </record>
+
+    <!-- ============================================= -->
+    <!-- Scheduled Action: Recompute Partner Revenue -->
+    <!-- ============================================= -->
+    <record id="ir_cron_recompute_partner_revenue" model="ir.cron">
+        <field name="name">Recompute Partner Hierarchy Revenue</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_recompute_hierarchy_revenue()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+    
+    <!-- ============================================= -->
+    <!-- Server Action: Recompute Revenue (Binding) -->
+    <!-- ============================================= -->
+    <record id="action_server_recompute_revenue" model="ir.actions.server">
+        <field name="name">Recompute Revenue</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+records.action_recompute_revenue()
+        </field>
+    </record>
+</odoo>
