@@ -771,7 +771,7 @@ class SaleOrder(models.Model):
                  'last_payment_date', 'last_payment_partner_id', 'last_payment_amount',
                  'total_invoiced_amount', 'amount_to_pay', 'days_until_next_invoice',
                  'is_free_subscription', 'free_subscription_reason', 'free_subscription_expiry',
-                 'free_days_remaining', 'free_subscription_expired')
+                 'free_days_remaining', 'free_subscription_expired', 'is_server_shutdown')
     def _compute_payment_alert_message(self):
         """Generate HTML alert message with hover tooltip showing payment details"""
         from markupsafe import Markup
@@ -802,8 +802,16 @@ class SaleOrder(models.Model):
             is_shutdown_state = False  # Flag for shutdown alert
             is_free_state = False  # Flag for free subscription
             
+            # ===== SERVER SHUTDOWN OVERRIDE =====
+            # When is_server_shutdown is active, ALWAYS show shutdown alert
+            # regardless of date or payment status
+            if order.is_server_shutdown:
+                is_shutdown_state = True
+                status_msg = "SERVER SHUTDOWN"
+                status_emoji = "🔴"
+                alert_class = "o_already_shutdown"
             # ===== FREE SUBSCRIPTION HANDLING =====
-            if order.is_free_subscription and not order.free_subscription_expired:
+            elif order.is_free_subscription and not order.free_subscription_expired:
                 is_free_state = True
                 reason_label = reason_labels.get(order.free_subscription_reason, '🎁 Free')
                 
@@ -827,16 +835,10 @@ class SaleOrder(models.Model):
             # Check for SHUTDOWN condition: past 15th AND (pending or expired or requires_payment)
             elif is_past_15th and order.subscription_payment_status in ('pending', 'expired', 'requires_payment'):
                 is_shutdown_state = True
-                if order.is_server_shutdown:
-                    # Server is ALREADY shutdown
-                    status_msg = "SERVER SHUTDOWN"
-                    status_emoji = "🔴"
-                    alert_class = "o_already_shutdown"
-                else:
-                    # Server SHOULD be shutdown (not yet marked)
-                    status_msg = "System Should Shutdown"
-                    status_emoji = "⚠️"
-                    alert_class = "o_shutdown_alert"
+                # Server SHOULD be shutdown (not yet marked)
+                status_msg = "System Should Shutdown"
+                status_emoji = "⚠️"
+                alert_class = "o_shutdown_alert"
             elif order.subscription_payment_status == 'expired':
                 status_msg = "EXPIRED - No invoice!"
                 status_emoji = "🔥"
