@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Scheduled Message List View -->
+    <record id="view_whatsapp_scheduled_message_list" model="ir.ui.view">
+        <field name="name">whatsapp.scheduled.message.list</field>
+        <field name="model">whatsapp.scheduled.message</field>
+        <field name="arch" type="xml">
+            <list string="Scheduled Messages">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="schedule_type" widget="badge"
+                       decoration-info="schedule_type == 'early_month'"
+                       decoration-warning="schedule_type == 'late_month'"/>
+                <field name="template_id"/>
+                <field name="auto_run" widget="boolean_toggle"/>
+                <field name="last_run_date"/>
+                <field name="last_run_count"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Scheduled Message Form View -->
+    <record id="view_whatsapp_scheduled_message_form" model="ir.ui.view">
+        <field name="name">whatsapp.scheduled.message.form</field>
+        <field name="model">whatsapp.scheduled.message</field>
+        <field name="arch" type="xml">
+            <form string="Scheduled Message">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_send_now" type="object" class="oe_stat_button" icon="fa-paper-plane">
+                            <span>📤 Send Now</span>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" invisible="active"/>
+                    
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Message Name"/></h1>
+                    </div>
+                    
+                    <group>
+                        <group string="⚙️ Configuration">
+                            <field name="active"/>
+                            <field name="auto_run"/>
+                        </group>
+                        <group string="📅 Schedule">
+                            <field name="schedule_type" widget="radio"/>
+                        </group>
+                    </group>
+                    
+                    <group string="📋 Template">
+                        <field name="template_id" options="{'no_create': True}"/>
+                        <div class="text-muted">
+                            <em>ℹ️ Templates are managed in WhatsApp → Templates</em>
+                        </div>
+                    </group>
+                    
+                    <group string="📊 Statistics" invisible="not last_run_date">
+                        <group>
+                            <field name="last_run_date"/>
+                            <field name="last_run_count"/>
+                        </group>
+                    </group>
+                    
+                    <group>
+                        <div class="alert alert-info" role="alert">
+                            <strong>📅 Schedule Periods:</strong><br/>
+                            • <b>Early Month (1st-15th):</b> Payment reminder - "Please pay your subscription"<br/>
+                            • <b>Late Month (16th-End):</b> Shutdown warning - "System will be shut down"
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_scheduled_messages" model="ir.actions.act_window">
+        <field name="name">📆 Scheduled Messages</field>
+        <field name="res_model">whatsapp.scheduled.message</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create scheduled WhatsApp messages!
+            </p>
+            <p>
+                Configure automatic messages based on payment status and time of month.
+            </p>
+        </field>
+    </record>
+
+    <!-- NOTE: Menu items are centralized in social_channel_views.xml -->
+
+    <!-- Cron Job -->
+    <record id="ir_cron_whatsapp_scheduled_messages" model="ir.cron">
+        <field name="name">WhatsApp: Send Scheduled Messages</field>
+        <field name="model_id" ref="model_whatsapp_scheduled_message"/>
+        <field name="state">code</field>
+        <field name="code">model.run_scheduled_messages()</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

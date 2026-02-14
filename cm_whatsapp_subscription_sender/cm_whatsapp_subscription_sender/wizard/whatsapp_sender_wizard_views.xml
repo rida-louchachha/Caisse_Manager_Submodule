@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_whatsapp_subscription_sender_form" model="ir.ui.view">
+            <field name="name">whatsapp.subscription.sender.form</field>
+            <field name="model">whatsapp.subscription.sender</field>
+            <field name="arch" type="xml">
+                <form string="Send WhatsApp Message">
+                    <sheet>
+                        <!-- Header with recipient count -->
+                        <div class="oe_title mb-4">
+                            <h1>📱 Send WhatsApp Message</h1>
+                            <!-- Show "To X recipients" for bulk mode OR partner name for direct mode -->
+                            <h3 class="text-muted" invisible="sent_count &gt; 0 or failed_client_ids or partner_id">
+                                To <field name="total_count" class="oe_inline"/> recipients
+                            </h3>
+                            <h3 class="text-muted" invisible="sent_count &gt; 0 or failed_client_ids or not partner_id">
+                                To: <field name="partner_id" class="oe_inline" readonly="1" options="{'no_open': True}"/>
+                                (<field name="phone" class="oe_inline" readonly="1"/>)
+                            </h3>
+                        </div>
+                        
+                        <!-- Step 1: Input -->
+                        <div invisible="sent_count &gt; 0 or failed_client_ids">
+                            <group>
+                                <group string="📋 Select Template">
+                                    <field name="template_id" 
+                                           options="{'no_create': True}"
+                                           placeholder="Choose a WhatsApp template"/>
+                                </group>
+                            </group>
+                            
+                            <!-- Template Preview -->
+                            <div invisible="not template_id" class="mb-4">
+                                <div class="p-3 rounded" style="background: #e5ddd5; border-radius: 12px;">
+                                    <div class="p-3 rounded" style="background: #dcf8c6; max-width: 80%; border-radius: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.1);">
+                                        <field name="preview_text" nolabel="1" readonly="1" 
+                                               style="white-space: pre-wrap; font-family: 'Segoe UI', sans-serif;"/>
+                                        <div class="text-end mt-2">
+                                            <small class="text-muted">Preview ✓✓</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="alert alert-info mb-3" role="alert">
+                                <p><strong>ℹ️ Note:</strong> Only approved templates are shown. 
+                                Manage templates in <em>WhatsApp → Templates</em></p>
+                            </div>
+                            
+                            <field name="order_ids" widget="many2many_tags" invisible="1"/>
+                        </div>
+
+                        <!-- Step 2: Results -->
+                        <div invisible="sent_count == 0 and not failed_client_ids">
+                            <div class="alert alert-success mb-3" role="alert" invisible="sent_count == 0">
+                                <h4 class="alert-heading">✅ Success!</h4>
+                                <p>Message sent to <strong><field name="sent_count" readonly="1" class="oe_inline"/></strong> recipients.</p>
+                            </div>
+                            <div class="alert alert-warning mb-3" role="alert" invisible="not failed_client_ids">
+                                <h4 class="alert-heading">⚠️ Some messages failed</h4>
+                                <p>The following recipients did not receive the message:</p>
+                            </div>
+                            <field name="failed_client_ids" readonly="1" invisible="not failed_client_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="phone"/>
+                                    <field name="mobile"/>
+                                </list>
+                            </field>
+                        </div>
+                    </sheet>
+                    
+                    <footer>
+                        <button string="📤 Send Message" name="action_send_whatsapp" type="object" 
+                                class="btn-success btn-lg"
+                                invisible="sent_count &gt; 0 or failed_client_ids"/>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

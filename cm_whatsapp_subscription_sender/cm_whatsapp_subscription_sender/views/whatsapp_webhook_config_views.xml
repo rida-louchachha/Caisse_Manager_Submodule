@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Webhook Config Form View -->
+    <record id="view_whatsapp_webhook_config_form" model="ir.ui.view">
+        <field name="name">whatsapp.webhook.config.form</field>
+        <field name="model">whatsapp.webhook.config</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Webhook Configuration">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_test_connection" type="object" 
+                                class="oe_stat_button" icon="fa-plug">
+                            <span>Test Connection</span>
+                        </button>
+                    </div>
+                    
+                    <group string="Webhook Settings (for Meta Configuration)">
+                        <group>
+                            <field name="callback_url" widget="CopyClipboardChar"/>
+                            <field name="verify_token" widget="CopyClipboardChar"/>
+                        </group>
+                        <group>
+                            <button name="action_regenerate_token" type="object" 
+                                    string="🔄 Regenerate Token" class="btn-secondary"/>
+                        </group>
+                    </group>
+                    
+                    <div class="alert alert-info" role="alert">
+                        <h5>📋 Meta Configuration Steps:</h5>
+                        <ol>
+                            <li>Go to <a href="https://developers.facebook.com" target="_blank">Meta for Developers</a></li>
+                            <li>Open your App → WhatsApp → Configuration</li>
+                            <li>Click "Edit" on Webhook</li>
+                            <li>Paste the <strong>Callback URL</strong> above</li>
+                            <li>Paste the <strong>Verify Token</strong> above</li>
+                            <li>Subscribe to: <code>messages</code> and <code>message_status</code></li>
+                        </ol>
+                    </div>
+                    
+                    <group string="API Credentials">
+                        <group>
+                            <field name="api_token" password="True"/>
+                            <field name="phone_number_id"/>
+                        </group>
+                        <group>
+                            <field name="business_account_id"/>
+                        </group>
+                    </group>
+                    
+                    <group string="Status">
+                        <group>
+                            <field name="webhook_verified"/>
+                            <field name="last_webhook_activity"/>
+                        </group>
+                        <group>
+                            <field name="active"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Webhook Config List View -->
+    <record id="view_whatsapp_webhook_config_list" model="ir.ui.view">
+        <field name="name">whatsapp.webhook.config.list</field>
+        <field name="model">whatsapp.webhook.config</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Configurations">
+                <field name="name"/>
+                <field name="callback_url"/>
+                <field name="webhook_verified"/>
+                <field name="last_webhook_activity"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_webhook_config" model="ir.actions.act_window">
+        <field name="name">WhatsApp Configuration</field>
+        <field name="res_model">whatsapp.webhook.config</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+        <field name="context">{'form_view_initial_mode': 'edit'}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Configure your WhatsApp webhook!
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu under Subscriptions -->
+    <menuitem id="menu_whatsapp_webhook_config"
+              name="⚙️ WhatsApp Config"
+              parent="sale_subscription.menu_sale_subscription"
+              action="action_whatsapp_webhook_config"
+              sequence="120"/>
+</odoo>
