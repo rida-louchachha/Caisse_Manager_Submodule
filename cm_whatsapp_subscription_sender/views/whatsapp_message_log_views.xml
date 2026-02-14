@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_whatsapp_message_log_tree" model="ir.ui.view">
+        <field name="name">whatsapp.message.log.tree</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Logs" decoration-danger="status=='failed'" decoration-success="status=='sent'">
+                <field name="create_date"/>
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="status" widget="badge"/>
+                <field name="failure_reason" optional="show"/>
+                <field name="message" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_whatsapp_message_log_search" model="ir.ui.view">
+        <field name="name">whatsapp.message.log.search</field>
+        <field name="model">whatsapp.message.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="phone"/>
+                <field name="order_id"/>
+                <filter string="Failed" name="failed" domain="[('status', '=', 'failed')]"/>
+                <filter string="Sent" name="sent" domain="[('status', '=', 'sent')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+                    <filter string="Client" name="group_partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by': 'create_date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_whatsapp_message_logs" model="ir.actions.act_window">
+        <field name="name">WhatsApp Logs</field>
+        <field name="res_model">whatsapp.message.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No logs yet. Send some messages!
+            </p>
+        </field>
+    </record>
+
+    <!-- NOTE: Menu items are centralized in social_channel_views.xml -->
+</odoo>

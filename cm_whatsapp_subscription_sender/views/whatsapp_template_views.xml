@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Template List View -->
+    <record id="view_whatsapp_subscription_template_list" model="ir.ui.view">
+        <field name="name">whatsapp.subscription.template.list</field>
+        <field name="model">whatsapp.subscription.template</field>
+        <field name="arch" type="xml">
+            <list string="WhatsApp Templates" editable="bottom">
+                <field name="name"/>
+                <field name="meta_template_name"/>
+                <field name="language"/>
+                <field name="body"/>
+                <field name="param_1" optional="show"/>
+                <field name="param_2" optional="show"/>
+                <field name="param_3" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Template Form View -->
+    <record id="view_whatsapp_subscription_template_form" model="ir.ui.view">
+        <field name="name">whatsapp.subscription.template.form</field>
+        <field name="model">whatsapp.subscription.template</field>
+        <field name="arch" type="xml">
+            <form string="WhatsApp Template">
+                <sheet>
+                    <group>
+                        <group string="Template Info">
+                            <field name="name" placeholder="Payment Reminder"/>
+                            <field name="meta_template_name" placeholder="subscription_payment_reminder"/>
+                            <field name="language" placeholder="en"/>
+                        </group>
+                        <group string="Parameters">
+                            <field name="param_1" placeholder="e.g. Client Name"/>
+                            <field name="param_2" placeholder="e.g. Subscription Ref"/>
+                            <field name="param_3" placeholder="e.g. Amount Due"/>
+                        </group>
+                    </group>
+                    <group string="Template Body (Preview)">
+                        <field name="body" widget="text" nolabel="1" colspan="2"
+                               placeholder="Hello {{1}}, your subscription {{2}} requires payment of {{3}} MAD."/>
+                    </group>
+                    <div class="alert alert-info" role="alert">
+                        <strong>Note:</strong> The Meta Template Name must exactly match the template name registered in your Meta Business Manager.
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_whatsapp_subscription_templates" model="ir.actions.act_window">
+        <field name="name">WhatsApp Templates</field>
+        <field name="res_model">whatsapp.subscription.template</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first WhatsApp template!
+            </p>
+            <p>
+                Templates allow you to send pre-approved messages to clients.
+                Make sure the Meta Template Name matches exactly with your Meta Business Manager.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu -->
+    <menuitem id="menu_whatsapp_subscription_templates"
+              name="📝 WhatsApp Templates"
+              parent="sale_subscription.menu_sale_subscription"
+              action="action_whatsapp_subscription_templates"
+              sequence="115"/>
+</odoo>

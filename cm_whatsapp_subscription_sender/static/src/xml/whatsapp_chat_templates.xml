@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="whatsapp_subscription_sender.WhatsAppChatView">
+        <div class="si-layout">
+            <aside class="si-sidebar">
+                <div class="si-sidebar-head">
+                    <div class="si-title">Conversations</div>
+                    <button class="btn btn-primary btn-sm si-new-btn" t-on-click="openNewChatModal" title="Nouveau chat">+</button>
+                </div>
+
+                <div class="si-filter-tabs">
+                    <button class="si-tab-btn" t-att-class="state.activeInboxFilter === 'all' ? 'si-tab-btn active' : 'si-tab-btn'" t-on-click="() => this.setActiveInboxFilter('all')">
+                        Tous
+                    </button>
+                    <button class="si-tab-btn" t-att-class="state.activeInboxFilter === 'unread' ? 'si-tab-btn active' : 'si-tab-btn'" t-on-click="() => this.setActiveInboxFilter('unread')">
+                        Non lus
+                    </button>
+                    <button class="si-tab-btn disabled" type="button">Favoris</button>
+                </div>
+
+                <div class="si-search-header">
+                    <input type="text" class="form-control si-search" placeholder="Rechercher une conversation..." t-att-value="state.searchQuery" t-on-input="onSearchInput"/>
+                </div>
+
+                <div class="si-conv-list">
+                    <t t-if="state.loading">
+                        <div class="si-empty">Chargement...</div>
+                    </t>
+                    <t t-elif="filteredConversations.length === 0">
+                        <div class="si-empty">Aucune conversation</div>
+                    </t>
+                    <t t-else="">
+                        <t t-foreach="filteredConversations" t-as="conv" t-key="conv.id">
+                            <div class="si-conv-item" t-att-class="isSelected(conv) ? 'si-conv-item selected' : 'si-conv-item'" t-on-click="() => this.selectConversation(conv)">
+                                <div class="si-avatar-wrap">
+                                    <t t-if="getConversationAvatarUrl(conv)">
+                                        <img class="si-avatar si-avatar-img" t-att-src="getConversationAvatarUrl(conv)" alt="avatar"/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="si-avatar"><t t-esc="getAvatarLetter(getPartnerName(conv))"/></div>
+                                    </t>
+                                    <img class="si-avatar-channel-icon" t-att-src="getChannelIconUrl(conv.channel_type || 'whatsapp')" alt="channel"/>
+                                </div>
+                                <div class="si-conv-main">
+                                    <div class="si-conv-top">
+                                        <div class="si-conv-name"><t t-esc="getPartnerName(conv)"/></div>
+                                        <div class="si-conv-time"><t t-esc="formatDate(conv.last_message_date)"/></div>
+                                    </div>
+                                    <div class="si-conv-bottom">
+                                        <span class="si-conv-msg"><t t-esc="conv.last_message || 'No messages'"/></span>
+                                        <t t-if="conv.unread_count > 0">
+                                            <span class="si-unread"><t t-esc="conv.unread_count"/></span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+            </aside>
+
+            <section class="si-chat">
+                <t t-if="state.selectedConversation">
+                    <header class="si-chat-head">
+                        <div class="si-avatar-wrap">
+                            <t t-if="getConversationAvatarUrl(state.selectedConversation)">
+                                <img class="si-avatar big si-avatar-img" t-att-src="getConversationAvatarUrl(state.selectedConversation)" alt="avatar"/>
+                            </t>
+                            <t t-else="">
+                                <div class="si-avatar big"><t t-esc="getAvatarLetter(getPartnerName(state.selectedConversation))"/></div>
+                            </t>
+                            <img class="si-avatar-channel-icon" t-att-src="getChannelIconUrl(state.selectedConversation.channel_type || 'whatsapp')" alt="channel"/>
+                        </div>
+                        <div class="si-chat-contact">
+                            <div class="si-chat-topline">
+                                <button class="si-chat-name-link" t-on-click="onOpenSelectedContactForm">
+                                    <t t-esc="getPartnerName(state.selectedConversation)"/>
+                                </button>
+                                <span class="si-chat-channel-badge"><t t-esc="getChannelName(state.selectedConversation.channel_type || 'whatsapp')"/></span>
+                            </div>
+                            <div class="si-chat-phone"><t t-esc="state.selectedConversation.phone || state.selectedConversation.external_user_id || 'No phone'"/></div>
+                        </div>
+                        <div class="si-chat-actions">
+                            <button class="si-call-icon-btn"
+                                    t-on-click="onCallSelectedContact"
+                                    t-att-title="'Call: ' + (getSelectedPhone() || 'No phone')">
+                                <i class="fa fa-phone"/>
+                            </button>
+                        </div>
+                    </header>
+
+                    <div class="si-messages" t-ref="messagesContainer">
+                        <t t-if="state.messages.length === 0">
+                            <div class="si-empty-center">Aucun message dans cette conversation</div>
+                        </t>
+                        <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                            <div class="si-msg-row" t-att-class="msg.direction === 'outgoing' ? 'si-msg-row outgoing' : 'si-msg-row incoming'">
+                                <t t-if="msg.direction !== 'outgoing'">
+                                    <div class="si-msg-avatar-wrap">
+                                        <t t-if="getMessageAvatarUrl(msg)">
+                                            <img class="si-avatar si-avatar-img si-msg-avatar" t-att-src="getMessageAvatarUrl(msg)" alt="avatar"/>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="si-avatar si-msg-avatar"><t t-esc="getAvatarLetter(getPartnerName(state.selectedConversation))"/></div>
+                                        </t>
+                                        <img class="si-avatar-channel-icon si-msg-channel-icon" t-att-src="getChannelIconUrl(msg.channel_type || state.selectedConversation.channel_type || 'whatsapp')" alt="channel"/>
+                                    </div>
+                                </t>
+                                <div class="si-bubble" t-att-class="isInternalNote(msg) ? 'si-bubble si-bubble-internal' : 'si-bubble'">
+                                    <t t-if="msg.media_type === 'audio' and getAudioUrl(msg)">
+                                        <div class="si-msg-audio">
+                                            <audio controls="controls" preload="metadata" t-att-src="getAudioUrl(msg)" class="si-audio-player"/>
+                                        </div>
+                                    </t>
+                                    <t t-if="msg.message and msg.media_type !== 'audio'">
+                                        <div class="si-msg-text">
+                                            <t t-if="isInternalNote(msg)"><span class="si-internal-tag">Internal</span></t>
+                                            <t t-esc="formatDisplayMessage(msg)"/>
+                                        </div>
+                                    </t>
+                                    <t t-if="msg.message and msg.media_type === 'audio' and msg.message !== '[Audio]'">
+                                        <div class="si-msg-text si-msg-caption"><t t-esc="msg.message"/></div>
+                                    </t>
+                                    <div class="si-msg-meta">
+                                        <span><t t-esc="formatTime(msg.create_date)"/></span>
+                                        <t t-if="msg.direction === 'outgoing' || !msg.direction">
+                                            <span t-att-style="'color:' + getStatusColor(msg.status)" t-att-title="getStatusLabel(msg.status)">
+                                                <t t-esc="getStatusIcon(msg.status)"/>
+                                            </span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </div>
+
+                    <footer class="si-composer ghl-composer" t-att-class="state.isInternalComment ? 'si-composer ghl-composer internal-on' : 'si-composer ghl-composer'">
+                        <div class="si-composer-top">
+                            <div class="si-composer-title-wrap">
+                                <span class="si-composer-title"><t t-esc="getComposerTitle()"/></span>
+                                <t t-if="shouldShowComposerPage()">
+                                    <span class="si-composer-page-label">Page:</span>
+                                    <span class="si-page-badge"><t t-esc="getComposerPageName()"/></span>
+                                </t>
+                            </div>
+                            <button class="si-internal-comment"
+                                    t-att-class="state.isInternalComment ? 'si-internal-comment active' : 'si-internal-comment'"
+                                    t-on-click="toggleInternalCommentMode">
+                                Internal Comment <span class="si-internal-state"><t t-esc="state.isInternalComment ? 'ON' : 'OFF'"/></span>
+                            </button>
+                        </div>
+
+                        <textarea class="form-control si-input-area"
+                                  t-att-placeholder="getComposerPlaceholder()"
+                                  t-model="state.newMessage"
+                                  t-on-keydown="onInputKeydown"/>
+
+                        <div class="si-composer-bottom">
+                            <div class="si-composer-tools">
+                                <div class="si-tools-box">
+                                    <button class="si-tool-btn" t-on-click="toggleEmojiPicker" title="Emoji"><i class="fa fa-smile-o"/></button>
+                                    <button class="si-tool-btn" t-on-click="onOpenTemplateSelector" title="Template"><i class="fa fa-paperclip"/></button>
+                                <t t-if="!state.isRecordingAudio &amp;&amp; !state.audioBlob">
+                                        <button type="button" class="si-tool-btn" t-on-click="startAudioRecord" title="Enregistrer un audio"><i class="fa fa-microphone"/></button>
+                                </t>
+                                <t t-if="state.isRecordingAudio">
+                                        <button class="si-tool-btn si-tool-btn-danger" t-on-click="stopAudioRecord" title="Arrêter"><i class="fa fa-stop"/></button>
+                                </t>
+                                </div>
+                                <t t-if="state.audioBlob &amp;&amp; !state.isRecordingAudio">
+                                    <button class="btn btn-outline-secondary btn-sm" t-on-click="cancelAudioRecord" title="Annuler">Annuler</button>
+                                    <button class="btn btn-primary btn-sm" t-on-click="sendAudioMessage" title="Envoyer l'audio">Envoyer audio</button>
+                                </t>
+                            </div>
+                            <div class="si-composer-actions">
+                                <button class="btn btn-light si-clear-btn" t-on-click="clearComposer">Clear</button>
+                                <button class="btn btn-primary si-send-btn" t-on-click="onSendMessage">Send</button>
+                            </div>
+                        </div>
+                    </footer>
+
+                    <t t-if="state.showEmojiPicker">
+                        <div class="si-emoji-panel">
+                            <t t-foreach="getCommonEmojis()" t-as="emoji" t-key="emoji">
+                                <button class="si-emoji-btn" t-on-click="() => this.insertEmoji(emoji)"><t t-esc="emoji"/></button>
+                            </t>
+                        </div>
+                    </t>
+                </t>
+                <t t-else="">
+                    <div class="si-empty-main">
+                        <h4>Unified Social Inbox</h4>
+                        <p>Sélectionnez une conversation pour commencer.</p>
+                    </div>
+                </t>
+            </section>
+
+        </div>
+
+        <t t-if="state.showNewChatModal">
+            <div class="modal d-block si-overlay" t-on-click="closeNewChatModal">
+                <div class="modal-dialog modal-dialog-centered" t-on-click.stop="">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Créer un nouveau message</h5>
+                            <button type="button" class="btn-close" t-on-click="closeNewChatModal"/>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-2">
+                                <label class="form-label">Sélectionnez Contact *</label>
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="Sélectionnez le nom, l'email ou le téléphone"
+                                       t-att-value="state.newChatQuery"
+                                       t-on-input="onNewChatQueryInput"/>
+                            </div>
+                            <t t-if="state.searchResults.length > 0">
+                                <div class="list-group">
+                                    <t t-foreach="state.searchResults" t-as="contact" t-key="contact.id">
+                                        <button class="list-group-item list-group-item-action"
+                                                t-att-class="state.selectedSearchContact &amp;&amp; state.selectedSearchContact.id === contact.id ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'"
+                                                t-on-click="() => this.selectSearchContact(contact)">
+                                            <strong><t t-esc="contact.name"/></strong>
+                                            <div><small><t t-esc="contact.mobile || contact.phone || contact.email || 'No phone'"/></small></div>
+                                        </button>
+                                    </t>
+                                </div>
+                            </t>
+                            <t t-if="state.searchPerformed &amp;&amp; state.searchResults.length === 0 &amp;&amp; state.newChatQuery">
+                                <div class="alert alert-warning mt-2 mb-0">
+                                    Contact n'existe pas. Il sera ajouté au contact lors du clic sur <strong>Nouveau chat</strong>.
+                                </div>
+                            </t>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="closeNewChatModal">Cancel</button>
+                            <button class="btn btn-primary" t-on-click="submitNewChat">Nouveau chat</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+
+        <t t-if="state.showDeleteConfirm">
+            <div class="modal d-block si-overlay" t-on-click="cancelDelete">
+                <div class="modal-dialog modal-dialog-centered modal-sm" t-on-click.stop="">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Archiver conversation</h5>
+                            <button type="button" class="btn-close" t-on-click="cancelDelete"/>
+                        </div>
+                        <div class="modal-body">
+                            <p>Confirmer l’archivage de la conversation?</p>
+                            <p><strong><t t-esc="state.pendingDeleteConv ? getPartnerName(state.pendingDeleteConv) : ''"/></strong></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" t-on-click="cancelDelete">Cancel</button>
+                            <button class="btn btn-danger" t-on-click="confirmDelete">Archive</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+</templates>

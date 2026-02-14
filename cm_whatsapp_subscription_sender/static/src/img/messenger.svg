@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <linearGradient id="mess1" x1="6.228" x2="42.077" y1="4.896" y2="43.432" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#00c6ff"/>
+    <stop offset="1" stop-color="#0078ff"/>
+  </linearGradient>
+  <path fill="url(#mess1)" d="M24 4C12.954 4 4 12.954 4 24s8.954 20 20 20 20-8.954 20-20S35.046 4 24 4z"/>
+  <path fill="#fff" d="M33 29.5c0 2.485-2.017 4.5-4.5 4.5h-9c-2.485 0-4.5-2.015-4.5-4.5v-11c0-2.485 2.015-4.5 4.5-4.5h9c2.483 0 4.5 2.015 4.5 4.5v11z"/>
+  <path fill="#0078FF" d="M24.001 27.906c-2.154 0-3.905-1.75-3.905-3.906 0-2.154 1.751-3.905 3.905-3.905 2.156 0 3.906 1.751 3.906 3.905 0 2.156-1.75 3.906-3.906 3.906z"/>
+</svg>

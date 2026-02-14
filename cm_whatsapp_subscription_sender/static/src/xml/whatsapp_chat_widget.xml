@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <!-- WhatsApp Chat Widget for Subscription Form -->
+    <t t-name="whatsapp_subscription_sender.WhatsAppChatWidget">
+        <div class="wa-chat-widget" style="border: 1px solid #2a3942; border-radius: 12px; overflow: hidden; background: #111b21; min-height: 400px; display: flex; flex-direction: column;">
+            
+            <!-- Chat Header -->
+            <div class="wa-widget-header d-flex align-items-center justify-content-between px-3 py-2" 
+                 style="background: #202c33; border-bottom: 1px solid #2a3942; cursor: pointer;"
+                 t-on-click="toggleExpanded">
+                <div class="d-flex align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center" 
+                         style="width: 36px; height: 36px; background: linear-gradient(135deg, #00a884, #00d4aa); color: white; font-weight: 600; font-size: 14px;">
+                        <t t-esc="state.partnerName ? state.partnerName[0].toUpperCase() : '?'"/>
+                    </div>
+                    <div class="ms-2">
+                        <div style="color: #e9edef; font-size: 14px; font-weight: 500;">
+                            💬 WhatsApp Chat
+                        </div>
+                        <div style="color: #8696a0; font-size: 12px;">
+                            <t t-esc="state.partnerName"/> • <t t-esc="state.partnerPhone"/>
+                        </div>
+                    </div>
+                </div>
+                <div style="color: #8696a0; font-size: 16px;">
+                    <span t-if="state.isExpanded">▼</span>
+                    <span t-else="">▶</span>
+                </div>
+            </div>
+
+            <!-- Collapsible Content -->
+            <t t-if="state.isExpanded">
+                <!-- Messages Area -->
+                <div class="wa-widget-messages flex-grow-1 overflow-auto p-3" t-ref="messagesContainer"
+                     style="background: #0b141a; max-height: 300px; min-height: 200px;">
+                    
+                    <t t-if="state.loading">
+                        <div class="text-center py-4" style="color: #8696a0;">
+                            <div class="spinner-border spinner-border-sm text-success mb-2"></div>
+                            <div style="font-size: 13px;">Loading messages...</div>
+                        </div>
+                    </t>
+                    
+                    <t t-elif="state.messages.length === 0">
+                        <div class="text-center py-4" style="color: #8696a0;">
+                            <div style="font-size: 32px; margin-bottom: 8px;">💬</div>
+                            <div style="font-size: 13px;">No messages yet</div>
+                            <div style="font-size: 12px;">Send a template to start</div>
+                        </div>
+                    </t>
+                    
+                    <t t-else="">
+                        <t t-foreach="state.messages" t-as="msg" t-key="msg.id">
+                            <div class="wa-msg-wrapper d-flex mb-2"
+                                 t-att-class="{'justify-content-end': msg.direction === 'outgoing', 'justify-content-start': msg.direction === 'incoming'}">
+                                <div class="wa-bubble px-2 py-1"
+                                     t-att-style="msg.direction === 'outgoing' ? 'background: #005c4b; border-radius: 6px 0 6px 6px; max-width: 85%;' : 'background: #202c33; border-radius: 0 6px 6px 6px; max-width: 85%;'">
+                                    <div style="color: #e9edef; font-size: 13px; word-wrap: break-word; white-space: pre-wrap;">
+                                        <t t-esc="msg.message"/>
+                                    </div>
+                                    <div class="d-flex justify-content-end align-items-center mt-1" style="gap: 4px;">
+                                        <small style="color: #8696a0; font-size: 10px;">
+                                            <t t-esc="formatTime(msg.create_date)"/>
+                                        </small>
+                                        <t t-if="msg.direction === 'outgoing'">
+                                            <small t-att-style="'color: ' + getStatusColor(msg.status) + '; font-size: 12px;'">
+                                                <t t-esc="getStatusIcon(msg.status)"/>
+                                            </small>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </t>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="wa-widget-input d-flex align-items-center p-2" style="background: #202c33; border-top: 1px solid #2a3942;">
+                    <button class="btn btn-sm me-2" 
+                            t-on-click="onSendTemplate" 
+                            style="background: transparent; color: #8696a0; border: none; font-size: 18px;"
+                            title="Send Template">
+                        📎
+                    </button>
+                    <input type="text" 
+                           class="form-control flex-grow-1" 
+                           placeholder="Type a message..."
+                           t-model="state.newMessage"
+                           t-on-keydown="onInputKeydown"
+                           style="background: #2a3942; border: none; color: #e9edef; border-radius: 6px; padding: 8px 12px; font-size: 13px;"/>
+                    <button class="btn ms-2" 
+                            t-on-click="onSendMessage"
+                            style="background: #00a884; color: white; border: none; border-radius: 50%; width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center;">
+                        ➤
+                    </button>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>
